@@ -2,27 +2,47 @@
 use bevy::prelude::*;
 use bevy_matchbox::prelude::*;
 
+use crate::{local_player::LocalPlayer, networked_players::NetworkedPlayer};
+
+use super::messages::NewLocationMessage;
+
 pub fn start_socket(mut commands: Commands) {
     let socket = MatchboxSocket::new_reliable("ws://localhost:3536/hello");
     commands.insert_resource(socket);
 }
 
-pub fn send_message(mut socket: ResMut<MatchboxSocket<SingleChannel>>) {
+pub fn send_message(
+    mut socket: ResMut<MatchboxSocket<SingleChannel>>,
+    local_player_query: Query<&Transform, (With<LocalPlayer>, Without<NetworkedPlayer>)>
+) {
     let peers: Vec<_> = socket.connected_peers().collect();
 
     for peer in peers {
-        let message = "Hello";
-        //info!("Sending message: {message:?} to {peer}");
-        //socket.send(message.as_bytes().into(), peer);
+        let t_result = local_player_query.get_single();
+        match t_result {
+            Ok(t) => {
+                let message = NewLocationMessage {
+                    code: 0,
+                    translation_x: t.translation.x,
+                    translation_y: t.translation.y,
+                };
+                socket.send(bincode::serialize(&message).unwrap().into(), peer);
+            },
+            Err(e) => error!("ERROR SENDING MESSAGE: {e}"),
+        }
     }
 }
 
-pub fn receive_messages(mut socket: ResMut<MatchboxSocket<SingleChannel>>) {
+pub fn receive_messages(
+    mut socket: ResMut<MatchboxSocket<SingleChannel>>,
+    mut player_query: Query<&mut Transform, (Without<LocalPlayer>, With<NetworkedPlayer>)>
+) {
     for (_id, message) in socket.receive() {
-        match std::str::from_utf8(&message) {
-            Ok(message) => info!("Received message: {message:?}"),
-            Err(e) => error!("Failed to convert message to string: {e}"),
+        let message: NewLocationMessage = bincode::deserialize(&message[..]).unwrap();
+        for mut t in &mut player_query {
+            t.translation = Vec3::new(message.translation_x, message.translation_y, 0.0);
         }
+
     }
 }
 
