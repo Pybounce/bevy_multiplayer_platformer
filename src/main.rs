@@ -1,10 +1,11 @@
 use bevy::{
-    core_pipeline::bloom::BloomSettings,
     prelude::*,
     window::{ close_on_esc, PresentMode },
     winit::{ UpdateMode, WinitSettings },
 };
 
+mod player;
+use player::{ spawn_player, move_player };
 
 fn main() {
     let winit_settings = WinitSettings {
@@ -26,8 +27,8 @@ fn main() {
     App::new()
         .insert_resource(winit_settings)
         .add_plugins(DefaultPlugins.set(window_settings))
-        .add_systems(Startup, spawn_camera)
-        .add_systems(Update, close_on_esc)
+        .add_systems(Startup, (spawn_camera, spawn_player))
+        .add_systems(Update, (move_player, close_on_esc))
         .run();
 }
 
@@ -43,6 +44,5 @@ fn spawn_camera(mut commands: Commands) {
                 ..default()
             },
             ..default()
-        })
-        .insert(BloomSettings::default());
+        });
 }
