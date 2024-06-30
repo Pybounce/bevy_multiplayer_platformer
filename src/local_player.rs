@@ -5,7 +5,7 @@ const PLAYER_COLOR: Color = Color::rgb(0.0, 2.0, 0.0);
 const PLAYER_MOVE_SPEED: f32 = 200.0;
 
 #[derive(Component)]
-pub struct Player {
+pub struct LocalPlayer {
     move_up_key: KeyCode,
     move_down_key: KeyCode,
     move_right_key: KeyCode,
@@ -13,9 +13,9 @@ pub struct Player {
     move_speed: f32,
 }
 
-pub fn spawn_player(mut commands: Commands) {
+pub fn spawn_local_player(mut commands: Commands) {
     commands
-        .spawn(Player {
+        .spawn(LocalPlayer {
             move_up_key: KeyCode::KeyW,
             move_down_key: KeyCode::KeyS,
             move_right_key: KeyCode::KeyD,
@@ -35,7 +35,7 @@ pub fn spawn_player(mut commands: Commands) {
         });
 }
 
-pub fn move_player(mut query: Query<(&mut Transform, &Player)>, 
+pub fn move_player(mut query: Query<(&mut Transform, &LocalPlayer)>, 
     input: Res<ButtonInput<KeyCode>>,
     time: Res<Time>
 ) {
