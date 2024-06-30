@@ -1,12 +1,15 @@
+
+use std::time::Duration;
+
 use bevy::{
-    prelude::*,
-    window::{ close_on_esc, PresentMode },
-    winit::{ UpdateMode, WinitSettings },
+    prelude::*, time::common_conditions::on_timer, window::{ close_on_esc, PresentMode }, winit::{ UpdateMode, WinitSettings }
 };
 
 mod player;
 use player::{ spawn_player, move_player };
 
+mod networking_exmaple;
+use networking_exmaple::{ receive_messages, send_message, start_socket };
 fn main() {
     let winit_settings = WinitSettings {
         focused_mode: UpdateMode::Continuous,
@@ -29,6 +32,12 @@ fn main() {
         .add_plugins(DefaultPlugins.set(window_settings))
         .add_systems(Startup, (spawn_camera, spawn_player))
         .add_systems(Update, (move_player, close_on_esc))
+        .add_systems(Startup, start_socket)
+        .add_systems(Update, receive_messages)
+        .add_systems(
+            Update,
+            send_message.run_if(on_timer(Duration::from_secs(5))),
+        )
         .run();
 }
 
