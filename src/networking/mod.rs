@@ -14,6 +14,10 @@ impl Plugin for GameNetworkingPlugin {
         .add_event::<PeerConnectionEvent>()
         .add_event::<PeerDisconnectionEvent>()
         .add_systems(Startup, start_socket)
-        .add_systems(Update, (send_message, receive_messages, check_peer_connections));
+        .add_systems(Update, (receive_messages, check_peer_connections))
+        .add_systems(
+            Update,
+            send_message.run_if(on_timer(Duration::from_millis(300))),
+        );
     }
 }

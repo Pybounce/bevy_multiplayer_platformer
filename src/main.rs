@@ -22,7 +22,7 @@ fn main() {
         primary_window: Some(Window {
             title: "Legend of the Octo-Parakeet".into(),
             name: Some("Legend of the Octo-Parakeet".into()),
-            resolution: (1600.0, 900.0).into(),
+            resolution: (800.0, 450.0).into(),
             present_mode: PresentMode::Immediate,
             ..default()
         }),
