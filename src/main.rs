@@ -1,11 +1,17 @@
+
+
 use bevy::{
-    prelude::*,
-    window::{ close_on_esc, PresentMode },
-    winit::{ UpdateMode, WinitSettings },
+    prelude::*, window::{ close_on_esc, PresentMode }, winit::{ UpdateMode, WinitSettings }
 };
 
-mod player;
-use player::{ spawn_player, move_player };
+mod local_player;
+use local_player::{ spawn_local_player, move_player };
+
+mod networking;
+use networking::GameNetworkingPlugin;
+
+mod networked_players;
+use networked_players::{remove_disconnected_players, spawn_new_players};
 
 fn main() {
     let winit_settings = WinitSettings {
@@ -16,7 +22,7 @@ fn main() {
         primary_window: Some(Window {
             title: "Legend of the Octo-Parakeet".into(),
             name: Some("Legend of the Octo-Parakeet".into()),
-            resolution: (1600.0, 900.0).into(),
+            resolution: (800.0, 450.0).into(),
             present_mode: PresentMode::Immediate,
             ..default()
         }),
@@ -27,8 +33,9 @@ fn main() {
     App::new()
         .insert_resource(winit_settings)
         .add_plugins(DefaultPlugins.set(window_settings))
-        .add_systems(Startup, (spawn_camera, spawn_player))
-        .add_systems(Update, (move_player, close_on_esc))
+        .add_plugins(GameNetworkingPlugin)
+        .add_systems(Startup, (spawn_camera, spawn_local_player))
+        .add_systems(Update, (move_player, close_on_esc, spawn_new_players, remove_disconnected_players))
         .run();
 }
 
@@ -46,3 +53,4 @@ fn spawn_camera(mut commands: Commands) {
             ..default()
         });
 }
+
