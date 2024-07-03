@@ -15,7 +15,7 @@ mod networked_players;
 use networked_players::{remove_disconnected_players, spawn_new_players};
 
 mod stage_1;
-use stage_1::{spawn_stage, check_grounded};
+use stage_1::{ check_grounded, spawn_stage_vec};
 
 fn main() {
     let winit_settings = WinitSettings {
@@ -39,7 +39,7 @@ fn main() {
         .add_plugins(DefaultPlugins.set(window_settings))
         .add_plugins(RapierPhysicsPlugin::<NoUserData>::pixels_per_meter(100.0))
         .add_plugins(GameNetworkingPlugin)
-        .add_systems(Startup, (spawn_camera, spawn_local_player, spawn_stage))
+        .add_systems(Startup, (spawn_camera, spawn_local_player, spawn_stage_vec))
         .add_systems(Update, (check_grounded, move_player, close_on_esc, spawn_new_players, remove_disconnected_players))
         .run();
 }
