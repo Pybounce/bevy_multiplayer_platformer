@@ -67,12 +67,7 @@ pub fn move_player(
 
         let mut new_direction = Vec2::new(0.0, 0.0);
 
-        if input.pressed(p.move_up_key) {
-            new_direction += Vec2::new(0.0, 1.0);
-        }
-        if input.pressed(p.move_down_key) {
-            new_direction -= Vec2::new(0.0, 1.0);
-        }
+
         if input.pressed(p.move_right_key) {
             new_direction += Vec2::new(1.0, 0.0);
         }
@@ -80,8 +75,8 @@ pub fn move_player(
             new_direction -= Vec2::new(1.0, 0.0);
         }
         if new_direction.length() > 0.00001 {
-            v.linvel +=
-                new_direction.normalize() * p.acceleration * time.delta_seconds();
+            v.linvel.x +=
+                new_direction.normalize().x * p.acceleration * time.delta_seconds();
         } else if v.linvel.x.abs() > 0.00001 {
             v.linvel.x -= (p.horizontal_friction * time.delta_seconds()) * v.linvel.x.signum();
         }
