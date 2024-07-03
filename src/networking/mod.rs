@@ -17,7 +17,7 @@ impl Plugin for GameNetworkingPlugin {
         .add_systems(Update, (receive_messages, check_peer_connections))
         .add_systems(
             Update,
-            send_message.run_if(on_timer(Duration::from_millis(300))),
+            send_message.run_if(on_timer(Duration::from_millis(100 / 6))),
         );
     }
 }

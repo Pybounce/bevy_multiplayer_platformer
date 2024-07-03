@@ -7,7 +7,9 @@ use crate::{local_player::LocalPlayer, networked_players::NetworkedPlayer};
 use super::messages::NewLocationMessage;
 
 pub fn start_socket(mut commands: Commands) {
-    let socket = MatchboxSocket::new_reliable("ws://localhost:3536/hello");
+    //let socket = MatchboxSocket::new_reliable("ws://localhost:3536/hello");
+    let socket = MatchboxSocket::new_reliable("ws://20.90.116.144:3536/hello");
+
     commands.insert_resource(socket);
 }
 
