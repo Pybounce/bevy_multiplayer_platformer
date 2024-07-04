@@ -1,7 +1,7 @@
 
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
-use crate::{common::states::{AppState, GameState, StageTransitionData}, stage_1::Ground};
+use crate::{common::states::{AppState, GameState, StageState, StageTransitionData}, stage_1::Ground};
 
 use super::{stage_goal::StageGoal, stage_manager::StageData};
 
@@ -74,8 +74,8 @@ pub fn spawn_stage_vec(
     stage_transition_data: Res<StageTransitionData>,
     mut game_state: ResMut<NextState<GameState>>,
     mut app_state: ResMut<NextState<AppState>>,
+    mut stage_state: ResMut<NextState<StageState>>,
 ) {
-
     let stage_build_data = try_get_stage_data(stage_transition_data.target_stage_id);
     match stage_build_data {
         Some(data) => {
@@ -96,11 +96,13 @@ pub fn spawn_stage_vec(
                     stage_id: stage_transition_data.target_stage_id, 
                     respawn_translation: data.spawn_translation
                 });
-            game_state.set(GameState::Playing);
-        },
+                game_state.set(GameState::Playing);
+                stage_state.set(StageState::Loaded);
+            },
         None => {
             app_state.set(AppState::StageSelect);
             game_state.set(GameState::NA);
+            stage_state.set(StageState::NA);
         },
     }
 
@@ -108,7 +110,7 @@ pub fn spawn_stage_vec(
 }
 
 fn try_get_stage_data(stage_id: usize) -> Option<StageBuildingData> {
-    warn!("stage: {}", stage_id);
+
     if stage_id == 0 {
         return Some(StageBuildingData {
             tiles: vec![

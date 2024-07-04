@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::common::states::{GameState, StageTransitionData};
+use crate::common::states::{GameState, StageState, StageTransitionData};
 
 use super::stage_goal::GoalReached;
 
@@ -25,6 +25,7 @@ pub fn next_staged_if_goal_reached(
     stage_data: Res<StageData>,
     mut stage_transition_data: ResMut<StageTransitionData>,
     mut event_reader: EventReader<GoalReached>,
+    mut stage_state: ResMut<NextState<StageState>>,
     mut game_state: ResMut<NextState<GameState>>,
 
 ) {
@@ -32,7 +33,8 @@ pub fn next_staged_if_goal_reached(
     for event in event_reader.read() {
         if event.stage_id == stage_data.stage_id {
             stage_transition_data.target_stage_id = stage_data.stage_id + 1;
-            game_state.set(GameState::Transitioning);
+            stage_state.set(StageState::Loading);
+            game_state.set(GameState::NA);
             break;
         }
     }

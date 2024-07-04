@@ -2,16 +2,33 @@
 use bevy::prelude::*;
 use bevy_matchbox::prelude::*;
 
-use crate::local_player::LocalPlayer;
+use crate::{common::states::NetworkingState, game::stage_manager::StageData, local_player::LocalPlayer};
 
 use super::{messages::NewLocationMessage, networked_players::NetworkedPlayer};
 
-pub fn start_socket(mut commands: Commands) {
-    //let socket = MatchboxSocket::new_reliable("ws://localhost:3536/hello");
-    let socket = MatchboxSocket::new_reliable("ws://20.90.116.144:3536/hello");
+pub fn connect_socket(
+    mut commands: Commands,
+    stage_data: Res<StageData>,
+    mut networking_state: ResMut<NextState<NetworkingState>>,
+) {
+    let mut room_url = String::from("ws://20.90.116.144:3536/game_name_");
+    //let mut room_url = String::from("ws://localhost:3536/");
+
+    room_url.push_str(&stage_data.stage_id.to_string());
+    let socket = MatchboxSocket::new_reliable(room_url);
 
     commands.insert_resource(socket);
+    networking_state.set(NetworkingState::Connected);
 }
+
+pub fn disconnect_socket(
+    mut socket: ResMut<MatchboxSocket<SingleChannel>>,
+    mut networking_state: ResMut<NextState<NetworkingState>>,
+) {
+    socket.close();
+    networking_state.set(NetworkingState::Disconnected);
+}
+
 
 pub fn send_message(
     mut socket: ResMut<MatchboxSocket<SingleChannel>>,
