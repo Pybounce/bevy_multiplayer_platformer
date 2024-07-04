@@ -2,9 +2,9 @@
 use bevy::prelude::*;
 use bevy_matchbox::prelude::*;
 
-use crate::{local_player::LocalPlayer, networked_players::NetworkedPlayer};
+use crate::local_player::LocalPlayer;
 
-use super::messages::NewLocationMessage;
+use super::{messages::NewLocationMessage, networked_players::NetworkedPlayer};
 
 pub fn start_socket(mut commands: Commands) {
     //let socket = MatchboxSocket::new_reliable("ws://localhost:3536/hello");

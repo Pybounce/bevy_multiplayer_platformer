@@ -6,6 +6,7 @@ pub mod networking_stuff;
 use networking_stuff::{ check_peer_connections, receive_messages, send_message, start_socket, PeerConnectionEvent, PeerDisconnectionEvent };
 
 pub mod messages;
+pub mod networked_players;
 
 pub struct GameNetworkingPlugin;
 impl Plugin for GameNetworkingPlugin {
