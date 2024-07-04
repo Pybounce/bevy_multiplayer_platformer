@@ -1,7 +1,7 @@
 
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
-use crate::{common::states::{DespawnOnStateEnter, GameState, StageData}, stage_1::Ground};
+use crate::{common::states::GameState, stage_1::Ground};
 
 
 #[derive(Component)]
@@ -37,7 +37,6 @@ pub fn spawn_stage_vec(
     mut commands: Commands,
     mut game_state: ResMut<NextState<GameState>>,
 ) {
-    error!("Asdasd");
     let width = 9;
     let height = 9;
     let stage: Vec::<u32> = vec![
