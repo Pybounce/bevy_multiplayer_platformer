@@ -29,6 +29,11 @@ pub fn disconnect_socket(
     networking_state.set(NetworkingState::Disconnected);
 }
 
+pub fn prepare_disconnect(
+    mut networking_state: ResMut<NextState<NetworkingState>>,
+) {
+    networking_state.set(NetworkingState::PreparingDisconnect);
+}
 
 pub fn send_message(
     mut socket: ResMut<MatchboxSocket<SingleChannel>>,
@@ -80,6 +85,8 @@ pub fn check_peer_connections(
     mut connection_event_writer: EventWriter<PeerConnectionEvent>,
     mut disconnection_event_writer: EventWriter<PeerDisconnectionEvent>
 ) {
+    error!("CHECK CONNECTIONS");
+
     for (id, state) in socket.update_peers().into_iter() {
         match state {
             PeerState::Connected => {

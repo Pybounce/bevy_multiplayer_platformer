@@ -48,6 +48,7 @@ pub enum NetworkingState {
     Connected,
     #[default]
     Disconnected,
+    PreparingDisconnect,
 }
 
 
