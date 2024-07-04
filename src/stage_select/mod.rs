@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::common::states::{AppState, GameState, StageData};
+use crate::common::states::{AppState, GameState, StageTransitionData};
 
 
 pub struct StageSelectPlugin;
@@ -27,7 +27,7 @@ pub fn try_enter_stage(
     mut commands: Commands
 ) {
     if input.just_released(KeyCode::Space) {
-        commands.insert_resource(StageData {stage_id: 0, respawn_translation: Vec3::default()});
+        commands.insert_resource(StageTransitionData {target_stage_id: 0});
         app_state.set(AppState::Game);
         game_state.set(GameState::Transitioning);
     }

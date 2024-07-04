@@ -19,7 +19,7 @@ pub fn check_goal_reached(
 
         for colliding_entity in colliding_entities.iter() {
             if let Ok(_) = goal_query.get(colliding_entity) {
-                error!("goal reached");
+                error!("GOAL WRITE");
                 event_writer.send(GoalReached);
             }
         }

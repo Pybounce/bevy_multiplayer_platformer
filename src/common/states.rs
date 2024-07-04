@@ -24,14 +24,14 @@ pub enum AppState {
 #[derive(States, Debug, Hash, Eq, PartialEq, Clone, Default)]
 pub enum GameState {
     #[default]
+    NA,
     Playing,
     Transitioning
 }
 
 #[derive(Resource)]
-pub struct StageData {
-    pub stage_id: usize,
-    pub respawn_translation: Vec3
+pub struct StageTransitionData {
+    pub target_stage_id: usize,
 }
 
 

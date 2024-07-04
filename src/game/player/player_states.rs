@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::common::states::StageData;
+use crate::{game::stage_manager::StageData, local_player::LocalPlayer};
 
 
 
@@ -24,5 +24,14 @@ pub fn respawn_dead_players(
                 commands.entity(e).try_insert(PlayerState::Alive);
             },
         }
+    }
+}
+
+pub fn reset_players(
+    stage_data: Res<StageData>,
+    mut query: Query<&mut Transform, With<LocalPlayer>>
+) {
+    for mut t in &mut query {
+        t.translation = stage_data.respawn_translation;
     }
 }
