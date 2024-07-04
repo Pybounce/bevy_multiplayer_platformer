@@ -18,7 +18,7 @@ impl Plugin for GamePlugin {
         .add_event::<GoalReached>()
         .add_systems(OnEnter(GameState::Transitioning), (despawn_stage, spawn_stage_vec, reset_players).chain()
     )//.run_if(in_state(AppState::Game)))
-        .add_systems(Update, (check_grounded, respawn_dead_players, (check_goal_reached, next_staged_if_goal_reached).chain())
+        .add_systems(Update, (check_grounded, respawn_dead_players, check_goal_reached, next_staged_if_goal_reached)
             .run_if(in_state(AppState::Game))
             .run_if(in_state(GameState::Playing)));
     }

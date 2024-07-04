@@ -28,9 +28,13 @@ pub fn next_staged_if_goal_reached(
     mut game_state: ResMut<NextState<GameState>>,
 
 ) {
-    if event_reader.read().len() > 0 {
-        error!("GOAL READ");
-        stage_transition_data.target_stage_id = stage_data.stage_id + 1;
-        game_state.set(GameState::Transitioning);
+
+    for event in event_reader.read() {
+        if event.stage_id == stage_data.stage_id {
+            stage_transition_data.target_stage_id = stage_data.stage_id + 1;
+            game_state.set(GameState::Transitioning);
+            break;
+        }
     }
+
 }
