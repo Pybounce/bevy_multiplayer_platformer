@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
 
-use crate::stage_1::{Groundable, Grounded};
+use crate::{game::player::player_states::PlayerState, stage_1::{Groundable, Grounded}};
 
 const PLAYER_SIZE: Vec2 = Vec2::new(30.0, 30.0);
 const PLAYER_COLOR: Color = Color::rgb(0.0, 2.0, 0.0);
@@ -53,7 +53,8 @@ pub fn spawn_local_player(mut commands: Commands) {
         .insert(Velocity::linear(Vec2::ZERO))
         .insert(GravityScale(2.0))
         .insert(Groundable)
-        .insert(CollidingEntities::default());
+        .insert(CollidingEntities::default())
+        .insert(PlayerState::Dead);
 }
 
 pub fn move_player(

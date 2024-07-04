@@ -42,11 +42,11 @@ fn main() {
     App::new()
         .insert_resource(winit_settings)
         .add_plugins(DefaultPlugins.set(window_settings))
-        .add_plugins(StageSelectPlugin)
         .add_plugins(StatesPlugin)
+        .add_plugins(StageSelectPlugin)
         .add_plugins(GamePlugin)
-        .add_plugins(RapierPhysicsPlugin::<NoUserData>::pixels_per_meter(100.0))
         .add_plugins(GameNetworkingPlugin)
+        .add_plugins(RapierPhysicsPlugin::<NoUserData>::pixels_per_meter(100.0))
         .add_systems(Startup, (spawn_camera, spawn_local_player))
         .add_systems(Update, (move_player, close_on_esc, spawn_new_players, remove_disconnected_players))
         .run();
