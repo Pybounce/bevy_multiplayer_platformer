@@ -27,6 +27,12 @@ pub fn respawn_dead_players(
     }
 }
 
+//TODO: Make this more resiliant
+// Right now this is run directly after the stage building
+// And it assumes that the stage was built
+// If something went wrong, like the stage file didn't exist...
+// The StageData would be null and crash the program
+// Consider raising a player reset event or just adding an Option<StageData>
 pub fn reset_players(
     stage_data: Res<StageData>,
     mut query: Query<&mut Transform, With<LocalPlayer>>

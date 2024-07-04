@@ -97,7 +97,6 @@ pub fn spawn_stage_vec(
                     respawn_translation: data.spawn_translation
                 });
             game_state.set(GameState::Playing);
-            error!("STAGE BUILT");
         },
         None => {
             app_state.set(AppState::StageSelect);
