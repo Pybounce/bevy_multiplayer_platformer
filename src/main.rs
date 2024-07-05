@@ -8,7 +8,7 @@ mod local_player;
 use bevy_rapier2d::plugin::{NoUserData, RapierPhysicsPlugin};
 use common::states::StatesPlugin;
 use game::GamePlugin;
-use local_player::{ spawn_local_player, move_player };
+use local_player::{ move_player, spawn_local_player, LocalPlayer };
 
 mod networking;
 use networking::{networked_players::{remove_disconnected_players, spawn_new_players}, GameNetworkingPlugin};
@@ -48,7 +48,7 @@ fn main() {
         .add_plugins(GameNetworkingPlugin)
         .add_plugins(RapierPhysicsPlugin::<NoUserData>::pixels_per_meter(100.0))
         .add_systems(Startup, (spawn_camera, spawn_local_player))
-        .add_systems(Update, (move_player, close_on_esc, spawn_new_players, remove_disconnected_players))
+        .add_systems(Update, (move_camera, move_player, close_on_esc, spawn_new_players, remove_disconnected_players))
         .run();
 }
 
@@ -67,3 +67,11 @@ fn spawn_camera(mut commands: Commands) {
         });
 }
 
+fn move_camera(
+    mut camera_query: Query<&mut Transform, With<Camera>>,
+    player_query: Query<&Transform, (With<LocalPlayer>, Without<Camera>)>
+) {
+    let mut camera_transform = camera_query.single_mut();
+    let player_transform = player_query.single();
+    camera_transform.translation = player_transform.translation;
+}
