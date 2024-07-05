@@ -99,6 +99,7 @@ pub fn spawn_stage_vec(
     //let stage_build_data = try_get_stage_data(stage_transition_data.target_stage_id);
     match stage_asset {
         Some(data) => {
+            let mut spawn = data.spawn_translation;
             for i in 0..data.tiles.len() {
                 if data.tiles[i] == 0 { continue; }
                 let x = i % data.tiles_width;
@@ -109,12 +110,15 @@ pub fn spawn_stage_vec(
                 else if data.tiles[i] == 2 {
                     spawn_goal(x as f32, -(y as f32), &mut commands);
                 }
+                else if data.tiles[i] == 3 {
+                    spawn = Vec3::new(x as f32 * 30.0, y as f32 * -30.0, 0.0)
+                }
             }
 
             commands.insert_resource(
                 StageData {
                     stage_id: stage_transition_data.target_stage_id, 
-                    respawn_translation: data.spawn_translation
+                    respawn_translation: spawn
                 });
                 game_state.set(GameState::Playing);
                 stage_state.set(StageState::Loaded);
@@ -143,48 +147,6 @@ pub fn load_stage_handles(
     stage_handles.stage_handle = asset_server.load(format!("stage_{}.stage", stage_transition_data.target_stage_id));
 }
 
-fn try_get_stage_data(stage_id: usize) -> Option<StageBuildingData> {
-
-    if stage_id == 0 {
-        return Some(StageBuildingData {
-            tiles: vec![
-                0, 0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0, 2,
-                1, 1, 1, 1, 1, 1, 1, 1, 1,
-            ],
-            tiles_height: 9,
-            tiles_width: 9,
-            spawn_translation: Vec3::default()
-        });
-    }
-    else if stage_id == 1 {
-        return Some(StageBuildingData {
-            tiles: vec![
-                0, 0, 0, 0, 0, 0, 0, 0, 0,
-                1, 0, 0, 0, 0, 0, 2, 0, 0,
-                1, 1, 1, 0, 0, 1, 1, 1, 0,
-                0, 0, 0, 0, 0, 1, 0, 0, 0,
-                0, 0, 0, 1, 1, 1, 0, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0, 0,
-                1, 1, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 1, 1, 1, 1, 0, 0,
-                0, 0, 0, 0, 0, 0, 0, 0, 0,
-            ],
-            tiles_height: 9,
-            tiles_width: 9,
-            spawn_translation: Vec3::default()
-        });
-    }
-    else {
-        return None;
-    }
-}
 
 pub fn despawn_stage(
     query: Query<Entity, With<StagePiece>>,
