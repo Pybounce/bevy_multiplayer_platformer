@@ -3,7 +3,7 @@ use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
 use crate::{common::states::{AppState, GameState, StageState, StageTransitionData}, stage_1::Ground};
 
-use super::{stage_goal::StageGoal, stage_manager::StageData};
+use super::{stage_asset_loader::Stage, stage_goal::StageGoal, stage_manager::StageData};
 
 
 #[derive(Component)]
@@ -75,9 +75,29 @@ pub fn spawn_stage_vec(
     mut game_state: ResMut<NextState<GameState>>,
     mut app_state: ResMut<NextState<AppState>>,
     mut stage_state: ResMut<NextState<StageState>>,
+    stage_handles: Res<StageAssetLoadingHandles>,
+    stage_assets: Res<Assets<Stage>>,
+    asset_server: Res<AssetServer>
 ) {
-    let stage_build_data = try_get_stage_data(stage_transition_data.target_stage_id);
-    match stage_build_data {
+
+    match asset_server.load_state(&stage_handles.stage_handle) {
+        bevy::asset::LoadState::NotLoaded => {
+            app_state.set(AppState::StageSelect);
+            game_state.set(GameState::NA);
+            stage_state.set(StageState::NA);
+        },
+        bevy::asset::LoadState::Loading => { return; },
+        bevy::asset::LoadState::Loaded => (),
+        bevy::asset::LoadState::Failed => {
+            app_state.set(AppState::StageSelect);
+            game_state.set(GameState::NA);
+            stage_state.set(StageState::NA);
+        },
+    }
+
+    let stage_asset = stage_assets.get(&stage_handles.stage_handle);
+    //let stage_build_data = try_get_stage_data(stage_transition_data.target_stage_id);
+    match stage_asset {
         Some(data) => {
             for i in 0..data.tiles.len() {
                 if data.tiles[i] == 0 { continue; }
@@ -107,6 +127,20 @@ pub fn spawn_stage_vec(
     }
 
     
+}
+
+#[derive(Resource, Default)]
+pub struct StageAssetLoadingHandles {
+    stage_handle: Handle<Stage>
+}
+
+pub fn load_stage_handles(
+    asset_server: Res<AssetServer>,
+    mut stage_handles: ResMut<StageAssetLoadingHandles>,
+    stage_transition_data: Res<StageTransitionData>,
+) {
+    //let a = asset_server.load
+    stage_handles.stage_handle = asset_server.load(format!("stage_{}.stage", stage_transition_data.target_stage_id));
 }
 
 fn try_get_stage_data(stage_id: usize) -> Option<StageBuildingData> {

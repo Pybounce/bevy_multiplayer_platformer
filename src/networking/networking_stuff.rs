@@ -85,8 +85,6 @@ pub fn check_peer_connections(
     mut connection_event_writer: EventWriter<PeerConnectionEvent>,
     mut disconnection_event_writer: EventWriter<PeerDisconnectionEvent>
 ) {
-    error!("CHECK CONNECTIONS");
-
     for (id, state) in socket.update_peers().into_iter() {
         match state {
             PeerState::Connected => {
