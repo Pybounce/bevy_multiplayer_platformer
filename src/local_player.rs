@@ -1,14 +1,15 @@
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
 
-use crate::{game::player::player_states::PlayerState, stage_1::{Groundable, Grounded}};
+use crate::{game::player::player_states::PlayerState, player::player_jump_controller::PlayerJumpController, stage_1::{Groundable, Grounded}};
 
 const PLAYER_SIZE: Vec2 = Vec2::new(30.0, 30.0);
 const PLAYER_COLOR: Color = Color::rgb(0.0, 2.0, 0.0);
-const PLAYER_MAX_SPEED: Vec2 = Vec2::new(200.0, 1000.0);
-const PLAYER_ACCELERATION: f32 = 800.0;
-const PLAYER_HORIZONTAL_FRICTION: f32 = 200.0;
-const PLAYER_JUMP_SPEED: f32 = 500.0;
+const PLAYER_MAX_SPEED: Vec2 = Vec2::new(300.0, 1000.0);
+const PLAYER_ACCELERATION: f32 = 2000.0;
+const PLAYER_HORIZONTAL_FRICTION: f32 = 600.0;
+const PLAYER_JUMP_SPEED: f32 = 300.0;
+const PLAYER_JUMP_DURATION: f64 = 0.3;
 
 #[derive(Component)]
 pub struct LocalPlayer {
@@ -49,12 +50,21 @@ pub fn spawn_local_player(mut commands: Commands) {
         .insert(Ccd::enabled())
         .insert(Collider::ball(0.5))
         .insert(Restitution::coefficient(0.0))
-        .insert(Friction::coefficient(1.0))
+        .insert(Friction::coefficient(0.0))
         .insert(Velocity::linear(Vec2::ZERO))
         .insert(GravityScale(2.0))
         .insert(Groundable)
         .insert(CollidingEntities::default())
-        .insert(PlayerState::Dead);
+        .insert(PlayerState::Dead)
+        .insert(PlayerJumpController {
+            key: KeyCode::KeyW,
+            force: PLAYER_JUMP_SPEED,
+            duration: PLAYER_JUMP_DURATION,
+            last_jump_pressed_time: 0.0,
+            last_jump_released_time: 0.0,
+            last_grounded: 0.0,
+            coyote_time: 0.3,
+        });
 }
 
 pub fn move_player(
