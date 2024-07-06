@@ -52,7 +52,6 @@ fn main() {
         .add_systems(Startup, (spawn_camera, spawn_local_player))
         .add_systems(Update, (move_camera, close_on_esc, spawn_new_players, remove_disconnected_players))
         .add_systems(Update, (move_airbourne_horizontal_controller, move_ground_horizontal_controller, update_last_grounded, maintain_player_jump, begin_player_jump, can_jump, check_jump_fall_states))
-        .insert_resource(Msaa::Sample8)
         .run();
 }
 
