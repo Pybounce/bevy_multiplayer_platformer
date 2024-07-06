@@ -12,29 +12,11 @@ const PLAYER_JUMP_SPEED: f32 = 300.0;
 const PLAYER_JUMP_DURATION: f64 = 0.3;
 
 #[derive(Component)]
-pub struct LocalPlayer {
-    move_up_key: KeyCode,
-    move_down_key: KeyCode,
-    move_right_key: KeyCode,
-    move_left_key: KeyCode,
-    acceleration: f32,
-    horizontal_friction: f32,
-    max_speed: Vec2,
-    jump_speed: f32
-}
+pub struct LocalPlayer;
 
 pub fn spawn_local_player(mut commands: Commands) {
     commands
-        .spawn(LocalPlayer {
-            move_up_key: KeyCode::KeyW,
-            move_down_key: KeyCode::KeyS,
-            move_right_key: KeyCode::KeyD,
-            move_left_key: KeyCode::KeyA,
-            acceleration: PLAYER_ACCELERATION,
-            horizontal_friction: PLAYER_HORIZONTAL_FRICTION,
-            max_speed: PLAYER_MAX_SPEED,
-            jump_speed: PLAYER_JUMP_SPEED
-        })
+        .spawn(LocalPlayer)
         .insert(SpriteBundle {
             transform: Transform {
                 scale: PLAYER_SIZE.extend(1.0),
