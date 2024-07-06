@@ -6,7 +6,7 @@ use crate::stage_1::Grounded;
 
 
 #[derive(Component)]
-pub struct PlayerJumpController {
+pub struct JumpController {
     pub key: KeyCode,
     pub force: f32,
     pub duration: f64,
@@ -24,7 +24,7 @@ pub struct Jumping;
 pub struct Falling;
 
 pub fn maintain_player_jump(
-    mut query: Query<(Entity, &mut PlayerJumpController)>,
+    mut query: Query<(Entity, &mut JumpController)>,
     time: Res<Time>,
     input: Res<ButtonInput<KeyCode>>,
     mut commands: Commands
@@ -45,7 +45,7 @@ pub fn maintain_player_jump(
 }
 
 pub fn begin_player_jump(
-    mut query: Query<(&mut Velocity, &mut PlayerJumpController), With<CanJump>>,
+    mut query: Query<(&mut Velocity, &mut JumpController), With<CanJump>>,
     time: Res<Time>,
     input: Res<ButtonInput<KeyCode>>
 ) {
@@ -59,7 +59,7 @@ pub fn begin_player_jump(
 }
 
 pub fn can_jump(
-    query: Query<(Entity, &PlayerJumpController)>,
+    query: Query<(Entity, &JumpController)>,
     time: Res<Time>,
     mut commands: Commands
 ) {
@@ -74,7 +74,7 @@ pub fn can_jump(
 }
 
 pub fn update_last_grounded(
-    mut query: Query<&mut PlayerJumpController, With<Grounded>>,
+    mut query: Query<&mut JumpController, With<Grounded>>,
     time: Res<Time>
 ) {
     for mut jc in &mut query {

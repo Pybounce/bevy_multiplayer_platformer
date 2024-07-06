@@ -1,1 +1,1 @@
-pub mod player_jump_controller;
+pub mod jump_controller;

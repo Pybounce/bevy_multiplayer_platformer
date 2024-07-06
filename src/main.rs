@@ -14,7 +14,7 @@ mod networking;
 use networking::{networked_players::{remove_disconnected_players, spawn_new_players}, GameNetworkingPlugin};
 
 mod stage_select;
-use player::player_jump_controller::{begin_player_jump, can_jump, check_jump_fall_states, maintain_player_jump, update_last_grounded};
+use player::jump_controller::{begin_player_jump, can_jump, check_jump_fall_states, maintain_player_jump, update_last_grounded};
 use stage_select::StageSelectPlugin;
 
 mod common;
