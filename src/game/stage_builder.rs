@@ -1,5 +1,5 @@
 
-use bevy::prelude::*;
+use bevy::{prelude::*, render::render_resource::Texture};
 use bevy_rapier2d::prelude::*;
 use crate::{common::states::{AppState, GameState, StageState, StageTransitionData}, stage_1::Ground};
 
@@ -9,25 +9,20 @@ use super::{stage_asset_loader::Stage, stage_goal::StageGoal, stage_manager::Sta
 #[derive(Component)]
 pub struct StagePiece;
 
-struct StageBuildingData {
-    tiles: Vec::<u32>,
-    tiles_width: usize,
-    tiles_height: usize,
-    spawn_translation: Vec3
-}
-
-fn spawn_tile(x: f32, y: f32, commands: &mut Commands) {
+fn spawn_tile(x: f32, y: f32, commands: &mut Commands, tex_handle: &Handle<Image>) {
     commands
     .spawn(Ground)
     .insert(SpriteBundle {
         transform: Transform {
-            scale: Vec3::new(30.0, 30.0, 1.0),
-            translation: Vec3::new(x * 30.0, y * 30.0, 0.0),
+            scale: Vec3::new(32.0, 32.0, 1.0),
+            translation: Vec3::new(x * 32.0, y * 32.0, 0.0),
             //rotation: Quat::from_axis_angle(Vec3::new(0.0, 0.0, 1.0), 60.0),
             ..default()
         },
+        texture: tex_handle.clone(),
         sprite: Sprite {
-            color: Color::WHITE,
+            custom_size: Some(Vec2::new(1.0, 1.0)),
+            rect: Some(Rect::new(0.0, 0.0, 16.0, 16.0)),
             ..default()
         },
         ..default()
@@ -47,8 +42,8 @@ fn spawn_goal(x: f32, y: f32, commands: &mut Commands) {
     .spawn(StageGoal)
     .insert(SpriteBundle {
         transform: Transform {
-            scale: Vec3::new(30.0, 30.0, 1.0),
-            translation: Vec3::new(x * 30.0, y * 30.0, 0.0),
+            scale: Vec3::new(32.0, 32.0, 1.0),
+            translation: Vec3::new(x * 32.0, y * 32.0, 0.0),
             //rotation: Quat::from_axis_angle(Vec3::new(0.0, 0.0, 1.0), 60.0),
             ..default()
         },
@@ -96,7 +91,8 @@ pub fn spawn_stage_vec(
     }
 
     let stage_asset = stage_assets.get(&stage_handles.stage_handle);
-    //let stage_build_data = try_get_stage_data(stage_transition_data.target_stage_id);
+    let texture: Handle<Image> = asset_server.load("test_sprite_sheet.png");
+
     match stage_asset {
         Some(data) => {
             let mut spawn = data.spawn_translation;
@@ -105,13 +101,13 @@ pub fn spawn_stage_vec(
                 let x = i % data.tiles_width;
                 let y = i / data.tiles_height;
                 if data.tiles[i] == 1 {
-                    spawn_tile(x as f32, -(y as f32), &mut commands);
+                    spawn_tile(x as f32, -(y as f32), &mut commands, &texture);
                 }
                 else if data.tiles[i] == 2 {
                     spawn_goal(x as f32, -(y as f32), &mut commands);
                 }
                 else if data.tiles[i] == 3 {
-                    spawn = Vec3::new(x as f32 * 30.0, y as f32 * -30.0, 0.0)
+                    spawn = Vec3::new(x as f32 * 32.0, y as f32 * -32.0, 0.0)
                 }
             }
 
