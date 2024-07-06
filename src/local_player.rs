@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
 
-use crate::{game::player::player_states::PlayerState, player::jump_controller::JumpController, stage_1::{Groundable, Grounded}};
+use crate::{game::player::player_states::PlayerState, player::{horizontal_movement_controller::GroundedHorizontalMovementController, jump_controller::JumpController}, stage_1::{Groundable, Grounded}};
 
 const PLAYER_SIZE: Vec2 = Vec2::new(30.0, 30.0);
 const PLAYER_COLOR: Color = Color::rgb(0.0, 2.0, 0.0);
@@ -64,6 +64,13 @@ pub fn spawn_local_player(mut commands: Commands) {
             last_jump_released_time: 0.0,
             last_grounded: 0.0,
             coyote_time: 0.3,
+        })
+        .insert(GroundedHorizontalMovementController {
+            left_key: KeyCode::KeyA,
+            right_key: KeyCode::KeyD,
+            acceleration: PLAYER_ACCELERATION,
+            friction: PLAYER_HORIZONTAL_FRICTION,
+            max_speed: 300.0,
         });
 }
 

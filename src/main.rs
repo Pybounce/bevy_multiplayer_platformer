@@ -14,7 +14,7 @@ mod networking;
 use networking::{networked_players::{remove_disconnected_players, spawn_new_players}, GameNetworkingPlugin};
 
 mod stage_select;
-use player::jump_controller::{begin_player_jump, can_jump, check_jump_fall_states, maintain_player_jump, update_last_grounded};
+use player::{horizontal_movement_controller::move_ground_horizontal_controller, jump_controller::{begin_player_jump, can_jump, check_jump_fall_states, maintain_player_jump, update_last_grounded}};
 use stage_select::StageSelectPlugin;
 
 mod common;
@@ -51,7 +51,7 @@ fn main() {
         .add_plugins(RapierPhysicsPlugin::<NoUserData>::pixels_per_meter(100.0))
         .add_systems(Startup, (spawn_camera, spawn_local_player))
         .add_systems(Update, (move_camera, close_on_esc, spawn_new_players, remove_disconnected_players))
-        .add_systems(Update, (update_last_grounded, maintain_player_jump, begin_player_jump, can_jump, check_jump_fall_states))
+        .add_systems(Update, (move_ground_horizontal_controller, update_last_grounded, maintain_player_jump, begin_player_jump, can_jump, check_jump_fall_states))
         .run();
 }
 
