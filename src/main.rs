@@ -8,7 +8,7 @@ mod local_player;
 use bevy_rapier2d::plugin::{NoUserData, RapierPhysicsPlugin};
 use common::states::StatesPlugin;
 use game::GamePlugin;
-use local_player::{ move_player, spawn_local_player, LocalPlayer };
+use local_player::{ spawn_local_player, LocalPlayer };
 
 mod networking;
 use networking::{networked_players::{remove_disconnected_players, spawn_new_players}, GameNetworkingPlugin};

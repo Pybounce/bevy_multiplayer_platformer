@@ -81,41 +81,4 @@ pub fn spawn_local_player(mut commands: Commands) {
         });
 }
 
-pub fn move_player(
-    mut query: Query<(&mut Velocity, &LocalPlayer, Option<&Grounded>)>, 
-    input: Res<ButtonInput<KeyCode>>,
-    time: Res<Time>
-) {
-    for (mut v, p, grounded_opt) in &mut query.iter_mut() {
-
-
-
-        let mut new_direction = Vec2::new(0.0, 0.0);
-
-
-        if input.pressed(p.move_right_key) {
-            new_direction += Vec2::new(1.0, 0.0);
-        }
-        if input.pressed(p.move_left_key) {
-            new_direction -= Vec2::new(1.0, 0.0);
-        }
-        if new_direction.length() > 0.00001 {
-            v.linvel.x +=
-                new_direction.normalize().x * p.acceleration * time.delta_seconds();
-        } else if v.linvel.x.abs() > 0.00001 {
-            v.linvel.x -= (p.horizontal_friction * time.delta_seconds()) * v.linvel.x.signum();
-        }
-
-        if let Some(_) = grounded_opt {
-            if input.pressed(p.move_up_key) {
-                 v.linvel.y = p.jump_speed;
-             }
-         }
-
-
-        v.linvel.x = v.linvel.x.abs().min(p.max_speed.x) * v.linvel.x.signum();
-        v.linvel.y = v.linvel.y.abs().min(p.max_speed.y) * v.linvel.y.signum();
-
-    }
-}
 
