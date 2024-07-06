@@ -8,17 +8,19 @@ mod local_player;
 use bevy_rapier2d::plugin::{NoUserData, RapierPhysicsPlugin};
 use common::states::StatesPlugin;
 use game::GamePlugin;
-use local_player::{ move_player, spawn_local_player, LocalPlayer };
+use local_player::{ spawn_local_player, LocalPlayer };
 
 mod networking;
 use networking::{networked_players::{remove_disconnected_players, spawn_new_players}, GameNetworkingPlugin};
 
 mod stage_select;
+use player::{horizontal_movement_controller::{move_airbourne_horizontal_controller, move_ground_horizontal_controller}, jump_controller::{begin_player_jump, can_jump, check_jump_fall_states, maintain_player_jump, update_last_grounded}};
 use stage_select::StageSelectPlugin;
 
 mod common;
 
 mod game;
+mod player;
 
 pub mod stage_1;
 
@@ -48,7 +50,8 @@ fn main() {
         .add_plugins(GameNetworkingPlugin)
         .add_plugins(RapierPhysicsPlugin::<NoUserData>::pixels_per_meter(100.0))
         .add_systems(Startup, (spawn_camera, spawn_local_player))
-        .add_systems(Update, (move_camera, move_player, close_on_esc, spawn_new_players, remove_disconnected_players))
+        .add_systems(Update, (move_camera, close_on_esc, spawn_new_players, remove_disconnected_players))
+        .add_systems(Update, (move_airbourne_horizontal_controller, move_ground_horizontal_controller, update_last_grounded, maintain_player_jump, begin_player_jump, can_jump, check_jump_fall_states))
         .run();
 }
 
