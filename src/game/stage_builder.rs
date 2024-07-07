@@ -5,15 +5,15 @@ use crate::{common::states::{AppState, GameState, StageState, StageTransitionDat
 
 use super::{stage_asset_loader::Stage, stage_goal::StageGoal, stage_manager::StageData};
 
-const TILE_SIZE: f32 = 64.0;
+const TILE_SIZE: f32 = 32.0;
 
 #[derive(Component)]
 pub struct StagePiece;
 
 fn spawn_tile(x: f32, y: f32, commands: &mut Commands, tex_handle: &Handle<Image>, atlas_index: u8) {
-    let sprite_rect_x = (atlas_index % 16) as f32 * 16.0;
-    let sprite_rect_y = (atlas_index / 16) as f32 * 16.0;
-    let sprite_rect = Rect::new(sprite_rect_x, sprite_rect_y, sprite_rect_x + 16.0, sprite_rect_y + 16.0);
+    let sprite_rect_x = (atlas_index % 16) as f32;
+    let sprite_rect_y = (atlas_index / 16) as f32;
+    let sprite_rect = Rect::new(sprite_rect_x, sprite_rect_y, sprite_rect_x + 1.0, sprite_rect_y + 1.0);
     
     commands
     .spawn(Ground)
@@ -42,10 +42,10 @@ fn spawn_tile(x: f32, y: f32, commands: &mut Commands, tex_handle: &Handle<Image
 }
 
 fn spawn_background_tile(x: f32, y: f32, commands: &mut Commands, tex_handle: &Handle<Image>, atlas_index: u8) {
-    let sprite_rect_x = (atlas_index % 16) as f32 * 16.0;
-    let sprite_rect_y = (atlas_index / 16) as f32 * 16.0;
-    let sprite_rect = Rect::new(sprite_rect_x, sprite_rect_y, sprite_rect_x + 16.0, sprite_rect_y + 16.0);
-    
+    let sprite_rect_x = (atlas_index % 16) as f32;
+    let sprite_rect_y = (atlas_index / 16) as f32;
+    let sprite_rect = Rect::new(sprite_rect_x, sprite_rect_y, sprite_rect_x + 1.0, sprite_rect_y + 1.0);
+
     commands
     .spawn(Ground)
     .insert(SpriteBundle {
@@ -119,7 +119,7 @@ pub fn spawn_stage_vec(
     }
 
     let stage_asset = stage_assets.get(&stage_handles.stage_handle);
-    let texture: Handle<Image> = asset_server.load("test_sprite_sheet.png");
+    let texture: Handle<Image> = asset_server.load("colour_palettes.png");
 
     match stage_asset {
         Some(data) => {
@@ -127,26 +127,18 @@ pub fn spawn_stage_vec(
             for i in 0..data.tiles.len() {
                 let x = i % data.tiles_width;
                 let y = i / data.tiles_height;
+
                 if data.tiles[i] == 0 {
                     spawn_background_tile(x as f32, -(y as f32), &mut commands, &texture, 0);
-                }
-                else if data.tiles[i] == 3 {
-                    spawn_tile(x as f32, -(y as f32), &mut commands, &texture, 1);
-                }
-                if data.tiles[i] == 4 {
-                    spawn_tile(x as f32, -(y as f32), &mut commands, &texture, 2);
-                }
-                if data.tiles[i] == 5 {
-                    spawn_tile(x as f32, -(y as f32), &mut commands, &texture, 3);
-                }
-                if data.tiles[i] == 6 {
-                    spawn_tile(x as f32, -(y as f32), &mut commands, &texture, 4);
                 }
                 else if data.tiles[i] == 1 {
                     spawn_goal(x as f32, -(y as f32), &mut commands);
                 }
                 else if data.tiles[i] == 2 {
                     spawn = Vec3::new(x as f32 * TILE_SIZE, y as f32 * -TILE_SIZE, 0.0)
+                }
+                else if data.tiles[i] == 3 {
+                    spawn_tile(x as f32, -(y as f32), &mut commands, &texture, 1);
                 }
             }
 
