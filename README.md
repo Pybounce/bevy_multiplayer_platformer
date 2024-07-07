@@ -29,4 +29,6 @@ To Theory Craft
 
 - Player mechanics
 - Obstacles
-- Moustache/player appearance
+- Moustache/player appearance (floating hats, such as a crown, and googly eyes)
+- Fancy backgrounds (ones that are parallaxed or move in a nice animation by themselves)
+- Fancy stage loading (fancy animation for a stage being loaded/unloaded)
