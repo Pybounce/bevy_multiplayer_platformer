@@ -5,7 +5,7 @@ use bevy::{
 };
 
 mod local_player;
-use bevy_rapier2d::plugin::{NoUserData, RapierPhysicsPlugin};
+use bevy_rapier2d::{plugin::{NoUserData, RapierPhysicsPlugin}, render::RapierDebugRenderPlugin};
 use common::states::StatesPlugin;
 use game::GamePlugin;
 use local_player::{ spawn_local_player, LocalPlayer };
@@ -49,9 +49,11 @@ fn main() {
         .add_plugins(GamePlugin)
         .add_plugins(GameNetworkingPlugin)
         .add_plugins(RapierPhysicsPlugin::<NoUserData>::pixels_per_meter(100.0))
+        //.add_plugins(RapierDebugRenderPlugin::default())
         .add_systems(Startup, (spawn_camera, spawn_local_player))
         .add_systems(Update, (move_camera, close_on_esc, spawn_new_players, remove_disconnected_players))
         .add_systems(Update, (move_airbourne_horizontal_controller, move_ground_horizontal_controller, update_last_grounded, maintain_player_jump, begin_player_jump, can_jump, check_jump_fall_states))
+        .insert_resource(Msaa::Off)
         .run();
 }
 

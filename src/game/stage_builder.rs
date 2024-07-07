@@ -16,7 +16,6 @@ fn spawn_tile(x: f32, y: f32, commands: &mut Commands, tex_handle: &Handle<Image
         transform: Transform {
             scale: Vec3::new(32.0, 32.0, 1.0),
             translation: Vec3::new(x * 32.0, y * 32.0, 0.0),
-            //rotation: Quat::from_axis_angle(Vec3::new(0.0, 0.0, 1.0), 60.0),
             ..default()
         },
         texture: tex_handle.clone(),
