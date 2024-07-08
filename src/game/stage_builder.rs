@@ -1,33 +1,32 @@
 
-use bevy::prelude::*;
+use bevy::{prelude::*, render::render_resource::Texture};
 use bevy_rapier2d::prelude::*;
 use crate::{common::states::{AppState, GameState, StageState, StageTransitionData}, stage_1::Ground};
 
 use super::{stage_asset_loader::Stage, stage_goal::StageGoal, stage_manager::StageData};
 
+const TILE_SIZE: f32 = 32.0;
 
 #[derive(Component)]
 pub struct StagePiece;
 
-struct StageBuildingData {
-    tiles: Vec::<u32>,
-    tiles_width: usize,
-    tiles_height: usize,
-    spawn_translation: Vec3
-}
-
-fn spawn_tile(x: f32, y: f32, commands: &mut Commands) {
+fn spawn_tile(x: f32, y: f32, commands: &mut Commands, tex_handle: &Handle<Image>, atlas_index: u8) {
+    let sprite_rect_x = (atlas_index % 16) as f32;
+    let sprite_rect_y = (atlas_index / 16) as f32;
+    let sprite_rect = Rect::new(sprite_rect_x, sprite_rect_y, sprite_rect_x + 1.0, sprite_rect_y + 1.0);
+    
     commands
     .spawn(Ground)
     .insert(SpriteBundle {
         transform: Transform {
-            scale: Vec3::new(30.0, 30.0, 1.0),
-            translation: Vec3::new(x * 30.0, y * 30.0, 0.0),
-            //rotation: Quat::from_axis_angle(Vec3::new(0.0, 0.0, 1.0), 60.0),
+            scale: Vec3::new(TILE_SIZE, TILE_SIZE, 1.0),
+            translation: Vec3::new(x * TILE_SIZE, y * TILE_SIZE, 0.0),
             ..default()
         },
+        texture: tex_handle.clone(),
         sprite: Sprite {
-            color: Color::WHITE,
+            custom_size: Some(Vec2::new(1.0, 1.0)),
+            rect: Some(sprite_rect),
             ..default()
         },
         ..default()
@@ -42,13 +41,37 @@ fn spawn_tile(x: f32, y: f32, commands: &mut Commands) {
     .insert(StagePiece);
 }
 
+fn spawn_background_tile(x: f32, y: f32, commands: &mut Commands, tex_handle: &Handle<Image>, atlas_index: u8) {
+    let sprite_rect_x = (atlas_index % 16) as f32;
+    let sprite_rect_y = (atlas_index / 16) as f32;
+    let sprite_rect = Rect::new(sprite_rect_x, sprite_rect_y, sprite_rect_x + 1.0, sprite_rect_y + 1.0);
+
+    commands
+    .spawn(Ground)
+    .insert(SpriteBundle {
+        transform: Transform {
+            scale: Vec3::new(TILE_SIZE, TILE_SIZE, 1.0),
+            translation: Vec3::new(x * TILE_SIZE, y * TILE_SIZE, -10.0),
+            ..default()
+        },
+        texture: tex_handle.clone(),
+        sprite: Sprite {
+            custom_size: Some(Vec2::new(1.0, 1.0)),
+            rect: Some(sprite_rect),
+            ..default()
+        },
+        ..default()
+    })
+    .insert(StagePiece);
+}
+
 fn spawn_goal(x: f32, y: f32, commands: &mut Commands) {
     commands
     .spawn(StageGoal)
     .insert(SpriteBundle {
         transform: Transform {
-            scale: Vec3::new(30.0, 30.0, 1.0),
-            translation: Vec3::new(x * 30.0, y * 30.0, 0.0),
+            scale: Vec3::new(TILE_SIZE, TILE_SIZE, 1.0),
+            translation: Vec3::new(x * TILE_SIZE, y * TILE_SIZE, 0.0),
             //rotation: Quat::from_axis_angle(Vec3::new(0.0, 0.0, 1.0), 60.0),
             ..default()
         },
@@ -96,22 +119,26 @@ pub fn spawn_stage_vec(
     }
 
     let stage_asset = stage_assets.get(&stage_handles.stage_handle);
-    //let stage_build_data = try_get_stage_data(stage_transition_data.target_stage_id);
+    let texture: Handle<Image> = asset_server.load("colour_palettes.png");
+
     match stage_asset {
         Some(data) => {
             let mut spawn = data.spawn_translation;
             for i in 0..data.tiles.len() {
-                if data.tiles[i] == 0 { continue; }
                 let x = i % data.tiles_width;
                 let y = i / data.tiles_height;
-                if data.tiles[i] == 1 {
-                    spawn_tile(x as f32, -(y as f32), &mut commands);
+
+                if data.tiles[i] == 0 {
+                    spawn_background_tile(x as f32, -(y as f32), &mut commands, &texture, 0);
                 }
-                else if data.tiles[i] == 2 {
+                else if data.tiles[i] == 1 {
                     spawn_goal(x as f32, -(y as f32), &mut commands);
                 }
+                else if data.tiles[i] == 2 {
+                    spawn = Vec3::new(x as f32 * TILE_SIZE, y as f32 * -TILE_SIZE, 0.0)
+                }
                 else if data.tiles[i] == 3 {
-                    spawn = Vec3::new(x as f32 * 30.0, y as f32 * -30.0, 0.0)
+                    spawn_tile(x as f32, -(y as f32), &mut commands, &texture, 1);
                 }
             }
 
