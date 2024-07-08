@@ -6,10 +6,10 @@ use bevy::{
 };
 
 
-use super::stage_asset_loader::Stage;
+use super::stage_asset_loader::Stage_Old;
 
 pub fn save_stage() {
-    let stage =  Stage {
+    let stage =  Stage_Old {
         tiles: vec![
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,

@@ -3,12 +3,12 @@ use bevy::{prelude::*, render::render_resource::Texture};
 use bevy_rapier2d::prelude::*;
 use crate::{common::states::{AppState, GameState, StageState, StageTransitionData}, stage_1::Ground};
 
-use super::{stage_asset_loader::Stage, stage_goal::StageGoal, stage_manager::StageData};
+use super::{stage_asset_loader::Stage_Old, stage_goal::StageGoal, stage_manager::StageData};
 
 const TILE_SIZE: f32 = 32.0;
 
 #[derive(Component)]
-pub struct StagePiece;
+pub struct StagePieceOld;
 
 fn spawn_tile(x: f32, y: f32, commands: &mut Commands, tex_handle: &Handle<Image>, atlas_index: u8) {
     let sprite_rect_x = (atlas_index % 16) as f32;
@@ -38,7 +38,7 @@ fn spawn_tile(x: f32, y: f32, commands: &mut Commands, tex_handle: &Handle<Image
     .insert(Friction::coefficient(0.0))
     .insert(GravityScale(0.0))
     .insert(ActiveEvents::COLLISION_EVENTS)
-    .insert(StagePiece);
+    .insert(StagePieceOld);
 }
 
 fn spawn_background_tile(x: f32, y: f32, commands: &mut Commands, tex_handle: &Handle<Image>, atlas_index: u8) {
@@ -62,7 +62,7 @@ fn spawn_background_tile(x: f32, y: f32, commands: &mut Commands, tex_handle: &H
         },
         ..default()
     })
-    .insert(StagePiece);
+    .insert(StagePieceOld);
 }
 
 fn spawn_goal(x: f32, y: f32, commands: &mut Commands) {
@@ -89,7 +89,7 @@ fn spawn_goal(x: f32, y: f32, commands: &mut Commands) {
     .insert(Friction::coefficient(0.0))
     .insert(GravityScale(0.0))
     .insert(ActiveEvents::COLLISION_EVENTS)
-    .insert(StagePiece);
+    .insert(StagePieceOld);
 }
 
 pub fn spawn_stage_vec(
@@ -99,7 +99,7 @@ pub fn spawn_stage_vec(
     mut app_state: ResMut<NextState<AppState>>,
     mut stage_state: ResMut<NextState<StageState>>,
     stage_handles: Res<StageAssetLoadingHandles>,
-    stage_assets: Res<Assets<Stage>>,
+    stage_assets: Res<Assets<Stage_Old>>,
     asset_server: Res<AssetServer>
 ) {
 
@@ -162,7 +162,7 @@ pub fn spawn_stage_vec(
 
 #[derive(Resource, Default)]
 pub struct StageAssetLoadingHandles {
-    stage_handle: Handle<Stage>
+    stage_handle: Handle<Stage_Old>
 }
 
 pub fn load_stage_handles(
@@ -176,7 +176,7 @@ pub fn load_stage_handles(
 
 
 pub fn despawn_stage(
-    query: Query<Entity, With<StagePiece>>,
+    query: Query<Entity, With<StagePieceOld>>,
     mut commands: Commands
 ) {
     for e in &query {

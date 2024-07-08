@@ -1,5 +1,3 @@
-
-
 use bevy::utils::thiserror;
 use bevy::{
     asset::{io::Reader, ron, AssetLoader, AsyncReadExt, LoadContext},
@@ -11,22 +9,8 @@ use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
 
-
-pub struct StageLoaderPLugin;
-
-impl Plugin for StageLoaderPLugin {
-    fn build(&self, app: &mut App) {
-        app
-        .init_asset::<Stage_Old>()
-        .init_asset_loader::<StageLoader_Old>();
-    }
-}
-
-
-
-
 #[derive(Asset, TypePath, Debug, Deserialize, Serialize)]
-pub struct Stage_Old {
+pub struct Stage {
     pub tiles: Vec::<u32>,
     pub tiles_width: usize,
     pub tiles_height: usize,
@@ -34,11 +18,11 @@ pub struct Stage_Old {
 }
 
 #[derive(Default)]
-struct StageLoader_Old;
+pub struct StageLoader;
 
 #[non_exhaustive]
 #[derive(Debug, Error)]
-pub enum StageLoaderError_Old {
+pub enum StageLoaderError {
     /// An [IO](std::io) Error
     #[error("Could not load asset: {0}")]
     Io(#[from] std::io::Error),
@@ -49,10 +33,10 @@ pub enum StageLoaderError_Old {
 }
 
 
-impl AssetLoader for StageLoader_Old {
-    type Asset = Stage_Old;
+impl AssetLoader for StageLoader {
+    type Asset = Stage;
     type Settings = ();
-    type Error = StageLoaderError_Old;
+    type Error = StageLoaderError;
 
     fn load<'a>(
         &'a self,
@@ -64,7 +48,7 @@ impl AssetLoader for StageLoader_Old {
             let mut bytes = Vec::new();
             reader.read_to_end(&mut bytes).await?;
 
-            let custom_asset = ron::de::from_bytes::<Stage_Old>(&bytes)?;
+            let custom_asset = ron::de::from_bytes::<Stage>(&bytes)?;
             Ok(custom_asset)
         })
     }

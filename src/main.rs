@@ -21,6 +21,7 @@ mod common;
 
 mod game;
 mod player;
+mod stage_builder;
 
 pub mod stage_1;
 
