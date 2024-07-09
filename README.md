@@ -8,6 +8,8 @@ To Do General
 
 - Despawn all players on transition to GameState::Transitioning (only local, since each stage is a new p2p room)
 - Spawn all players on transition to GameState::Playing
+- Potentially make events for loading main menu, which goes through and sets all the states correctly
+- Add new GameState for when the stage has loaded and the player needs to be spawned in initially
 
 To Do #1
 

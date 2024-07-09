@@ -1,5 +1,7 @@
 use bevy::prelude::*;
 
+use crate::common::states::{AppState, GameState};
+
 use super::{StageBuilderData, StageBuilderState};
 
 
@@ -14,8 +16,42 @@ pub struct BuildStageEvent {
     pub stage_id: usize
 }
 
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Event)]
+pub struct StageBuildCompleteEvent {
+    pub stage_id: usize
+}
+
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Event)]
+pub struct StageBuildFailedEvent {
+    pub stage_id: usize
+}
 
 
+pub fn read_stage_build_complete_events(
+    mut event_reader: EventReader<StageBuildCompleteEvent>,
+    mut game_state: ResMut<NextState<GameState>>,
+    mut app_state: ResMut<NextState<AppState>>,
+    mut stage_builder_state: ResMut<NextState<StageBuilderState>>,
+) {
+    for _ in event_reader.read() {
+        game_state.set(GameState::Playing);
+        app_state.set(AppState::Game);
+        stage_builder_state.set(StageBuilderState::NotBuilding);
+    }
+}
+
+pub fn read_stage_build_failed_events(
+    mut event_reader: EventReader<StageBuildFailedEvent>,
+    mut game_state: ResMut<NextState<GameState>>,
+    mut app_state: ResMut<NextState<AppState>>,
+    mut stage_builder_state: ResMut<NextState<StageBuilderState>>,
+) {
+    for _ in event_reader.read() {
+        game_state.set(GameState::NA);
+        app_state.set(AppState::StageSelect);
+        stage_builder_state.set(StageBuilderState::NotBuilding);
+    }
+}
 
 /// Listens for LoadStageEvent.</br>
 /// Begins loading the stage asset.</br>
