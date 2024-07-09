@@ -1,7 +1,6 @@
 use bevy::prelude::*;
 
-use super::{events::{StageBuildCompleteEvent, StageBuildFailedEvent}, stage_asset::Stage, StageBuilderData, StagePiece};
-
+use super::{events::{StageBuildCompleteEvent, StageBuildFailedEvent}, stage_asset::Stage, stage_creator::StageCreator, StageBuilderData, StagePiece};
 
 
 pub fn unload_old_stage(
@@ -39,26 +38,16 @@ pub fn try_build_stage(
 
     match stage_asset {
         Some(stage) => {
-            build_perimeter(&stage, &texture_handle);
-            build_background(&stage, &texture_handle);
-            
-
-            complete_event_writer.send(StageBuildCompleteEvent { stage_id: stage_builder_data.stage_id });
+            let stage_creator = StageCreator::new(&stage, &texture_handle);
+            if stage_creator.build() {
+                complete_event_writer.send(StageBuildCompleteEvent { stage_id: stage_builder_data.stage_id });
+            }
+            else {
+                failed_event_writer.send(StageBuildFailedEvent { stage_id: stage_builder_data.stage_id });
+            }
         },
         None => {
             failed_event_writer.send(StageBuildFailedEvent { stage_id: stage_builder_data.stage_id });
         },
     }
-}
-
-fn build_perimeter(stage: &Stage, texture_handle: &Handle<Image>) {
-
-}
-
-fn build_background(stage: &Stage, texture_handle: &Handle<Image>) {
-
-}
-
-fn set_camera_background(texture_handle: &Handle<Image>) {
-
 }
