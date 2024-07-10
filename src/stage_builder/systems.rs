@@ -16,6 +16,7 @@ pub fn unload_old_stage(
 }
 
 pub fn try_build_stage(
+    mut commands: Commands,
     asset_server: Res<AssetServer>,
     stage_builder_data: Res<StageBuilderData>,
     stage_assets: Res<Assets<Stage>>,
@@ -39,7 +40,7 @@ pub fn try_build_stage(
     match stage_asset {
         Some(stage) => {
             let stage_creator = StageCreator::new(&stage, &texture_handle);
-            if stage_creator.build() {
+            if stage_creator.build(&mut commands) {
                 complete_event_writer.send(StageBuildCompleteEvent { stage_id: stage_builder_data.stage_id });
             }
             else {
