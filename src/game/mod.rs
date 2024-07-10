@@ -21,14 +21,14 @@ impl Plugin for GamePlugin {
         app
         .add_plugins(StageLoaderPLugin)
         .add_event::<GoalReached>()
-        .init_resource::<StageAssetLoadingHandles>()
-        .add_systems(OnEnter(StageState::Loading), (save_stage, despawn_stage, load_stage_handles).chain())
-        .add_systems(Update, spawn_stage_vec.run_if(in_state(StageState::Loading)))
-        .add_systems(OnEnter(StageState::Loaded), reset_players)
-        .add_systems(OnExit(StageState::Loaded), despawn_stage)
-        .add_systems(Update, (check_grounded, respawn_dead_players, check_goal_reached, next_staged_if_goal_reached)
-            .run_if(in_state(AppState::Game))
-            .run_if(in_state(GameState::Playing)));
+        .init_resource::<StageAssetLoadingHandles>();
+        //.add_systems(OnEnter(StageState::Loading), (save_stage, despawn_stage, load_stage_handles).chain())
+        //.add_systems(Update, spawn_stage_vec.run_if(in_state(StageState::Loading)))
+        //.add_systems(OnEnter(StageState::Loaded), reset_players)
+        //.add_systems(OnExit(StageState::Loaded), despawn_stage)
+        //.add_systems(Update, (check_grounded, respawn_dead_players, check_goal_reached, next_staged_if_goal_reached)
+        //    .run_if(in_state(AppState::Game))
+        //    .run_if(in_state(GameState::Playing)));
     }
 }
 

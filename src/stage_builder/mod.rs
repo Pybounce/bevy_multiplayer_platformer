@@ -1,9 +1,9 @@
 use bevy::prelude::*;
-use events::{read_stage_build_complete_events, read_stage_build_events, read_stage_build_failed_events, read_stage_load_events, BuildStageEvent, LoadStageEvent};
+use events::{read_stage_build_complete_events, read_stage_build_events, read_stage_build_failed_events, read_stage_load_events, BuildStageEvent, LoadStageEvent, StageBuildCompleteEvent, StageBuildFailedEvent};
 use stage_asset::{Stage, StageLoader};
 use systems::{try_build_stage, unload_old_stage};
 
-mod events;
+pub mod events;
 mod stage_asset;
 mod systems;
 mod stage_creator;
@@ -15,6 +15,8 @@ impl Plugin for StageBuilderPlugin {
         app
         .add_event::<LoadStageEvent>()
         .add_event::<BuildStageEvent>()
+        .add_event::<StageBuildCompleteEvent>()
+        .add_event::<StageBuildFailedEvent>()
         .init_state::<StageBuilderState>()
         .init_asset::<Stage>()
         .init_asset_loader::<StageLoader>()

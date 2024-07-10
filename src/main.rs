@@ -15,6 +15,7 @@ use networking::{networked_players::{remove_disconnected_players, spawn_new_play
 
 mod stage_select;
 use player::{horizontal_movement_controller::{move_airbourne_horizontal_controller, move_ground_horizontal_controller}, jump_controller::{begin_player_jump, can_jump, check_jump_fall_states, maintain_player_jump, update_last_grounded}};
+use stage_builder::StageBuilderPlugin;
 use stage_select::StageSelectPlugin;
 
 mod common;
@@ -46,6 +47,7 @@ fn main() {
         .insert_resource(winit_settings)
         .add_plugins(DefaultPlugins.set(window_settings).set(ImagePlugin::default_nearest()))
         .add_plugins(StatesPlugin)
+        .add_plugins(StageBuilderPlugin)
         .add_plugins(StageSelectPlugin)
         .add_plugins(GamePlugin)
         .add_plugins(GameNetworkingPlugin)
@@ -78,5 +80,5 @@ fn move_camera(
 ) {
     let mut camera_transform = camera_query.single_mut();
     let player_transform = player_query.single();
-    camera_transform.translation = player_transform.translation;
+    //camera_transform.translation = player_transform.translation;
 }
