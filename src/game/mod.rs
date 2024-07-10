@@ -1,6 +1,5 @@
 use bevy::prelude::*;
 use player::player_states::{reset_players, respawn_dead_players};
-use stage_asset_creator::save_stage;
 use stage_asset_loader::StageLoaderPLugin;
 use stage_builder::{despawn_stage, load_stage_handles, spawn_stage_vec, StageAssetLoadingHandles};
 use stage_goal::{check_goal_reached, GoalReached};
@@ -12,7 +11,6 @@ pub mod player;
 pub mod stage_goal;
 pub mod stage_manager;
 mod stage_asset_loader;
-mod stage_asset_creator;
 
 pub struct GamePlugin;
 

@@ -4,12 +4,20 @@ use super::{stage_asset::Stage, StagePiece};
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
 
+const TILE_SIZE: f32 = 32.0;
 
 pub struct StageCreator<'a> {
     stage: &'a Stage, 
     colour_palettes: &'a Handle<Image>
 }
 
+pub enum PaletteColours {
+    Background,
+    Ground,
+    Obstacle,
+    Reward,
+    Misc
+}
 
 impl<'a> StageCreator<'a> {
 
@@ -21,18 +29,31 @@ impl<'a> StageCreator<'a> {
     }
 
     pub fn build(&self, commands: &mut Commands) -> bool {
-        build_perimeter(self, commands)// && build_background(self)
+        build_perimeter(self, commands) && build_ground(self, commands)
     }
 
 
 }
 
 fn build_perimeter(stage_creator: &StageCreator, commands: &mut Commands) -> bool {
-    for x in 0..stage_creator.stage.tiles_width {
-        build_tile(x as f32, -1.0, 0, commands, stage_creator.colour_palettes, 1);
-        build_tile(x as f32, stage_creator.stage.tiles_height as f32, 0, commands, stage_creator.colour_palettes, 1);
+    for x in 0..stage_creator.stage.grid_width + 2{
+        build_tile(x as f32 - 1.0, -1.0, PaletteColours::Ground as usize, commands, stage_creator.colour_palettes, 1);
+        build_tile(x as f32 - 1.0, stage_creator.stage.grid_height as f32, PaletteColours::Ground as usize, commands, stage_creator.colour_palettes, 1);
     }
+    for y in 0..stage_creator.stage.grid_height + 2{
+        build_tile(-1.0, y as f32 - 1.0, PaletteColours::Ground as usize, commands, stage_creator.colour_palettes, 1);
+        build_tile(stage_creator.stage.grid_width as f32, y as f32 - 1.0, PaletteColours::Ground as usize, commands, stage_creator.colour_palettes, 1);
+    }
+    return true;
+}
 
+fn build_ground(stage_creator: &StageCreator, commands: &mut Commands) -> bool {
+    for tile in &stage_creator.stage.ground_tiles {
+        let mut pos: Vec2 = tile.grid_pos;
+        pos.y = (stage_creator.stage.grid_height as f32) - 1.0 - pos.y;
+
+        build_tile(pos.x, pos.y, PaletteColours::Ground as usize, commands, stage_creator.colour_palettes, 1);
+    }
     return true;
 }
 
@@ -46,7 +67,6 @@ fn set_camera_background(texture_handle: &Handle<Image>) {
 
 
 fn build_tile(x: f32, y: f32, atlas_index: usize, commands: &mut Commands, tex_handle: &Handle<Image>, stage_id: usize) {
-    let TILE_SIZE = 32.0;
 
     let sprite_rect_x = (atlas_index % 5) as f32;
     let sprite_rect_y = (atlas_index / 5) as f32;

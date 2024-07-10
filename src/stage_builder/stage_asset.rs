@@ -1,4 +1,5 @@
-use bevy::utils::thiserror;
+use bevy::math::U64Vec2;
+use bevy::utils::{thiserror, HashMap};
 use bevy::{
     asset::{io::Reader, ron, AssetLoader, AsyncReadExt, LoadContext},
     prelude::*,
@@ -11,11 +12,18 @@ use thiserror::Error;
 
 #[derive(Asset, TypePath, Debug, Deserialize, Serialize)]
 pub struct Stage {
-    pub tiles: Vec::<u32>,
-    pub tiles_width: usize,
-    pub tiles_height: usize,
+    pub ground_tiles: Vec<GroundTile>,
+    pub grid_width: usize,
+    pub grid_height: usize,
     pub spawn_translation: Vec3
 }
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct GroundTile {
+    pub grid_pos: Vec2
+}
+
+
 
 #[derive(Default)]
 pub struct StageLoader;
