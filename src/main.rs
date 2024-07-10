@@ -14,7 +14,8 @@ mod networking;
 use networking::{networked_players::{remove_disconnected_players, spawn_new_players}, GameNetworkingPlugin};
 
 mod stage_select;
-use player::{horizontal_movement_controller::{move_airbourne_horizontal_controller, move_ground_horizontal_controller}, jump_controller::{begin_player_jump, can_jump, check_jump_fall_states, maintain_player_jump, update_last_grounded}};
+use player::{_TEMP_out_of_bounds::check_out_of_bounds, horizontal_movement_controller::{move_airbourne_horizontal_controller, move_ground_horizontal_controller}, jump_controller::{begin_player_jump, can_jump, check_jump_fall_states, maintain_player_jump, update_last_grounded}};
+use stage_1::check_grounded;
 use stage_builder::StageBuilderPlugin;
 use stage_select::StageSelectPlugin;
 
@@ -55,7 +56,7 @@ fn main() {
         //.add_plugins(RapierDebugRenderPlugin::default())
         .add_systems(Startup, (spawn_camera, spawn_local_player))
         .add_systems(Update, (move_camera, close_on_esc, spawn_new_players, remove_disconnected_players))
-        .add_systems(Update, (move_airbourne_horizontal_controller, move_ground_horizontal_controller, update_last_grounded, maintain_player_jump, begin_player_jump, can_jump, check_jump_fall_states))
+        .add_systems(Update, (check_grounded, check_out_of_bounds, move_airbourne_horizontal_controller, move_ground_horizontal_controller, update_last_grounded, maintain_player_jump, begin_player_jump, can_jump, check_jump_fall_states))
         .insert_resource(Msaa::Off)
         .run();
 }
