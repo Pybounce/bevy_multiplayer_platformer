@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::{game::stage_manager::StageData, stage::stage_objects::StageObject};
+use crate::stage::stage_objects::StageObject;
 
 use super::{events::{StageBuildCompleteEvent, StageBuildFailedEvent}, stage_asset::Stage, stage_creator::StageCreator, CurrentStageData, StageBuilderData};
 

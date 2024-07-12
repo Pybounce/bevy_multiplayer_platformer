@@ -15,18 +15,32 @@ pub fn check_goal_reached(
     goal_query: Query<(), With<StageGoal>>,
     mut event_writer: EventWriter<GoalReached>,
     stage_data: Res<CurrentStageData>,
-    mut load_event_writer: EventWriter<LoadStageEvent>,
-    mut build_event_writer: EventWriter<BuildStageEvent>
 ) {
     for colliding_entities in &player_query {
 
         for colliding_entity in colliding_entities.iter() {
             if let Ok(_) = goal_query.get(colliding_entity) {
-                load_event_writer.send(LoadStageEvent {stage_id: stage_data.stage_id + 1});
-                build_event_writer.send(BuildStageEvent {stage_id: stage_data.stage_id + 1});
-                return;
-                //event_writer.send(GoalReached { stage_id: stage_data.stage_id });
+                event_writer.send(GoalReached { stage_id: stage_data.stage_id });
             }
         }
     }
+}
+
+
+
+pub fn next_staged_if_goal_reached(
+    stage_data: Res<CurrentStageData>,
+    mut load_event_writer: EventWriter<LoadStageEvent>,
+    mut build_event_writer: EventWriter<BuildStageEvent>,
+    mut event_reader: EventReader<GoalReached>
+) {
+    let mut build_event_raised = false;
+    for event in event_reader.read() {
+        if event.stage_id == stage_data.stage_id && !build_event_raised {
+            load_event_writer.send(LoadStageEvent {stage_id: stage_data.stage_id + 1});
+            build_event_writer.send(BuildStageEvent {stage_id: stage_data.stage_id + 1});
+            build_event_raised = true;
+        }
+    }
+
 }

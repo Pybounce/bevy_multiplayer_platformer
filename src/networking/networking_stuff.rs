@@ -2,13 +2,13 @@
 use bevy::prelude::*;
 use bevy_matchbox::prelude::*;
 
-use crate::{common::states::NetworkingState, game::stage_manager::StageData, local_player::LocalPlayer};
+use crate::{common::states::NetworkingState, local_player::LocalPlayer, stage::stage_builder::CurrentStageData};
 
 use super::{messages::NewLocationMessage, networked_players::NetworkedPlayer};
 
 pub fn connect_socket(
     mut commands: Commands,
-    stage_data: Res<StageData>,
+    stage_data: Res<CurrentStageData>,
     mut networking_state: ResMut<NextState<NetworkingState>>,
 ) {
     let mut room_url = String::from("ws://20.90.116.144:3536/game_name_");
