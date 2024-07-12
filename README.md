@@ -35,3 +35,8 @@ To Theory Craft
 - Fancy backgrounds (ones that are parallaxed or move in a nice animation by themselves)
 - Fancy stage loading (fancy animation for a stage being loaded/unloaded)
 - Stage mechanic where blocks swich on and off in intervals, so player must jump on them with correct timing
+
+Bugs
+
+- Resizing the window adds the texture bleeding
+  Potentially will need to add texture padding to fix this
