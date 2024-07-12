@@ -12,6 +12,7 @@ use thiserror::Error;
 
 #[derive(Asset, TypePath, Debug, Deserialize, Serialize)]
 pub struct Stage {
+    pub id: usize,
     pub ground_tiles: Vec<GroundTile>,
     pub grid_width: usize,
     pub grid_height: usize,

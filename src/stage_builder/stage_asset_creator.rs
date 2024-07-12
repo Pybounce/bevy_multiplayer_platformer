@@ -29,6 +29,7 @@ pub fn save_stage() {
     }
 
     let stage =  Stage {
+        id: 0,
         spawn_translation: Vec3::default(),
         ground_tiles: ground_tiles,
         grid_width: 10,

@@ -9,6 +9,7 @@ mod stage_asset;
 mod systems;
 mod stage_creator;
 mod stage_asset_creator;
+mod tiles;
 
 pub struct StageBuilderPlugin;
 
@@ -47,6 +48,6 @@ struct StageBuilderData {
 }
 
 #[derive(Component)]
-struct StagePiece {
+struct StageMarker {
     pub stage_id: usize
 }
