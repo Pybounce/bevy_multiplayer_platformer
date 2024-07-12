@@ -1,9 +1,12 @@
 use bevy::prelude::*;
 
-use crate::{game::stage_goal::StageGoal, stage::stage_builder::stage_creator::StageCreator};
+use crate::stage::stage_builder::stage_creator::StageCreator;
 
 use super::tiles::PhysicalTileBundle;
 
+
+#[derive(Component)]
+pub struct StageGoal;
 
 #[derive(Bundle)]
 pub struct GoalBundle {

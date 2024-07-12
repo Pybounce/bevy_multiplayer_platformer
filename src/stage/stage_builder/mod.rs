@@ -23,6 +23,7 @@ impl Plugin for StageBuilderPlugin {
         .init_asset::<Stage>()
         .init_asset_loader::<StageLoader>()
         .init_resource::<StageBuilderData>()
+        .init_resource::<CurrentStageData>()
         .add_systems(PreUpdate, (read_stage_load_events, read_stage_build_events).chain())
         .add_systems(OnEnter(StageBuilderState::Building), (save_stage, unload_old_stage))
         .add_systems(Update, (try_build_stage).run_if(in_state(StageBuilderState::Building)))
@@ -32,7 +33,7 @@ impl Plugin for StageBuilderPlugin {
 
 
 #[derive(States, Debug, Hash, Eq, PartialEq, Clone, Default)]
-enum StageBuilderState {
+pub enum StageBuilderState {
     #[default]
     NotBuilding,
     Building,
@@ -41,8 +42,13 @@ enum StageBuilderState {
 
 
 #[derive(Resource, Default)]
-struct StageBuilderData {
+pub struct StageBuilderData {
     stage_id: usize,
     stage_handle: Handle<Stage>
 }
 
+#[derive(Resource, Default)]
+pub struct CurrentStageData {
+    pub stage_id: usize,
+    pub spawn_translation: Vec3
+}

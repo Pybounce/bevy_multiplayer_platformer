@@ -31,8 +31,5 @@ pub fn try_enter_stage(
     if input.just_released(KeyCode::Space) {
         load_event_writer.send(LoadStageEvent {stage_id: 0});
         build_event_writer.send(BuildStageEvent {stage_id: 0});
-        //commands.insert_resource(StageTransitionData {target_stage_id: 0});
-        //app_state.set(AppState::Game);
-        //stage_state.set(StageState::Loading);
     }
 }
