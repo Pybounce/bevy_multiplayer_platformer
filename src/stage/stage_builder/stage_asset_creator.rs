@@ -11,15 +11,15 @@ use crate::stage::stage_builder::stage_asset::{GroundTile, Stage};
 pub fn save_stage() {
     let ground: Vec<usize> = vec![
         1, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-        0, 1, 0, 0, 0, 0, 0, 0, 1, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 2, 0,
+        0, 0, 0, 0, 0, 0, 0, 1, 1, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 1, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 2, 0, 0, 0,
-        0, 0, 0, 0, 0, 1, 1, 0, 0, 0,
-        1, 1, 0, 0, 0, 1, 1, 0, 0, 0,
-        0, 0, 0, 0, 0, 1, 1, 0, 0, 0,
-        0, 1, 1, 1, 1, 1, 1, 0, 1, 0,
-        1, 0, 1, 0, 0, 0, 0, 0, 0, 1,];
+        1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 1, 1, 1, 1, 1, 1, 1, 1, 0,
+        0, 1, 1, 1, 1, 1, 1, 1, 1, 0,];
 
     let mut ground_tiles: Vec<GroundTile> = vec![];
     let mut goal_grid_pos: Vec2 = Vec2::default();
@@ -40,7 +40,7 @@ pub fn save_stage() {
     }
 
     let stage =  Stage {
-        id: 0,
+        id: 1,
         spawn_translation: Vec3::default(),
         ground_tiles: ground_tiles,
         grid_width: 10,
@@ -52,7 +52,7 @@ pub fn save_stage() {
 
 
 
-    let path = std::path::Path::new("assets/stage_0.stage");     
+    let path = std::path::Path::new("assets/stage_1.stage");     
     let mut file = std::fs::File::create(&path).expect("yeet1");       
  
     use std::io::Write;
