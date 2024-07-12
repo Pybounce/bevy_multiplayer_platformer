@@ -14,8 +14,8 @@ To Do General
 To Do #1
 
 - Add in large sprite that is the colour of the 2 index (floor colour) in the palette
-  The size of this sprite should be the level + camera max width/height
-  It should be behind everything else
+  - The size of this sprite should be the level + camera max width/height
+  - It should be behind everything else
 - Add in tiles that surround the level, with the floor colour, so that the player can't get out of the map
 - Add in multiple colour palettes and pick a random offset index
 - Refactor the stage loading/building so it doesn't make me want to cry
@@ -39,4 +39,4 @@ To Theory Craft
 Bugs
 
 - Resizing the window adds the texture bleeding
-  Potentially will need to add texture padding to fix this
+  - Potentially will need to add texture padding to fix this
