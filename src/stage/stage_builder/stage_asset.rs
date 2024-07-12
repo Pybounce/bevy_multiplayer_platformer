@@ -16,7 +16,8 @@ pub struct Stage {
     pub ground_tiles: Vec<GroundTile>,
     pub grid_width: usize,
     pub grid_height: usize,
-    pub spawn_translation: Vec3
+    pub spawn_translation: Vec3,
+    pub goal_grid_pos: Vec2
 }
 
 #[derive(Debug, Deserialize, Serialize)]

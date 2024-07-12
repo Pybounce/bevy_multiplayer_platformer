@@ -2,7 +2,7 @@
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
 
-use crate::stage_1::Ground;
+use crate::{game::stage_goal::StageGoal, stage_1::Ground};
 
 use super::{stage_creator::StageCreator, StageMarker};
 
@@ -29,6 +29,12 @@ struct PhysicalTileBundle {
 pub struct GroundTileBundle {
     physical_tile_bundle: PhysicalTileBundle,
     ground_marker: Ground
+}
+
+#[derive(Bundle)]
+pub struct GoalTileBundle {
+    physical_tile_bundle: PhysicalTileBundle,
+    goal_marker: StageGoal
 }
 
 

@@ -68,6 +68,12 @@ fn set_camera_background(texture_handle: &Handle<Image>) {
     todo!();
 }
 
+fn build_goal(commands: &mut Commands, stage_creator: &StageCreator) -> bool {
+
+
+    return true;
+}
+
 fn build_ground_tile(commands: &mut Commands, stage_creator: &StageCreator, grid_x: f32, grid_y: f32) {
 
     let sprite_rect_x = (ColourPaletteAtlasIndex::Ground as usize % 5) as f32;

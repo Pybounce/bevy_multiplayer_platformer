@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::{common::states::{AppState, GameState, StageState, StageTransitionData}, stage_builder::events::{BuildStageEvent, LoadStageEvent}};
+use crate::{common::states::{AppState, GameState, StageState, StageTransitionData}, stage::stage_builder::events::{BuildStageEvent, LoadStageEvent}};
 
 
 pub struct StageSelectPlugin;
