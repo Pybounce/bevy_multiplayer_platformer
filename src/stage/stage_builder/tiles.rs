@@ -2,16 +2,16 @@
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
 
-use crate::{game::stage_goal::StageGoal, stage_1::Ground};
+use crate::{game::stage_goal::StageGoal, stage::stage_objects::StageObject, stage_1::Ground};
 
-use super::{stage_creator::StageCreator, StageMarker};
+use super::{stage_creator::StageCreator};
 
 const TILE_SIZE: f32 = 32.0;
 
 #[derive(Bundle)]
 struct TileBundle {
     sprite_bundle: SpriteBundle,
-    stage_marker: StageMarker
+    stage_marker: StageObject
 }
 
 #[derive(Bundle)]
@@ -56,7 +56,7 @@ impl TileBundle {
                 },
                 ..default()
             },
-            stage_marker: StageMarker { stage_id: stage_creator.stage.id },
+            stage_marker: StageObject { stage_id: stage_creator.stage.id },
         }
         
     }

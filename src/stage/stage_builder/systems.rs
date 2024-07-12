@@ -1,10 +1,12 @@
 use bevy::prelude::*;
 
-use super::{events::{StageBuildCompleteEvent, StageBuildFailedEvent}, stage_asset::Stage, stage_creator::StageCreator, StageBuilderData, StageMarker};
+use crate::stage::stage_objects::StageObject;
+
+use super::{events::{StageBuildCompleteEvent, StageBuildFailedEvent}, stage_asset::Stage, stage_creator::StageCreator, StageBuilderData};
 
 
 pub fn unload_old_stage(
-    stage_piece_query: Query<(Entity, &StageMarker)>,
+    stage_piece_query: Query<(Entity, &StageObject)>,
     mut commands: Commands,
     stage_builder_data: Res<StageBuilderData>,
 ) {

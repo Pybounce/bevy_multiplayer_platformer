@@ -47,7 +47,3 @@ struct StageBuilderData {
     stage_handle: Handle<Stage>
 }
 
-#[derive(Component)]
-struct StageMarker {
-    pub stage_id: usize
-}

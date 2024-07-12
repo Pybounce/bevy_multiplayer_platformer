@@ -1,8 +1,5 @@
-use crate::stage_1::Ground;
-
-use super::{stage_asset::Stage, tiles::GroundTileBundle, StageMarker};
+use super::{stage_asset::Stage, tiles::GroundTileBundle};
 use bevy::prelude::*;
-use bevy_rapier2d::prelude::*;
 
 const TILE_SIZE: f32 = 32.0;
 
