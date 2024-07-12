@@ -2,9 +2,8 @@
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
 
-use crate::{game::stage_goal::StageGoal, stage::stage_objects::StageObject, stage_1::Ground};
+use crate::{game::stage_goal::StageGoal, stage::{stage_builder::stage_creator::StageCreator, stage_objects::StageObject}, stage_1::Ground};
 
-use super::{stage_creator::StageCreator};
 
 const TILE_SIZE: f32 = 32.0;
 
@@ -15,7 +14,7 @@ struct TileBundle {
 }
 
 #[derive(Bundle)]
-struct PhysicalTileBundle {
+pub struct PhysicalTileBundle {
     tile_bundle: TileBundle,
     rigidbody: RigidBody,
     collider: Collider,
@@ -29,12 +28,6 @@ struct PhysicalTileBundle {
 pub struct GroundTileBundle {
     physical_tile_bundle: PhysicalTileBundle,
     ground_marker: Ground
-}
-
-#[derive(Bundle)]
-pub struct GoalTileBundle {
-    physical_tile_bundle: PhysicalTileBundle,
-    goal_marker: StageGoal
 }
 
 

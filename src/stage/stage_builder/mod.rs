@@ -7,9 +7,8 @@ use systems::{try_build_stage, unload_old_stage};
 pub mod events;
 mod stage_asset;
 mod systems;
-mod stage_creator;
+pub mod stage_creator;
 mod stage_asset_creator;
-mod tiles;
 
 pub struct StageBuilderPlugin;
 
