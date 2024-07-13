@@ -1,6 +1,6 @@
-use crate::stage::{self, stage_objects::{goal::GoalBundle, spike::SpikeBundle, tiles::{GroundTileBundle, TileBundle}}};
+use crate::stage::stage_objects::{goal::GoalBundle, spike::SpikeBundle, tiles::{GroundTileBundle, TileBundle}};
 
-use super::{stage_asset::Stage};
+use super::stage_asset::Stage;
 use bevy::prelude::*;
 
 const TILE_SIZE: f32 = 32.0;

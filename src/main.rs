@@ -80,5 +80,5 @@ fn move_camera(
 ) {
     let mut camera_transform = camera_query.single_mut();
     let player_transform = player_query.single();
-    //camera_transform.translation = player_transform.translation;
+    camera_transform.translation = player_transform.translation;
 }
