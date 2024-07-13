@@ -29,11 +29,13 @@ pub fn try_build_stage(
     match asset_server.load_state(&stage_builder_data.stage_handle) {
         bevy::asset::LoadState::NotLoaded => {
             failed_event_writer.send(StageBuildFailedEvent { stage_id: stage_builder_data.stage_id });
+            return;
         },
         bevy::asset::LoadState::Loading => { return; },
         bevy::asset::LoadState::Loaded => (),
         bevy::asset::LoadState::Failed => {
             failed_event_writer.send(StageBuildFailedEvent { stage_id: stage_builder_data.stage_id });
+            return;
         },
     }
 
