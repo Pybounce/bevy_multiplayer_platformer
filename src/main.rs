@@ -5,7 +5,7 @@ use bevy::{
 };
 
 mod local_player;
-use bevy_rapier2d::{plugin::{NoUserData, RapierPhysicsPlugin}, render::RapierDebugRenderPlugin};
+use bevy_rapier2d::plugin::{NoUserData, RapierPhysicsPlugin};
 use common::states::StatesPlugin;
 use game::GamePlugin;
 use local_player::{ spawn_local_player, LocalPlayer };

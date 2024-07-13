@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::{common::states::{AppState, GameState, StageState, StageTransitionData}, stage::stage_builder::events::{BuildStageEvent, LoadStageEvent}};
+use crate::{common::states::AppState, stage::stage_builder::events::{BuildStageEvent, LoadStageEvent}};
 
 
 pub struct StageSelectPlugin;
@@ -22,9 +22,6 @@ pub fn display_stage_select() {
 
 pub fn try_enter_stage(
     input: Res<ButtonInput<KeyCode>>,
-    mut app_state: ResMut<NextState<AppState>>,
-    mut stage_state: ResMut<NextState<StageState>>,
-    mut commands: Commands,
     mut load_event_writer: EventWriter<LoadStageEvent>,
     mut build_event_writer: EventWriter<BuildStageEvent>
 ) {
