@@ -29,4 +29,8 @@ To Theory Craft
 
 Bugs
 
--
+- Cannot preload (with a stage load event) on build complete, will try building that stage immediately and fail
+  - Need to test the build failed events at different points (1 stage in, 0 stages in etc)
+  - Seems like it's not scrubbing the current stage
+  - Also might not be taking the user back to stage select
+  - NOTE this happens when preloading the next, non-existent stage, in the BuildComplete event
