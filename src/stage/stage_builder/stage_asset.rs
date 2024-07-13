@@ -14,6 +14,7 @@ use thiserror::Error;
 pub struct Stage {
     pub id: usize,
     pub ground_tiles: Vec<GroundTile>,
+    pub spikes: Vec<Spike>,
     pub grid_width: usize,
     pub grid_height: usize,
     pub spawn_translation: Vec3,
@@ -25,7 +26,10 @@ pub struct GroundTile {
     pub grid_pos: Vec2
 }
 
-
+#[derive(Debug, Deserialize, Serialize)]
+pub struct Spike {
+    pub grid_pos: Vec2
+}
 
 #[derive(Default)]
 pub struct StageLoader;

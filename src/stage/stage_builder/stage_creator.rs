@@ -1,4 +1,4 @@
-use crate::stage::{self, stage_objects::{goal::GoalBundle, tiles::{GroundTileBundle, TileBundle}}};
+use crate::stage::{self, stage_objects::{goal::GoalBundle, spike::SpikeBundle, tiles::{GroundTileBundle, TileBundle}}};
 
 use super::{stage_asset::Stage};
 use bevy::prelude::*;
@@ -32,6 +32,7 @@ impl<'a> StageCreator<'a> {
         && build_ground(self, commands)
         && build_goal(self, commands)
         && build_background(self, commands)
+        && build_spikes(self, commands)
     }
 
 
@@ -82,7 +83,7 @@ fn set_camera_background(texture_handle: &Handle<Image>) {
     todo!();
 }
 
-fn build_goal(stage_creator: &StageCreator, commands: &mut Commands, ) -> bool {
+fn build_goal(stage_creator: &StageCreator, commands: &mut Commands) -> bool {
     let sprite_rect_x = (ColourPaletteAtlasIndex::Goal as usize % 5) as f32;
     let sprite_rect_y = (ColourPaletteAtlasIndex::Goal as usize / 5) as f32;
     let sprite_rect = Rect::new(sprite_rect_x, sprite_rect_y, sprite_rect_x + 1.0, sprite_rect_y + 1.0);
@@ -94,6 +95,21 @@ fn build_goal(stage_creator: &StageCreator, commands: &mut Commands, ) -> bool {
     return true;
 }
 
+fn build_spikes(stage_creator: &StageCreator, commands: &mut Commands) -> bool {
+    let sprite_rect_x = (ColourPaletteAtlasIndex::Obstacle as usize % 5) as f32;
+    let sprite_rect_y = (ColourPaletteAtlasIndex::Obstacle as usize / 5) as f32;
+    let sprite_rect = Rect::new(sprite_rect_x, sprite_rect_y, sprite_rect_x + 1.0, sprite_rect_y + 1.0);
+    
+
+    for spike in &stage_creator.stage.spikes {
+        commands.spawn(SpikeBundle::new(
+            stage_creator, 
+            spike.grid_pos, 
+            sprite_rect));
+    }
+
+    return true;
+}
 fn build_ground_tile(commands: &mut Commands, stage_creator: &StageCreator, grid_x: f32, grid_y: f32) {
 
     let sprite_rect_x = (ColourPaletteAtlasIndex::Ground as usize % 5) as f32;
