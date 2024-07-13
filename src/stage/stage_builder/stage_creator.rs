@@ -15,7 +15,7 @@ pub enum ColourPaletteAtlasIndex {
     Ground,
     Obstacle,
     Goal,
-    Misc
+    _Misc
 }
 
 impl<'a> StageCreator<'a> {
@@ -33,6 +33,8 @@ impl<'a> StageCreator<'a> {
         && build_goal(self, commands)
         && build_background(self, commands)
         && build_spikes(self, commands)
+        && build_far_background(self, commands)
+
     }
 
 
@@ -79,8 +81,24 @@ fn build_background(stage_creator: &StageCreator, commands: &mut Commands) -> bo
     return true;
 }
 
-fn set_camera_background(texture_handle: &Handle<Image>) {
-    todo!();
+fn build_far_background(stage_creator: &StageCreator, commands: &mut Commands) -> bool {
+    let sprite_rect_x = (ColourPaletteAtlasIndex::Ground as usize % 5) as f32;
+    let sprite_rect_y = (ColourPaletteAtlasIndex::Ground as usize / 5) as f32;
+    let sprite_rect = Rect::new(sprite_rect_x, sprite_rect_y, sprite_rect_x + 1.0, sprite_rect_y + 1.0);
+
+    let mut background = TileBundle::new(
+        stage_creator, 
+        Vec2::new((stage_creator.stage.grid_width as f32 - 1.0) / 2.0, 
+        (stage_creator.stage.grid_height as f32 - 1.0) / 2.0), 
+        sprite_rect);
+    background.sprite_bundle.transform.translation.z = -20.0;
+    background.sprite_bundle.transform.scale = Vec3::new(
+        stage_creator.stage.grid_width as f32 * TILE_SIZE * 10.0,
+        stage_creator.stage.grid_height as f32 * TILE_SIZE * 10.0,
+        1.0);
+    commands.spawn(background);
+
+    return true;
 }
 
 fn build_goal(stage_creator: &StageCreator, commands: &mut Commands) -> bool {
