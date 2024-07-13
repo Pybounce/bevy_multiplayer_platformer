@@ -14,53 +14,79 @@ const PLAYER_JUMP_DURATION: f64 = 0.3;
 #[derive(Component)]
 pub struct LocalPlayer;
 
+#[derive(Bundle)]
+pub struct LocalPlayerBundle {
+    local_player_market: LocalPlayer,
+    sprite_bundle: SpriteBundle,
+    rigid_body: RigidBody,
+    ccd: Ccd,
+    collider: Collider,
+    restitution: Restitution,
+    friction: Friction,
+    velocity: Velocity,
+    gravity_scale: GravityScale,
+    groundable_marker: Groundable,
+    colliding_entities: CollidingEntities,
+    player_state: PlayerState,
+    jump_controller: JumpController,
+    grounded_horizontal_movement_controller: GroundedHorizontalMovementController,
+    airbourne_horizontal_movement_controller: AirbourneHorizontalMovementController,
+}
+
+impl Default for LocalPlayerBundle {
+    fn default() -> Self {
+        LocalPlayerBundle {
+            local_player_market: LocalPlayer,
+            sprite_bundle: SpriteBundle {
+                transform: Transform {
+                    scale: PLAYER_SIZE.extend(1.0),
+                    ..default()
+                },
+                sprite: Sprite {
+                    color: PLAYER_COLOR,
+                    ..default()
+                },
+                ..default()
+            },
+            rigid_body: RigidBody::Dynamic,
+            ccd: Ccd::enabled(),
+            collider: Collider::ball(0.5),
+            restitution: Restitution::coefficient(0.0),
+            friction: Friction::coefficient(0.0),
+            velocity: Velocity::linear(Vec2::ZERO),
+            gravity_scale: GravityScale(2.0),
+            groundable_marker: Groundable,
+            colliding_entities: CollidingEntities::default(),
+            player_state: PlayerState::Dead,
+            jump_controller: JumpController {
+                key: KeyCode::KeyW,
+                force: PLAYER_JUMP_SPEED,
+                duration: PLAYER_JUMP_DURATION,
+                last_jump_pressed_time: 0.0,
+                last_jump_released_time: 0.0,
+                last_grounded: 0.0,
+                coyote_time: 0.3,
+            },
+            grounded_horizontal_movement_controller: GroundedHorizontalMovementController {
+                left_key: KeyCode::KeyA,
+                right_key: KeyCode::KeyD,
+                acceleration: PLAYER_ACCELERATION,
+                resistance: PLAYER_HORIZONTAL_FRICTION,
+                max_speed: PLAYER_MAX_SPEED.x,
+            },
+            airbourne_horizontal_movement_controller: AirbourneHorizontalMovementController {
+                left_key: KeyCode::KeyA,
+                right_key: KeyCode::KeyD,
+                acceleration: PLAYER_ACCELERATION / 2.0,
+                resistance: PLAYER_HORIZONTAL_FRICTION / 2.0,
+                max_speed: PLAYER_MAX_SPEED.x,
+            },
+        }
+    }
+}
+
 pub fn spawn_local_player(mut commands: Commands) {
-    commands
-        .spawn(LocalPlayer)
-        .insert(SpriteBundle {
-            transform: Transform {
-                scale: PLAYER_SIZE.extend(1.0),
-                ..default()
-            },
-            sprite: Sprite {
-                color: PLAYER_COLOR,
-                ..default()
-            },
-            ..default()
-        })
-        .insert(RigidBody::Dynamic)
-        .insert(Ccd::enabled())
-        .insert(Collider::ball(0.5))
-        .insert(Restitution::coefficient(0.0))
-        .insert(Friction::coefficient(0.0))
-        .insert(Velocity::linear(Vec2::ZERO))
-        .insert(GravityScale(2.0))
-        .insert(Groundable)
-        .insert(CollidingEntities::default())
-        .insert(PlayerState::Dead)
-        .insert(JumpController {
-            key: KeyCode::KeyW,
-            force: PLAYER_JUMP_SPEED,
-            duration: PLAYER_JUMP_DURATION,
-            last_jump_pressed_time: 0.0,
-            last_jump_released_time: 0.0,
-            last_grounded: 0.0,
-            coyote_time: 0.3,
-        })
-        .insert(GroundedHorizontalMovementController {
-            left_key: KeyCode::KeyA,
-            right_key: KeyCode::KeyD,
-            acceleration: PLAYER_ACCELERATION,
-            resistance: PLAYER_HORIZONTAL_FRICTION,
-            max_speed: PLAYER_MAX_SPEED.x,
-        })
-        .insert(AirbourneHorizontalMovementController {
-            left_key: KeyCode::KeyA,
-            right_key: KeyCode::KeyD,
-            acceleration: PLAYER_ACCELERATION / 2.0,
-            resistance: PLAYER_HORIZONTAL_FRICTION / 2.0,
-            max_speed: PLAYER_MAX_SPEED.x,
-        });
+    commands.spawn(LocalPlayerBundle::default());
 }
 
 
