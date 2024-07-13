@@ -46,6 +46,7 @@ fn main() {
     
     App::new()
         .insert_resource(winit_settings)
+        .insert_resource(Msaa::Off)
         .add_plugins(DefaultPlugins.set(window_settings).set(ImagePlugin::default_nearest()))
         .add_plugins(StatesPlugin)
         .add_plugins(StageBuilderPlugin)
