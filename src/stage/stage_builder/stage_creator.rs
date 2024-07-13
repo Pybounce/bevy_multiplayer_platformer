@@ -44,8 +44,8 @@ fn build_perimeter(stage_creator: &StageCreator, commands: &mut Commands) -> boo
 
     }
     for y in 0..stage_creator.stage.grid_height + 2{
-        build_ground_tile(commands, stage_creator, -1.0, y as f32);
-        build_ground_tile(commands, stage_creator, stage_creator.stage.grid_width as f32, y as f32);
+        build_ground_tile(commands, stage_creator, -1.0, y as f32 - 1.0);
+        build_ground_tile(commands, stage_creator, stage_creator.stage.grid_width as f32, y as f32 - 1.0);
 
     }
     return true;
