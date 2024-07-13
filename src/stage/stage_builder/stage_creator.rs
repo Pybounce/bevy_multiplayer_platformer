@@ -53,10 +53,7 @@ fn build_perimeter(stage_creator: &StageCreator, commands: &mut Commands) -> boo
 
 fn build_ground(stage_creator: &StageCreator, commands: &mut Commands) -> bool {
     for tile in &stage_creator.stage.ground_tiles {
-        let mut pos: Vec2 = tile.grid_pos;
-        //pos.y = (stage_creator.stage.grid_height as f32) - 1.0 - pos.y;
-
-        build_ground_tile(commands, stage_creator, pos.x, pos.y);
+        build_ground_tile(commands, stage_creator, tile.grid_pos.x, tile.grid_pos.y);
     }
     return true;
 }
@@ -90,12 +87,9 @@ fn build_goal(stage_creator: &StageCreator, commands: &mut Commands, ) -> bool {
     let sprite_rect_y = (ColourPaletteAtlasIndex::Goal as usize / 5) as f32;
     let sprite_rect = Rect::new(sprite_rect_x, sprite_rect_y, sprite_rect_x + 1.0, sprite_rect_y + 1.0);
     
-    //TODO: holy shit refactor this pos.y bullshit, it's in buildground too
-    let mut pos: Vec2 = stage_creator.stage.goal_grid_pos;
-    //pos.y = (stage_creator.stage.grid_height as f32) - 1.0 - pos.y;
     commands.spawn(GoalBundle::new(
         &stage_creator, 
-        pos, 
+        stage_creator.stage.goal_grid_pos, 
         sprite_rect));
     return true;
 }
