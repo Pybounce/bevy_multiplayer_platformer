@@ -1,5 +1,4 @@
 
-
 use bevy::utils::thiserror;
 use bevy::{
     asset::{io::Reader, ron, AssetLoader, AsyncReadExt, LoadContext},
@@ -11,30 +10,29 @@ use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
 
-
-pub struct StageLoaderPLugin;
-
-impl Plugin for StageLoaderPLugin {
-    fn build(&self, app: &mut App) {
-        app
-        .init_asset::<Stage>()
-        .init_asset_loader::<StageLoader>();
-    }
-}
-
-
-
-
 #[derive(Asset, TypePath, Debug, Deserialize, Serialize)]
 pub struct Stage {
-    pub tiles: Vec::<u32>,
-    pub tiles_width: usize,
-    pub tiles_height: usize,
-    pub spawn_translation: Vec3
+    pub id: usize,
+    pub ground_tiles: Vec<GroundTile>,
+    pub spikes: Vec<Spike>,
+    pub grid_width: usize,
+    pub grid_height: usize,
+    pub spawn_translation: Vec3,
+    pub goal_grid_pos: Vec2
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct GroundTile {
+    pub grid_pos: Vec2
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct Spike {
+    pub grid_pos: Vec2
 }
 
 #[derive(Default)]
-struct StageLoader;
+pub struct StageLoader;
 
 #[non_exhaustive]
 #[derive(Debug, Error)]

@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::common::states::{AppState, GameState, StageState, StageTransitionData};
+use crate::{common::states::AppState, stage::stage_builder::events::{BuildStageEvent, LoadStageEvent}};
 
 
 pub struct StageSelectPlugin;
@@ -22,13 +22,11 @@ pub fn display_stage_select() {
 
 pub fn try_enter_stage(
     input: Res<ButtonInput<KeyCode>>,
-    mut app_state: ResMut<NextState<AppState>>,
-    mut stage_state: ResMut<NextState<StageState>>,
-    mut commands: Commands
+    mut load_event_writer: EventWriter<LoadStageEvent>,
+    mut build_event_writer: EventWriter<BuildStageEvent>
 ) {
     if input.just_released(KeyCode::Space) {
-        commands.insert_resource(StageTransitionData {target_stage_id: 0});
-        app_state.set(AppState::Game);
-        stage_state.set(StageState::Loading);
+        load_event_writer.send(LoadStageEvent {stage_id: 0});
+        build_event_writer.send(BuildStageEvent {stage_id: 0});
     }
 }

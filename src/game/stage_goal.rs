@@ -2,23 +2,19 @@
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
 
-use crate::local_player::LocalPlayer;
-
-use super::stage_manager::StageData;
+use crate::{local_player::LocalPlayer, stage::{stage_builder::{events::{BuildStageEvent, LoadStageEvent}, CurrentStageData}, stage_objects::goal::StageGoal}};
 
 #[derive(Event)]
 pub struct GoalReached {
     pub stage_id: usize
 }
 
-#[derive(Component)]
-pub struct StageGoal;
 
 pub fn check_goal_reached(
     player_query: Query<&CollidingEntities, With<LocalPlayer>>,
     goal_query: Query<(), With<StageGoal>>,
     mut event_writer: EventWriter<GoalReached>,
-    stage_data: Res<StageData>
+    stage_data: Res<CurrentStageData>,
 ) {
     for colliding_entities in &player_query {
 
@@ -28,4 +24,23 @@ pub fn check_goal_reached(
             }
         }
     }
+}
+
+
+
+pub fn next_staged_if_goal_reached(
+    stage_data: Res<CurrentStageData>,
+    mut load_event_writer: EventWriter<LoadStageEvent>,
+    mut build_event_writer: EventWriter<BuildStageEvent>,
+    mut event_reader: EventReader<GoalReached>
+) {
+    let mut build_event_raised = false;
+    for event in event_reader.read() {
+        if event.stage_id == stage_data.stage_id && !build_event_raised {
+            load_event_writer.send(LoadStageEvent {stage_id: stage_data.stage_id + 1});
+            build_event_writer.send(BuildStageEvent {stage_id: stage_data.stage_id + 1});
+            build_event_raised = true;
+        }
+    }
+
 }

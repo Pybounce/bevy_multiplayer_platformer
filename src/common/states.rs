@@ -37,11 +37,6 @@ pub enum StageState {
     Loaded
 }
 
-#[derive(Resource)]
-pub struct StageTransitionData {
-    pub target_stage_id: usize,
-}
-
 
 #[derive(States, Debug, Hash, Eq, PartialEq, Clone, Default)]
 pub enum NetworkingState {

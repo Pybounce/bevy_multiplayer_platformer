@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
 
-use crate::{game::player::player_states::PlayerState, player::{horizontal_movement_controller::{AirbourneHorizontalMovementController, GroundedHorizontalMovementController}, jump_controller::JumpController}, stage_1::{Groundable, Grounded}};
+use crate::{game::player::player_states::PlayerState, player::{horizontal_movement_controller::{AirbourneHorizontalMovementController, GroundedHorizontalMovementController}, jump_controller::JumpController}, stage_1::Groundable};
 
 const PLAYER_SIZE: Vec2 = Vec2::new(32.0, 32.0);
 const PLAYER_COLOR: Color = Color::rgb(0.0, 2.0, 0.0);
@@ -52,14 +52,14 @@ pub fn spawn_local_player(mut commands: Commands) {
             right_key: KeyCode::KeyD,
             acceleration: PLAYER_ACCELERATION,
             resistance: PLAYER_HORIZONTAL_FRICTION,
-            max_speed: 300.0,
+            max_speed: PLAYER_MAX_SPEED.x,
         })
         .insert(AirbourneHorizontalMovementController {
             left_key: KeyCode::KeyA,
             right_key: KeyCode::KeyD,
             acceleration: PLAYER_ACCELERATION / 2.0,
             resistance: PLAYER_HORIZONTAL_FRICTION / 2.0,
-            max_speed: 300.0,
+            max_speed: PLAYER_MAX_SPEED.x,
         });
 }
 
