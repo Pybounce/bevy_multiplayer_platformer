@@ -3,7 +3,7 @@ use crate::stage::stage_objects::{goal::GoalBundle, spike::SpikeBundle, tiles::{
 use super::stage_asset::Stage;
 use bevy::prelude::*;
 
-const TILE_SIZE: f32 = 32.0;
+pub const TILE_SIZE: f32 = 32.0;
 
 pub struct StageCreator<'a> {
     pub stage: &'a Stage, 

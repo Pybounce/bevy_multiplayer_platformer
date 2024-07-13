@@ -28,7 +28,7 @@ pub fn respawn_dead_players(
 }
 
 
-pub fn reset_players_on_stage_built(
+pub fn spawn_player_on_stage_built(
     stage_data: Res<CurrentStageData>,
     mut query: Query<&mut Transform, With<LocalPlayer>>,
     mut stage_built_event_reader: EventReader<StageBuildCompleteEvent>

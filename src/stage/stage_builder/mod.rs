@@ -51,5 +51,6 @@ pub struct StageBuilderData {
 #[derive(Resource, Default)]
 pub struct CurrentStageData {
     pub stage_id: usize,
-    pub spawn_translation: Vec3
+    pub spawn_translation: Vec3,
+    pub bounds: Rect
 }

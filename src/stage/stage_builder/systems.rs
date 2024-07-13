@@ -2,7 +2,7 @@ use bevy::prelude::*;
 
 use crate::stage::stage_objects::StageObject;
 
-use super::{events::{StageBuildCompleteEvent, StageBuildFailedEvent}, stage_asset::Stage, stage_creator::StageCreator, CurrentStageData, StageBuilderData};
+use super::{events::{StageBuildCompleteEvent, StageBuildFailedEvent}, stage_asset::Stage, stage_creator::{StageCreator, TILE_SIZE}, CurrentStageData, StageBuilderData};
 
 
 pub fn unload_old_stage(
@@ -48,6 +48,7 @@ pub fn try_build_stage(
             if stage_creator.build(&mut commands) {
                 current_stage_data.stage_id = stage.id;
                 current_stage_data.spawn_translation = stage.spawn_translation;
+                current_stage_data.bounds = Rect::new(-TILE_SIZE, -TILE_SIZE, stage.grid_width as f32 * TILE_SIZE, stage.grid_width as f32 * TILE_SIZE);
                 complete_event_writer.send(StageBuildCompleteEvent { stage_id: stage_builder_data.stage_id });
             }
             else {
