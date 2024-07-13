@@ -8,8 +8,8 @@ use crate::{stage::{stage_builder::stage_creator::StageCreator, stage_objects::S
 const TILE_SIZE: f32 = 32.0;
 
 #[derive(Bundle)]
-struct TileBundle {
-    sprite_bundle: SpriteBundle,
+pub struct TileBundle {
+    pub sprite_bundle: SpriteBundle,
     stage_marker: StageObject
 }
 
