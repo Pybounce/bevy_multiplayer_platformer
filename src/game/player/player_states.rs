@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::{local_player::LocalPlayer, stage::stage_builder::CurrentStageData};
+use crate::{local_player::LocalPlayer, stage::stage_builder::{events::StageBuildCompleteEvent, CurrentStageData}};
 
 
 
@@ -27,17 +27,15 @@ pub fn respawn_dead_players(
     }
 }
 
-//TODO: Make this more resiliant
-// Right now this is run directly after the stage building
-// And it assumes that the stage was built
-// If something went wrong, like the stage file didn't exist...
-// The StageData would be null and crash the program
-// Consider raising a player reset event or just adding an Option<StageData>
-pub fn reset_players(
+
+pub fn reset_players_on_stage_built(
     stage_data: Res<CurrentStageData>,
-    mut query: Query<&mut Transform, With<LocalPlayer>>
+    mut query: Query<&mut Transform, With<LocalPlayer>>,
+    mut stage_built_event_reader: EventReader<StageBuildCompleteEvent>
 ) {
-    for mut t in &mut query {
-        t.translation = stage_data.spawn_translation;
+    for _ in stage_built_event_reader.read() {
+        for mut t in &mut query {
+            t.translation = stage_data.spawn_translation;
+        }
     }
 }
