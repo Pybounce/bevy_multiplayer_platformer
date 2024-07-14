@@ -49,7 +49,7 @@ pub fn try_build_stage(
                 commands.insert_resource(CurrentStageData {
                     stage_id: stage.id,
                     spawn_translation: stage.spawn_translation,
-                    bounds: Rect::new(-TILE_SIZE, -TILE_SIZE, stage.grid_width as f32 * TILE_SIZE, stage.grid_width as f32 * TILE_SIZE),
+                    bounds: Rect::new(-TILE_SIZE, -TILE_SIZE, stage.grid_width as f32 * TILE_SIZE, stage.grid_height as f32 * TILE_SIZE),
                 });
                 complete_event_writer.send(StageBuildCompleteEvent { stage_id: stage_builder_data.stage_id });
             }
