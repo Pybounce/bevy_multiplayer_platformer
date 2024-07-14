@@ -1,9 +1,7 @@
-use std::default;
-
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
 
-use crate::{game::player::player_states::PlayerState, player::{death::Respawnable, horizontal_movement_controller::{AirbourneHorizontalMovementController, GroundedHorizontalMovementController}, jump_controller::JumpController}, stage::stage_objects::StageObject, stage_1::Groundable};
+use crate::{player::{death::Respawnable, horizontal_movement_controller::{AirbourneHorizontalMovementController, GroundedHorizontalMovementController}, jump_controller::JumpController}, stage::stage_objects::StageObject, stage_1::Groundable};
 
 const PLAYER_SIZE: Vec2 = Vec2::new(32.0, 32.0);
 const PLAYER_COLOR: Color = Color::rgb(0.0, 2.0, 0.0);
@@ -30,7 +28,6 @@ pub struct LocalPlayerBundle {
     gravity_scale: GravityScale,
     groundable_marker: Groundable,
     colliding_entities: CollidingEntities,
-    player_state: PlayerState,
     jump_controller: JumpController,
     grounded_horizontal_movement_controller: GroundedHorizontalMovementController,
     airbourne_horizontal_movement_controller: AirbourneHorizontalMovementController,
@@ -70,7 +67,6 @@ impl Default for LocalPlayerBundle {
             gravity_scale: GravityScale(2.0),
             groundable_marker: Groundable,
             colliding_entities: CollidingEntities::default(),
-            player_state: PlayerState::Dead,
             jump_controller: JumpController {
                 key: KeyCode::KeyW,
                 force: PLAYER_JUMP_SPEED,
