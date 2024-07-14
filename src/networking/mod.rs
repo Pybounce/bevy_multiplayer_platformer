@@ -53,13 +53,13 @@ fn check_connection(
                 Some(network_data) => {
                     if network_data.stage_id != stage_data.stage_id {
                         // disconnect current connection
-                        error!("AAAA");
+                        error!("DISCONNECT");
                         networking_state.set(NetworkingState::Disconnecting);
                     }
                 },
                 None => {
                     // start new connection
-                    error!("BBB");
+                    error!("CONNECT NEW");
                     networking_state.set(NetworkingState::Connecting);
                 },
             }
@@ -68,7 +68,7 @@ fn check_connection(
             match current_network_data {
                 Some(_) => {
                     //disconnect current connection
-                    error!("CCC");
+                    error!("DISCONNECT");
                     networking_state.set(NetworkingState::Disconnecting);
                 },
                 None => (),
