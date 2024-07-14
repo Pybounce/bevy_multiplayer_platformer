@@ -13,6 +13,7 @@ pub fn unload_old_stage(
     for (e, sp) in &stage_piece_query {
         if sp.stage_id != stage_builder_data.stage_id {
             commands.entity(e).despawn();
+            commands.remove_resource::<CurrentStageData>();
         }
     }
 }
@@ -22,7 +23,6 @@ pub fn try_build_stage(
     asset_server: Res<AssetServer>,
     stage_builder_data: Res<StageBuilderData>,
     stage_assets: Res<Assets<Stage>>,
-    mut current_stage_data: ResMut<CurrentStageData>,
     mut complete_event_writer: EventWriter<StageBuildCompleteEvent>,
     mut failed_event_writer: EventWriter<StageBuildFailedEvent>
 ) {
@@ -46,9 +46,11 @@ pub fn try_build_stage(
         Some(stage) => {
             let stage_creator = StageCreator::new(&stage, &texture_handle);
             if stage_creator.build(&mut commands) {
-                current_stage_data.stage_id = stage.id;
-                current_stage_data.spawn_translation = stage.spawn_translation;
-                current_stage_data.bounds = Rect::new(-TILE_SIZE, -TILE_SIZE, stage.grid_width as f32 * TILE_SIZE, stage.grid_width as f32 * TILE_SIZE);
+                commands.insert_resource(CurrentStageData {
+                    stage_id: stage.id,
+                    spawn_translation: stage.spawn_translation,
+                    bounds: Rect::new(-TILE_SIZE, -TILE_SIZE, stage.grid_width as f32 * TILE_SIZE, stage.grid_width as f32 * TILE_SIZE),
+                });
                 complete_event_writer.send(StageBuildCompleteEvent { stage_id: stage_builder_data.stage_id });
             }
             else {

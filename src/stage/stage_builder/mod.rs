@@ -23,7 +23,6 @@ impl Plugin for StageBuilderPlugin {
         .init_asset::<Stage>()
         .init_asset_loader::<StageLoader>()
         .init_resource::<StageBuilderData>()
-        .init_resource::<CurrentStageData>()
         .add_systems(PreUpdate, (read_stage_load_events, read_stage_build_events).chain())
         //.add_systems(OnEnter(StageBuilderState::Building), save_stage)
         .add_systems(OnEnter(StageBuilderState::Building), unload_old_stage)
