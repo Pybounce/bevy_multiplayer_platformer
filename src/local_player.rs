@@ -35,12 +35,14 @@ pub struct LocalPlayerBundle {
     grounded_horizontal_movement_controller: GroundedHorizontalMovementController,
     airbourne_horizontal_movement_controller: AirbourneHorizontalMovementController,
     respawnable: Respawnable,
+    stage_object: StageObject
 }
 impl LocalPlayerBundle {
-    pub fn from_spawn_pos(pos: Vec3) -> Self {
+    pub fn new(pos: Vec3, stage_id: usize) -> Self {
         let mut p = LocalPlayerBundle::default();
         p.sprite_bundle.transform.translation = pos;
         p.respawnable.translation = pos;
+        p.stage_object.stage_id = stage_id;
         return p;
     }
 }
@@ -96,6 +98,7 @@ impl Default for LocalPlayerBundle {
                 translation: Vec3::default(),
                 delay_in_seconds: PLAYER_RESPAWN_DELAY,
             },
+            stage_object: StageObject { stage_id: usize::max_value() }
         }
     }
 }
