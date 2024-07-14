@@ -1,7 +1,7 @@
 
-use bevy::prelude::*;
+use bevy::{core::Zeroable, prelude::*};
 
-use crate::local_player::LocalPlayer;
+use crate::{common::{death::DeathMarker, shake::Shake}, local_player::LocalPlayer};
 
 pub fn spawn_camera(mut commands: Commands) {
     commands
@@ -27,5 +27,24 @@ pub fn move_camera(
         Ok(t) => camera_transform.translation = t.translation,
         Err(_) => (),
     }
-    
+}
+
+
+pub fn camera_shake_on_death(
+    mut commands: Commands,
+    query: Query<(), (With<LocalPlayer>, With<DeathMarker>)>,
+    camera_query: Query<Entity, With<Camera>>
+) {
+    if let Ok(e) = camera_query.get_single() {
+        if query.iter().len() > 0 {
+            commands.entity(e).try_insert(Shake {
+                current_offset: Vec2::ZERO,
+                force: 15.0,
+                duration: Some(0.15),
+                shake_delay: 0.015,
+                current_delay: 0.0,
+            });
+        }
+    }
+
 }
