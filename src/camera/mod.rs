@@ -1,6 +1,6 @@
 
 use bevy::prelude::*;
-use bevy_rapier2d::dynamics::Velocity;
+use bevy_rapier2d::prelude::*;
 
 use crate::local_player::LocalPlayer;
 
@@ -16,22 +16,28 @@ pub fn spawn_camera(mut commands: Commands) {
             },
             ..default()
         })
-        .insert(Velocity::default());
+        .insert(Velocity::default())
+        .insert(RigidBody::Dynamic);
 }
 
 pub fn move_camera(
-    mut camera_query: Query<&mut Transform, With<Camera>>,
+    mut camera_query: Query<(&mut Velocity, &Transform), With<Camera>>,
     player_query: Query<&Transform, (With<LocalPlayer>, Without<Camera>)>,
     time: Res<Time>
 ) {
-    let mut ct = camera_query.single_mut();
+    let (mut cv, ct) = camera_query.single_mut();
     let pt = player_query.get_single();
     match pt {
         Ok(pt) => {
             let distance = ct.translation.truncate().distance(pt.translation.truncate());
-            let speed = distance * 3.0;
+            let speed = distance * 2.5;
             let dir = (pt.translation - ct.translation).truncate().normalize();
-            ct.translation += (dir * speed * time.delta_seconds()).extend(0.0);
+
+            if distance < 10.0 {
+                cv.linvel = Vec2::ZERO;
+                return;
+            }
+            cv.linvel = dir * speed;
         }
         Err(_) => (),
     }
