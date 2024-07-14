@@ -8,7 +8,6 @@ impl Plugin for StatesPlugin {
         app.init_state::<AppState>()
         .init_state::<GameState>()
         .init_state::<NetworkingState>()
-        .init_state::<StageState>()
         .add_systems(Update, check_state_transitions);
     }
 }
@@ -28,21 +27,14 @@ pub enum GameState {
     Playing,
 }
 
-#[derive(States, Debug, Hash, Eq, PartialEq, Clone, Default)]
-pub enum StageState {
-    #[default]
-    NA,
-    Loading,
-    Loaded
-}
-
 
 #[derive(States, Debug, Hash, Eq, PartialEq, Clone, Default)]
 pub enum NetworkingState {
     Connected,
     #[default]
     Disconnected,
-    PreparingDisconnect,
+    Disconnecting,
+    Connecting,
 }
 
 
@@ -52,7 +44,6 @@ pub enum DespawnOnStateExit {
     App(AppState),
     Game(GameState),
     Networking(NetworkingState),
-    Stage(StageState)
 }
 
 #[derive(Component)]
@@ -60,11 +51,9 @@ pub enum DespawnOnStateEnter {
     App(AppState),
     Game(GameState),
     Networking(NetworkingState),
-    Stage(StageState)
 }
 fn check_state_transitions(
     mut game_state_transition_events: EventReader<StateTransitionEvent<GameState>>,
-    mut stage_state_events: EventReader<StateTransitionEvent<StageState>>,
     mut app_state_transition_events: EventReader<StateTransitionEvent<AppState>>,
     mut networking_state_transition_events: EventReader<StateTransitionEvent<NetworkingState>>,
     mut commands: Commands,
@@ -72,7 +61,6 @@ fn check_state_transitions(
     enter_state_query: Query<(Entity, &DespawnOnStateEnter), With<DespawnOnStateEnter>>
 ) {
     let game_state_events: Vec<_> = game_state_transition_events.read().collect();
-    let stage_state_events: Vec<_> = stage_state_events.read().collect();
     let app_state_events: Vec<_> = app_state_transition_events.read().collect();
     let networking_state_events: Vec<_> = networking_state_transition_events.read().collect();
     if app_state_events.len() == 0 
@@ -104,13 +92,6 @@ fn check_state_transitions(
                     }
                 }
             }
-            DespawnOnStateExit::Stage(x) => {
-                for ste in &stage_state_events {
-                    if x == &ste.before {
-                        commands.entity(entity).despawn();
-                    }
-                }
-            }
         }
     }
 
@@ -135,13 +116,6 @@ fn check_state_transitions(
             }
             DespawnOnStateEnter::Networking(x) => {
                 for ste in &networking_state_events {
-                    if x == &ste.after {
-                        commands.entity(entity).despawn();
-                    }
-                }
-            }
-            DespawnOnStateEnter::Stage(x) => {
-                for ste in &stage_state_events {
                     if x == &ste.after {
                         commands.entity(entity).despawn();
                     }
