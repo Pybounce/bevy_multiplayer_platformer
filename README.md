@@ -17,6 +17,7 @@ To Do #1
 - Add in player deaths/spawns
 - Refactor player files
 - Make the player explode into many tiny squares with collision (good ol' ECS)
+- Move all that player config into a component for the player?
 
 To Theory Craft
 
@@ -34,3 +35,7 @@ Bugs
   - Seems like it's not scrubbing the current stage
   - Also might not be taking the user back to stage select
   - NOTE this happens when preloading the next, non-existent stage, in the BuildComplete event
+- StageState current still exists as a meta state
+  - This is old, it should be removed
+  - Networking uses this state to connect and disconnected players, it should use the StageBuild events
+    - Also potentially can slap StageObject on networked players and have them automatically cleaned

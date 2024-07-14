@@ -6,15 +6,16 @@ use bevy::{
 
 mod local_player;
 use bevy_rapier2d::plugin::{NoUserData, RapierPhysicsPlugin};
-use common::states::StatesPlugin;
+use common::{death::despawn_death_marked, states::StatesPlugin};
 use game::GamePlugin;
-use local_player::{ spawn_local_player, LocalPlayer };
+use local_player::LocalPlayer;
 
 mod networking;
 use networking::{networked_players::{remove_disconnected_players, spawn_new_players}, GameNetworkingPlugin};
 
 mod stage_select;
-use player::{_TEMP_out_of_bounds::check_out_of_bounds, horizontal_movement_controller::{move_airbourne_horizontal_controller, move_ground_horizontal_controller}, jump_controller::{begin_player_jump, can_jump, check_jump_fall_states, maintain_player_jump, update_last_grounded}};
+use obstacles::check_insta_kill_collisions;
+use player::{common::check_player_out_of_bounds, death::trigger_dead_local_player_respawn, horizontal_movement_controller::{move_airbourne_horizontal_controller, move_ground_horizontal_controller}, jump_controller::{begin_player_jump, can_jump, check_jump_fall_states, maintain_player_jump, update_last_grounded}, spawner::spawn_local_players};
 use stage_1::check_grounded;
 use stage::stage_builder::StageBuilderPlugin;
 use stage_select::StageSelectPlugin;
@@ -24,6 +25,7 @@ mod common;
 mod game;
 mod player;
 mod stage;
+mod obstacles;
 
 pub mod stage_1;
 
@@ -55,9 +57,9 @@ fn main() {
         .add_plugins(GameNetworkingPlugin)
         .add_plugins(RapierPhysicsPlugin::<NoUserData>::pixels_per_meter(100.0))
         //.add_plugins(RapierDebugRenderPlugin::default())
-        .add_systems(Startup, (spawn_camera, spawn_local_player))
+        .add_systems(Startup, spawn_camera)
         .add_systems(Update, (move_camera, close_on_esc, spawn_new_players, remove_disconnected_players))
-        .add_systems(Update, (check_grounded, check_out_of_bounds, move_airbourne_horizontal_controller, move_ground_horizontal_controller, update_last_grounded, maintain_player_jump, begin_player_jump, can_jump, check_jump_fall_states))
+        .add_systems(Update, (check_insta_kill_collisions, trigger_dead_local_player_respawn, spawn_local_players, check_grounded, check_player_out_of_bounds, move_airbourne_horizontal_controller, move_ground_horizontal_controller, update_last_grounded, maintain_player_jump, begin_player_jump, can_jump, check_jump_fall_states, despawn_death_marked))
         .run();
 }
 
@@ -80,6 +82,10 @@ fn move_camera(
     player_query: Query<&Transform, (With<LocalPlayer>, Without<Camera>)>
 ) {
     let mut camera_transform = camera_query.single_mut();
-    let player_transform = player_query.single();
-    camera_transform.translation = player_transform.translation;
+    let player_transform = player_query.get_single();
+    match player_transform {
+        Ok(t) => camera_transform.translation = t.translation,
+        Err(_) => (),
+    }
+    
 }

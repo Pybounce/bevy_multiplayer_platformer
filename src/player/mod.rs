@@ -1,4 +1,8 @@
 pub mod jump_controller;
 pub mod horizontal_movement_controller;
 
-pub mod _TEMP_out_of_bounds;
+pub mod common;
+pub mod spawner;
+pub mod death;
+
+//event Spawn_Player(pos)

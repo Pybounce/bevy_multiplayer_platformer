@@ -39,7 +39,7 @@ pub fn save_stage() {
             goal_grid_pos = Vec2::new(x as f32, y as f32);
         }
         else if layout[i] == 3 { 
-            //goal
+            //spike
             spikes.push(Spike {grid_pos: Vec2::new(x as f32, y as f32)});
         }
         else {
