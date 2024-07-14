@@ -47,16 +47,13 @@ pub fn send_message(
 
         for peer in peers {
             let t_result = local_player_query.get_single();
-            match t_result {
-                Ok(t) => {
-                    let message = NewLocationMessage {
-                        code: 0,
-                        translation_x: t.translation.x,
-                        translation_y: t.translation.y,
-                    };
-                    networking_data.socket.send(bincode::serialize(&message).unwrap().into(), peer);
-                },
-                Err(e) => error!("ERROR SENDING MESSAGE: {e}"),
+            if let Ok(t) = t_result {
+                let message = NewLocationMessage {
+                    code: 0,
+                    translation_x: t.translation.x,
+                    translation_y: t.translation.y,
+                };
+                networking_data.socket.send(bincode::serialize(&message).unwrap().into(), peer);
             }
         }
     }
