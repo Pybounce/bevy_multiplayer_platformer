@@ -1,7 +1,9 @@
+use std::default;
+
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
 
-use crate::{game::player::player_states::PlayerState, player::{horizontal_movement_controller::{AirbourneHorizontalMovementController, GroundedHorizontalMovementController}, jump_controller::JumpController}, stage_1::Groundable};
+use crate::{game::player::player_states::PlayerState, player::{death::Respawnable, horizontal_movement_controller::{AirbourneHorizontalMovementController, GroundedHorizontalMovementController}, jump_controller::JumpController}, stage::stage_objects::StageObject, stage_1::Groundable};
 
 const PLAYER_SIZE: Vec2 = Vec2::new(32.0, 32.0);
 const PLAYER_COLOR: Color = Color::rgb(0.0, 2.0, 0.0);
@@ -10,6 +12,7 @@ const PLAYER_ACCELERATION: f32 = 2000.0;
 const PLAYER_HORIZONTAL_FRICTION: f32 = 600.0;
 const PLAYER_JUMP_SPEED: f32 = 300.0;
 const PLAYER_JUMP_DURATION: f64 = 0.3;
+const PLAYER_RESPAWN_DELAY: f64 = 3.0;
 
 #[derive(Component)]
 pub struct LocalPlayer;
@@ -31,8 +34,16 @@ pub struct LocalPlayerBundle {
     jump_controller: JumpController,
     grounded_horizontal_movement_controller: GroundedHorizontalMovementController,
     airbourne_horizontal_movement_controller: AirbourneHorizontalMovementController,
+    respawnable: Respawnable,
 }
-
+impl LocalPlayerBundle {
+    pub fn from_spawn_pos(pos: Vec3) -> Self {
+        let mut p = LocalPlayerBundle::default();
+        p.sprite_bundle.transform.translation = pos;
+        p.respawnable.translation = pos;
+        return p;
+    }
+}
 impl Default for LocalPlayerBundle {
     fn default() -> Self {
         LocalPlayerBundle {
@@ -81,12 +92,12 @@ impl Default for LocalPlayerBundle {
                 resistance: PLAYER_HORIZONTAL_FRICTION / 2.0,
                 max_speed: PLAYER_MAX_SPEED.x,
             },
+            respawnable: Respawnable {
+                translation: Vec3::default(),
+                delay_in_seconds: PLAYER_RESPAWN_DELAY,
+            },
         }
     }
-}
-
-pub fn spawn_local_player(mut commands: Commands) {
-    commands.spawn(LocalPlayerBundle::default());
 }
 
 

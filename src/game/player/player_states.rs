@@ -27,15 +27,3 @@ pub fn respawn_dead_players(
     }
 }
 
-
-pub fn spawn_player_on_stage_built(
-    stage_data: Res<CurrentStageData>,
-    mut query: Query<&mut Transform, With<LocalPlayer>>,
-    mut stage_built_event_reader: EventReader<StageBuildCompleteEvent>
-) {
-    for _ in stage_built_event_reader.read() {
-        for mut t in &mut query {
-            t.translation = stage_data.spawn_translation;
-        }
-    }
-}

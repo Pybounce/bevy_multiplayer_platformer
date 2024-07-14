@@ -17,6 +17,7 @@ To Do #1
 - Add in player deaths/spawns
 - Refactor player files
 - Make the player explode into many tiny squares with collision (good ol' ECS)
+- Move all that player config into a component for the player?
 
 To Theory Craft
 

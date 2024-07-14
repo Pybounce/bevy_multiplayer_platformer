@@ -1,4 +1,4 @@
-use crate::stage::stage_objects::{goal::GoalBundle, spike::SpikeBundle, tiles::{GroundTileBundle, TileBundle}};
+use crate::{player::spawner::LocalPlayerSpawner, stage::stage_objects::{goal::GoalBundle, spike::SpikeBundle, tiles::{GroundTileBundle, TileBundle}}};
 
 use super::stage_asset::Stage;
 use bevy::prelude::*;
@@ -34,10 +34,19 @@ impl<'a> StageCreator<'a> {
         && build_background(self, commands)
         && build_spikes(self, commands)
         && build_far_background(self, commands)
+        && build_player_spawner(self, commands)
 
     }
 
 
+}
+
+fn build_player_spawner(stage_creator: &StageCreator, commands: &mut Commands) -> bool {
+    commands.spawn(LocalPlayerSpawner {
+        spawn_time: 0.0,
+        translation: stage_creator.stage.spawn_translation,
+    });
+    return true;
 }
 
 fn build_perimeter(stage_creator: &StageCreator, commands: &mut Commands) -> bool {
