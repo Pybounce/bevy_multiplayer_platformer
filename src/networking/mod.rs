@@ -6,7 +6,7 @@ pub mod networking_stuff;
 use bevy_matchbox::{matchbox_socket::SingleChannel, MatchboxSocket};
 use networking_stuff::{ check_peer_connections, connect_socket, disconnect_socket, receive_messages, send_message, PeerConnectionEvent, PeerDisconnectionEvent };
 
-use crate::{common::states::NetworkingState, stage::stage_builder::{events::StageBuildCompleteEvent, CurrentStageData}};
+use crate::{common::states::NetworkingState, stage::stage_builder::CurrentStageData};
 
 pub mod messages;
 pub mod networked_players;

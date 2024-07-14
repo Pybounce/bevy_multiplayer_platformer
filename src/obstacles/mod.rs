@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 use bevy_rapier2d::geometry::CollidingEntities;
 
-use crate::{common::death::{DeathMarker, Killable}, local_player::LocalPlayer};
+use crate::common::death::{DeathMarker, Killable};
 
 #[derive(Component)]
 pub struct InstantKiller;
