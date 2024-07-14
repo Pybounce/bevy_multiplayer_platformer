@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::stage::stage_builder::stage_creator::StageCreator;
+use crate::{obstacles::InstantKiller, stage::stage_builder::stage_creator::StageCreator};
 
 use super::tiles::PhysicalTileBundle;
 
@@ -10,7 +10,8 @@ pub struct Spike;
 #[derive(Bundle)]
 pub struct SpikeBundle {
     physical_tile_bundle: PhysicalTileBundle,
-    spike_marker: Spike
+    spike_marker: Spike,
+    instant_killer: InstantKiller
 }
 
 impl SpikeBundle {
@@ -18,6 +19,7 @@ impl SpikeBundle {
         SpikeBundle {
             physical_tile_bundle: PhysicalTileBundle::new(stage_creator, grid_pos, atlas_rect),
             spike_marker: Spike,
+            instant_killer: InstantKiller,
         }
     }
 }

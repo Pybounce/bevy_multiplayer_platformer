@@ -1,2 +1,2 @@
 pub mod states;
-pub mod death_marker;
+pub mod death;

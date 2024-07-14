@@ -6,7 +6,7 @@ use bevy::{
 
 mod local_player;
 use bevy_rapier2d::plugin::{NoUserData, RapierPhysicsPlugin};
-use common::{death_marker::despawn_death_marked, states::StatesPlugin};
+use common::{death::despawn_death_marked, states::StatesPlugin};
 use game::GamePlugin;
 use local_player::LocalPlayer;
 
@@ -14,6 +14,7 @@ mod networking;
 use networking::{networked_players::{remove_disconnected_players, spawn_new_players}, GameNetworkingPlugin};
 
 mod stage_select;
+use obstacles::check_insta_kill_collisions;
 use player::{common::check_player_out_of_bounds, death::trigger_dead_local_player_respawn, horizontal_movement_controller::{move_airbourne_horizontal_controller, move_ground_horizontal_controller}, jump_controller::{begin_player_jump, can_jump, check_jump_fall_states, maintain_player_jump, update_last_grounded}, spawner::spawn_local_players};
 use stage_1::check_grounded;
 use stage::stage_builder::StageBuilderPlugin;
@@ -24,6 +25,7 @@ mod common;
 mod game;
 mod player;
 mod stage;
+mod obstacles;
 
 pub mod stage_1;
 
@@ -57,7 +59,7 @@ fn main() {
         //.add_plugins(RapierDebugRenderPlugin::default())
         .add_systems(Startup, spawn_camera)
         .add_systems(Update, (move_camera, close_on_esc, spawn_new_players, remove_disconnected_players))
-        .add_systems(Update, (trigger_dead_local_player_respawn, spawn_local_players, check_grounded, check_player_out_of_bounds, move_airbourne_horizontal_controller, move_ground_horizontal_controller, update_last_grounded, maintain_player_jump, begin_player_jump, can_jump, check_jump_fall_states, despawn_death_marked))
+        .add_systems(Update, (check_insta_kill_collisions, trigger_dead_local_player_respawn, spawn_local_players, check_grounded, check_player_out_of_bounds, move_airbourne_horizontal_controller, move_ground_horizontal_controller, update_last_grounded, maintain_player_jump, begin_player_jump, can_jump, check_jump_fall_states, despawn_death_marked))
         .run();
 }
 

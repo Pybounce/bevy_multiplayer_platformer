@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
 
-use crate::{player::{death::Respawnable, horizontal_movement_controller::{AirbourneHorizontalMovementController, GroundedHorizontalMovementController}, jump_controller::JumpController}, stage::stage_objects::StageObject, stage_1::Groundable};
+use crate::{common::death::Killable, player::{death::Respawnable, horizontal_movement_controller::{AirbourneHorizontalMovementController, GroundedHorizontalMovementController}, jump_controller::JumpController}, stage::stage_objects::StageObject, stage_1::Groundable};
 
 const PLAYER_SIZE: Vec2 = Vec2::new(32.0, 32.0);
 const PLAYER_COLOR: Color = Color::rgb(0.0, 2.0, 0.0);
@@ -10,7 +10,7 @@ const PLAYER_ACCELERATION: f32 = 2000.0;
 const PLAYER_HORIZONTAL_FRICTION: f32 = 600.0;
 const PLAYER_JUMP_SPEED: f32 = 300.0;
 const PLAYER_JUMP_DURATION: f64 = 0.3;
-const PLAYER_RESPAWN_DELAY: f64 = 3.0;
+const PLAYER_RESPAWN_DELAY: f64 = 0.5;
 
 #[derive(Component)]
 pub struct LocalPlayer;
@@ -32,7 +32,8 @@ pub struct LocalPlayerBundle {
     grounded_horizontal_movement_controller: GroundedHorizontalMovementController,
     airbourne_horizontal_movement_controller: AirbourneHorizontalMovementController,
     respawnable: Respawnable,
-    stage_object: StageObject
+    stage_object: StageObject,
+    killable: Killable
 }
 impl LocalPlayerBundle {
     pub fn new(pos: Vec3, stage_id: usize) -> Self {
@@ -94,7 +95,8 @@ impl Default for LocalPlayerBundle {
                 translation: Vec3::default(),
                 delay_in_seconds: PLAYER_RESPAWN_DELAY,
             },
-            stage_object: StageObject { stage_id: usize::max_value() }
+            stage_object: StageObject { stage_id: usize::max_value() },
+            killable: Killable,
         }
     }
 }

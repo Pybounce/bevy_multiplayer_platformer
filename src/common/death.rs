@@ -3,6 +3,9 @@ use bevy::prelude::*;
 #[derive(Component)]
 pub struct DeathMarker;
 
+#[derive(Component)]
+pub struct Killable;
+
 pub fn despawn_death_marked(
     mut commands: Commands,
     query: Query<Entity, With<DeathMarker>>
