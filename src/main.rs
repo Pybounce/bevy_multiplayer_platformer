@@ -6,7 +6,7 @@ use bevy::{
 
 mod local_player;
 use bevy_rapier2d::plugin::{NoUserData, RapierPhysicsPlugin};
-use camera::{move_camera, spawn_camera};
+use camera::{move_camera, spawn_camera, zoom_camera};
 use common::{death::despawn_death_marked, shake::shake, states::StatesPlugin};
 use game::GamePlugin;
 
@@ -58,7 +58,7 @@ fn main() {
         .add_plugins(RapierPhysicsPlugin::<NoUserData>::pixels_per_meter(100.0))
         //.add_plugins(RapierDebugRenderPlugin::default())
         .add_systems(Startup, spawn_camera)
-        .add_systems(Update, (move_camera, close_on_esc, spawn_new_players, remove_disconnected_players))
+        .add_systems(Update, (zoom_camera, move_camera, close_on_esc, spawn_new_players, remove_disconnected_players))
         .add_systems(Update, (shake, check_insta_kill_collisions, trigger_dead_local_player_respawn, spawn_local_players, check_grounded, check_player_out_of_bounds, move_airbourne_horizontal_controller, move_ground_horizontal_controller, update_last_grounded, maintain_player_jump, begin_player_jump, can_jump, check_jump_fall_states, despawn_death_marked))
         .run();
 }

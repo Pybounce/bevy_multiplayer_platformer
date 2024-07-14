@@ -9,6 +9,13 @@ To Do #1
 - Make the player explode into many tiny squares with collision (good ol' ECS)
 - Move all that player config into a component for the player?
 
+Game Juice
+
+- Player jump particles (dust off ground)
+- Player land particles (dust on ground collision, walls too)
+- Player movement particles (dust on ground when moving)
+- Player elasticity when jumping and landing (shader??)
+
 To Theory Craft
 
 - Player mechanics
