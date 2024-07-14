@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
 
-use crate::stage_1::Grounded;
+use crate::ground::Grounded;
 
 
 

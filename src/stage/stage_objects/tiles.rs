@@ -2,7 +2,7 @@
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
 
-use crate::{stage::{stage_builder::stage_creator::StageCreator, stage_objects::StageObject}, stage_1::Ground};
+use crate::{stage::{stage_builder::stage_creator::StageCreator, stage_objects::StageObject}, ground::Ground};
 
 
 const TILE_SIZE: f32 = 32.0;

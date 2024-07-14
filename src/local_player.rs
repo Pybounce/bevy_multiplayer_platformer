@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
 
-use crate::{common::death::Killable, player::{death::Respawnable, horizontal_movement_controller::{AirbourneHorizontalMovementController, GroundedHorizontalMovementController}, jump_controller::JumpController}, stage::stage_objects::StageObject, stage_1::Groundable};
+use crate::{common::death::Killable, player::{death::Respawnable, horizontal_movement_controller::{AirbourneHorizontalMovementController, GroundedHorizontalMovementController}, jump_controller::JumpController}, stage::stage_objects::StageObject, ground::Groundable};
 
 const PLAYER_SIZE: Vec2 = Vec2::new(32.0, 32.0);
 const PLAYER_COLOR: Color = Color::rgb(0.0, 2.0, 0.0);
