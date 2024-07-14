@@ -6,9 +6,9 @@ use bevy::{
 
 mod local_player;
 use bevy_rapier2d::plugin::{NoUserData, RapierPhysicsPlugin};
+use camera::{move_camera, spawn_camera};
 use common::{death::despawn_death_marked, states::StatesPlugin};
 use game::GamePlugin;
-use local_player::LocalPlayer;
 
 mod networking;
 use networking::{networked_players::{remove_disconnected_players, spawn_new_players}, GameNetworkingPlugin};
@@ -26,7 +26,7 @@ mod game;
 mod player;
 mod stage;
 mod obstacles;
-
+mod camera;
 pub mod stage_1;
 
 fn main() {
@@ -38,7 +38,7 @@ fn main() {
         primary_window: Some(Window {
             title: "Legend of the Octo-Parakeet".into(),
             name: Some("Legend of the Octo-Parakeet".into()),
-            resolution: (800.0, 450.0).into(),
+            resolution: (1600.0, 900.0).into(),
             present_mode: PresentMode::Immediate,
             ..default()
         }),
@@ -63,29 +63,3 @@ fn main() {
         .run();
 }
 
-fn spawn_camera(mut commands: Commands) {
-    commands
-        .spawn(Camera2dBundle {
-            camera: Camera {
-                ..default()
-            },
-            transform: Transform {
-                translation: Vec3::new(0.0, 0.0, 0.0),
-                ..default()
-            },
-            ..default()
-        });
-}
-
-fn move_camera(
-    mut camera_query: Query<&mut Transform, With<Camera>>,
-    player_query: Query<&Transform, (With<LocalPlayer>, Without<Camera>)>
-) {
-    let mut camera_transform = camera_query.single_mut();
-    let player_transform = player_query.get_single();
-    match player_transform {
-        Ok(t) => camera_transform.translation = t.translation,
-        Err(_) => (),
-    }
-    
-}
