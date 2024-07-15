@@ -78,3 +78,19 @@ Bugs
   - Seems like it's not scrubbing the current stage
   - Also might not be taking the user back to stage select
   - NOTE this happens when preloading the next, non-existent stage, in the BuildComplete event
+
+Thoughts on Multiplayer
+
+- Main issue is that small short stages will become cluttered with players
+- Fix #1: Can instead move to the server relay architecture with matchmaking
+  - This would then look for any game on that stage, with less than x players
+  - If there is one, join it -- if there isn't one, create a new lobby on that map
+  - This way players will have a decent amount of fellow players without it becoming cluttered
+  - DRAWBACK: Once you move to the next stage, you're unlikely to see the player you were just with agian
+- Fix #2: Make stages far longer and with checkpoints
+  - Players should be more spread out
+  - You stay with the same players for longer
+  - DRAWBACK: If the game gets lots of attention, clutter will still be a big issue
+- Fix #3: Combine #1 and #2, make lobbies with long stages
+  - Scales to many players well
+  - You still get to play with the same players
