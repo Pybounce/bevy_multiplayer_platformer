@@ -20,7 +20,18 @@ To Theory Craft
 
 Stage Mechanics
 
-- Key blocks
+- Triggers
+  - Many types of stage mechanic will be a trigger, such as:
+    - Keys
+    - Buttons
+    - Switches
+  - There should probably be some unified way of triggering an event off to the subscribers
+  - Subscribers might be
+    - Key Blocks
+    - Stage Event (rising water etc)
+    - Interval blocks
+    - Door opening (basically key blocks but it closes after x seconds?)
+- Key Blocks
   - Keys are placed around the stage
   - Collect the key to unlock the assigned locked blocks
   - Different keys will be assigned to different blocks in one stage
@@ -38,6 +49,27 @@ Stage Mechanics
   - Touching them gives the object a boost of velocity in the normal direction
 - Rotating stage??
   - Just hold the player in place, rotate the camera, flip gravity
+- Interval blocks
+  - They 'switch' on and off every x seconds
+  - When on, they are just blocks, when off, they have dissapear
+  - Can be triggered by timer or maybe even player events (button/switch?)
+- Crushing blocks
+  - A trigger subscriber that usually just stays on a timer
+  - Can act as a door if it subscribes to a non timer trigger?
+  - Will crush the player if they hit the bottom or top of it as well as touching ground/ceiling
+
+Player Mechanics
+
+- Dash
+  - Works on ground and air
+  - Restores after touching ground (+delay) or wall
+- Wall jumping
+  - Literally just the bees knees, what more must be said
+- Slide
+  - Press down to trigger
+  - Only works when grounded
+  - Gives a bit of a boost in speed like dash? (might be weird in air to slide transition)
+  - Player becomes shorter and can slide under things
 
 Bugs
 
