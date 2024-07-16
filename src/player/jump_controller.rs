@@ -17,7 +17,7 @@ pub struct JumpController {
 }
 
 #[derive(Component)]
-pub struct CanJump;
+pub struct CoyoteGrounded;
 #[derive(Component)]
 pub struct Jumping;
 #[derive(Component)]
@@ -45,7 +45,7 @@ pub fn maintain_player_jump(
 }
 
 pub fn begin_player_jump(
-    mut query: Query<(&mut Velocity, &mut JumpController), With<CanJump>>,
+    mut query: Query<(&mut Velocity, &mut JumpController), Or<(With<Grounded>, With<CoyoteGrounded>)>>,
     time: Res<Time>,
     input: Res<ButtonInput<KeyCode>>
 ) {
@@ -58,17 +58,17 @@ pub fn begin_player_jump(
     }
 }
 
-pub fn can_jump(
-    query: Query<(Entity, &JumpController)>,
+pub fn is_coyote_grounded(
+    query: Query<(Entity, &JumpController), Without<Grounded>>,
     time: Res<Time>,
     mut commands: Commands
 ) {
     for (e, jc) in &query {
         if time.elapsed_seconds_f64() - jc.last_grounded < jc.coyote_time {
-            commands.entity(e).try_insert(CanJump);
+            commands.entity(e).try_insert(CoyoteGrounded);
         }
         else {
-            commands.entity(e).remove::<CanJump>();
+            commands.entity(e).remove::<CoyoteGrounded>();
         }
     }
 }
