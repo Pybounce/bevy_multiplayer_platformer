@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
 
-use crate::{common::death::Killable, ground::Groundable, player::{death::Respawnable, horizontal_movement_controller::{AirbourneHorizontalMovementController, GroundedHorizontalMovementController}, jump_controller::JumpController, wall_jump_controller::WallJumpController}, stage::stage_objects::StageObject, wall::{Wall, Wallable}};
+use crate::{common::death::Killable, ground::Groundable, player::{death::Respawnable, horizontal_movement_controller::{AirbourneHorizontalMovementController, GroundedHorizontalMovementController}, jump_controller::JumpController, wall_jump_controller::{WallJumpController, WallStickable}}, stage::stage_objects::StageObject, wall::{Wall, Wallable}};
 
 const PLAYER_SIZE: Vec2 = Vec2::new(32.0, 32.0);
 const PLAYER_COLOR: Color = Color::rgb(0.0, 2.0, 0.0);
@@ -36,6 +36,7 @@ pub struct LocalPlayerBundle {
     colliding_entities: CollidingEntities,
     jump_controller: JumpController,
     wall_jump_controller: WallJumpController,
+    wall_stickable: WallStickable,
     grounded_horizontal_movement_controller: GroundedHorizontalMovementController,
     airbourne_horizontal_movement_controller: AirbourneHorizontalMovementController,
     respawnable: Respawnable,
@@ -88,6 +89,9 @@ impl Default for LocalPlayerBundle {
                 force_in: PLAYER_WALL_JUMP_IN_FORCE,
                 force_out: PLAYER_WALL_JUMP_OUT_FORCE,
                 friction_coefficient: PLAYER_WALL_FRICTION_COEFFICIENT,
+            },
+            wall_stickable: WallStickable {
+                wall_stick_time: 1.0,
             },
             grounded_horizontal_movement_controller: GroundedHorizontalMovementController {
                 left_key: KeyCode::KeyA,

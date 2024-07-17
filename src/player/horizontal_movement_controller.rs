@@ -4,6 +4,8 @@ use bevy_rapier2d::prelude::*;
 
 use crate::ground::Grounded;
 
+use super::wall_jump_controller::WallStuck;
+
 #[derive(Component)]
 pub struct GroundedHorizontalMovementController {
     pub left_key: KeyCode,
@@ -54,7 +56,7 @@ pub struct AirbourneHorizontalMovementController {
 
 
 pub fn move_airbourne_horizontal_controller(
-    mut query: Query<(&mut Velocity, &AirbourneHorizontalMovementController), Without<Grounded>>,    //todo: need an airbourne state, right now there are seaprate states for jumping
+    mut query: Query<(&mut Velocity, &AirbourneHorizontalMovementController), (Without<Grounded>, Without<WallStuck>)>,    //todo: need an airbourne state, right now there are seaprate states for jumping
     input: Res<ButtonInput<KeyCode>>,
     time: Res<Time>
 ) {
@@ -64,11 +66,11 @@ pub fn move_airbourne_horizontal_controller(
 
         if input.pressed(con.right_key) {
             vel.linvel.x += con.acceleration * time.delta_seconds();
-            player_inputting = false;
+            player_inputting = true;
         }
         if input.pressed(con.left_key) {
             vel.linvel.x -= con.acceleration * time.delta_seconds();
-            player_inputting = false;
+            player_inputting = true;
         }
 
         if player_inputting == false {

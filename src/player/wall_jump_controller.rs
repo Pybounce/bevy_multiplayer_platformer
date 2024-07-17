@@ -1,9 +1,23 @@
-use bevy::prelude::*;
+use bevy::{prelude::*, transform::commands};
 use bevy_rapier2d::prelude::*;
 
 use crate::{ground::Grounded, wall::TouchingWall};
 
-use super::jump_controller::{CoyoteGrounded, JumpController};
+use super::{horizontal_movement_controller::AirbourneHorizontalMovementController, jump_controller::{CoyoteGrounded, JumpController}};
+
+#[derive(Component)]
+pub struct WallStickable {
+    /// Amount of time player sticks to a wall
+    pub wall_stick_time: f64
+}
+
+#[derive(Component)]
+pub struct WallStuck {
+    pub touching_wall: TouchingWall,
+    /// Time the player started to try getting away from the wall
+    pub last_unstuck_time: f64
+}
+
 
 #[derive(Component)]
 pub struct WallJumpController {
@@ -11,7 +25,7 @@ pub struct WallJumpController {
     pub force_in: Vec2,
     /// Force applied when jumping away from the wall
     pub force_out: Vec2,
-    pub friction_coefficient: f32
+    pub friction_coefficient: f32,
 }
 
 pub fn begin_player_wall_jump(
@@ -29,6 +43,26 @@ pub fn begin_player_wall_jump(
             wjc.force_out;
             jc.last_grounded -= jc.coyote_time; //todo: this sucks but it fixes being able to jump from the ground, and then jump again during coyote time
             jc.last_jump_pressed_time = time.elapsed_seconds_f64(); //todo: wrapped??
+        }
+    }
+}
+
+pub fn update_wall_stuck_time(
+    mut query: Query<(Entity, &mut WallStuck, &AirbourneHorizontalMovementController, &WallStickable)>,
+    input: Res<ButtonInput<KeyCode>>,
+    time: Res<Time>,
+    mut commands: Commands
+) {
+    for (e, mut wall_stuck, mc, wall_stickable) in &mut query {
+        let push_away_key = match wall_stuck.touching_wall {
+            TouchingWall::Left => mc.left_key,
+            TouchingWall::Right => mc.right_key,
+        };
+        if !input.pressed(push_away_key) {
+            wall_stuck.last_unstuck_time = time.elapsed_seconds_f64();
+        }
+        else if time.elapsed_seconds_f64() - wall_stuck.last_unstuck_time >= wall_stickable.wall_stick_time {
+            commands.entity(e).remove::<WallStuck>();
         }
     }
 }
