@@ -101,7 +101,6 @@ pub fn add_wall_stuck(
     time: Res<Time>
 ) {
     for (e, tw) in &mut query {
-        warn!("adding");
         commands.entity(e).try_insert(WallStuck {
             touching_wall: *tw,
             last_unstuck_time: time.elapsed_seconds_f64(),
@@ -114,7 +113,6 @@ pub fn remove_wall_stuck(
     mut commands: Commands,
 ) {
     for e in &mut query {
-        warn!("removing");
         commands.entity(e).remove::<WallStuck>();
     }
 }
