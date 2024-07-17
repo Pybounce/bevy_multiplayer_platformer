@@ -10,7 +10,8 @@ pub struct WallJumpController {
     /// Force applied when jumping into the wall
     pub force_in: Vec2,
     /// Force applied when jumping away from the wall
-    pub force_out: Vec2
+    pub force_out: Vec2,
+    pub friction_coefficient: f32
 }
 
 pub fn begin_player_wall_jump(
@@ -20,7 +21,7 @@ pub fn begin_player_wall_jump(
     input: Res<ButtonInput<KeyCode>>
 ) {
     for (mut v, mut jc, w, wjc) in &mut query {
-        if input.pressed(jc.key) {
+        if input.just_pressed(jc.key) {
             v.linvel = match w {
                 TouchingWall::Left => wjc.force_in * Vec2::new(-1.0, 1.0),
                 TouchingWall::Right => wjc.force_in,

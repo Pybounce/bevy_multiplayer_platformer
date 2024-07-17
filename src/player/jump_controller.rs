@@ -1,7 +1,9 @@
 use bevy::prelude::*;
-use bevy_rapier2d::prelude::*;
+use bevy_rapier2d::{na::ComplexField, prelude::*};
 
-use crate::ground::Grounded;
+use crate::{ground::Grounded, wall::TouchingWall};
+
+use super::wall_jump_controller::WallJumpController;
 
 
 
@@ -13,7 +15,7 @@ pub struct JumpController {
     pub last_jump_pressed_time: f64,
     pub last_jump_released_time: f64,
     pub last_grounded: f64,
-    pub coyote_time: f64
+    pub coyote_time: f64,
 }
 
 #[derive(Component)]
@@ -22,6 +24,20 @@ pub struct CoyoteGrounded;
 pub struct Jumping;
 #[derive(Component)]
 pub struct Falling;
+
+pub fn apply_wall_friction(
+    mut query: Query<(&mut Velocity, &WallJumpController), With<TouchingWall>>,
+    time: Res<Time>
+) {
+    for (mut v, wjc) in &mut query {
+        if v.linvel.y < 0.0 {
+            // we want to simulate grabbing the wall
+            // which would only happen when sliding down
+            // sliding up should be fast
+            v.linvel.y -= wjc.friction_coefficient * v.linvel.y.powi(2) * v.linvel.y.signum() * time.delta_seconds();
+        }
+    }
+}
 
 pub fn maintain_player_jump(
     mut query: Query<(Entity, &mut JumpController)>,

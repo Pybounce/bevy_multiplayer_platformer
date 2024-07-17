@@ -13,6 +13,7 @@ const PLAYER_JUMP_SPEED: f32 = 300.0;
 const PLAYER_JUMP_DURATION: f64 = 0.3;
 const PLAYER_WALL_JUMP_IN_FORCE: Vec2 = Vec2::new(250.0, 300.0);
 const PLAYER_WALL_JUMP_OUT_FORCE: Vec2 = Vec2::new(250.0, 300.0);
+const PLAYER_WALL_FRICTION_COEFFICIENT: f32 = 0.03;
 
 const PLAYER_RESPAWN_DELAY: f64 = 0.5;
 
@@ -86,6 +87,7 @@ impl Default for LocalPlayerBundle {
             wall_jump_controller: WallJumpController {
                 force_in: PLAYER_WALL_JUMP_IN_FORCE,
                 force_out: PLAYER_WALL_JUMP_OUT_FORCE,
+                friction_coefficient: PLAYER_WALL_FRICTION_COEFFICIENT,
             },
             grounded_horizontal_movement_controller: GroundedHorizontalMovementController {
                 left_key: KeyCode::KeyA,
