@@ -79,8 +79,10 @@ Bugs
   - Also might not be taking the user back to stage select
   - NOTE this happens when preloading the next, non-existent stage, in the BuildComplete event
 - Removing Groundable or Wallable component will not remove Grounded or TouchingWall component
-  - Can add a system to check Changed<Grounded> but for now, who cares?
+  - Can add a system to check Changed<Groundedable> but for now, who cares?
   - Consider removing groundable and wallable all together?
+  - Same thing with controllers Changed<JumpController>
+  - NOTE: Changed isn't how you track removed components, that is something different
 
 Thoughts on Multiplayer
 
