@@ -66,3 +66,41 @@ pub fn update_wall_stuck_time(
         }
     }
 }
+
+pub fn update_wall_stuck(
+    mut query: Query<(&TouchingWall, &mut WallStuck), Changed<TouchingWall>>,
+    time: Res<Time>
+) {
+    for (tw, mut ws) in &mut query {
+        match (&tw, &ws.touching_wall) {
+            (TouchingWall::Left, TouchingWall::Left) => continue,
+            (TouchingWall::Right, TouchingWall::Right) => continue,
+            _ => {
+                ws.touching_wall = *tw;
+                ws.last_unstuck_time = time.elapsed_seconds_f64();
+            }
+        };
+    }
+}
+
+pub fn add_wall_stuck(
+    mut query: Query<(Entity, &TouchingWall), (With<TouchingWall>, Without<WallStuck>, With<WallStickable>)>,
+    mut commands: Commands,
+    time: Res<Time>
+) {
+    for (e, tw) in &mut query {
+        commands.entity(e).try_insert(WallStuck {
+            touching_wall: *tw,
+            last_unstuck_time: time.elapsed_seconds_f64(),
+        });
+    }
+}
+
+pub fn remove_wall_stuck(
+    mut query: Query<Entity, (With<WallStuck>, Or<(Without<TouchingWall>, Without<WallStickable>)>)>,
+    mut commands: Commands,
+) {
+    for e in &mut query {
+        commands.entity(e).remove::<WallStuck>();
+    }
+}

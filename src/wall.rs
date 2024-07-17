@@ -11,7 +11,7 @@ pub struct Wall;
 pub struct Wallable;
 
 /// varients describe the side of the wall, not which side the wall is on
-#[derive(Component)]
+#[derive(Component, Copy, Clone)]
 pub enum TouchingWall {
     Left,
     Right
@@ -19,12 +19,11 @@ pub enum TouchingWall {
 
 pub fn check_touching_wall(
     mut commands: Commands,
-    wallable_query: Query<(Entity, &CollidingEntities, Option<&TouchingWall>), With<Wallable>>,
+    wallable_query: Query<(Entity, &CollidingEntities), With<Wallable>>,
     wall_query: Query<(), With<Wall>>,
-    rapier_context: Res<RapierContext>,
-    time: Res<Time>
+    rapier_context: Res<RapierContext>
 ) {
-    for (entity, colliding_entities, tw_opt) in &wallable_query {
+    for (entity, colliding_entities) in &wallable_query {
         let mut colliding_left = false;
         let mut colliding_right = false;
 
@@ -45,37 +44,15 @@ pub fn check_touching_wall(
             }
 
         }
-        if let Some(tw) = tw_opt {
-            match tw {
-                TouchingWall::Left => {
-                    if colliding_left {
-                        continue;
-                    }
-                },
-                TouchingWall::Right => {
-                    if colliding_right {
-                        continue;
-                    }
-                },
-            }
-        }
+
         if colliding_left {
             commands.entity(entity).try_insert(TouchingWall::Left);
-            commands.entity(entity).try_insert(WallStuck {
-                touching_wall: TouchingWall::Left,
-                last_unstuck_time: time.elapsed_seconds_f64(),
-            });
         }
         else if colliding_right {
             commands.entity(entity).try_insert(TouchingWall::Right);
-            commands.entity(entity).try_insert(WallStuck {
-                touching_wall: TouchingWall::Left,
-                last_unstuck_time: time.elapsed_seconds_f64(),
-            });
         }
         else if !colliding_right && !colliding_left {
             commands.entity(entity).remove::<TouchingWall>();
-            commands.entity(entity).remove::<WallStuck>();
         }
     }
 }
@@ -94,4 +71,6 @@ pub fn asdfdasd2(
         s.color = Color::GREEN;
     }
 }
+
+//TODO - SPlit out the WallStuck into a separate function that looks for the current TouchingWall and compares it with WallStuck, then adds or removes
 
