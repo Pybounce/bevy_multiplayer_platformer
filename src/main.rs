@@ -19,6 +19,7 @@ use player::{common::check_player_out_of_bounds, death::trigger_dead_local_playe
 use ground::check_grounded;
 use stage::stage_builder::StageBuilderPlugin;
 use stage_select::StageSelectPlugin;
+use wall::{check_touching_wall, wallupdate};
 
 mod common;
 
@@ -28,6 +29,7 @@ mod stage;
 mod obstacles;
 mod camera;
 pub mod ground;
+pub mod wall;
 
 fn main() {
     let winit_settings = WinitSettings {
@@ -59,7 +61,7 @@ fn main() {
         //.add_plugins(RapierDebugRenderPlugin::default())
         .add_systems(Startup, spawn_camera)
         .add_systems(Update, (move_camera, close_on_esc, spawn_new_players, remove_disconnected_players))
-        .add_systems(Update, (shake, check_insta_kill_collisions, trigger_dead_local_player_respawn, spawn_local_players, check_grounded, check_player_out_of_bounds, move_airbourne_horizontal_controller, move_ground_horizontal_controller, update_last_grounded, maintain_player_jump, begin_player_jump, is_coyote_grounded, check_jump_fall_states, despawn_death_marked))
+        .add_systems(Update, (wallupdate, check_touching_wall, shake, check_insta_kill_collisions, trigger_dead_local_player_respawn, spawn_local_players, check_grounded, check_player_out_of_bounds, move_airbourne_horizontal_controller, move_ground_horizontal_controller, update_last_grounded, maintain_player_jump, begin_player_jump, is_coyote_grounded, check_jump_fall_states, despawn_death_marked))
         .run();
 }
 

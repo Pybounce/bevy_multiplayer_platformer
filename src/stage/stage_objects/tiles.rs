@@ -2,7 +2,7 @@
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
 
-use crate::{stage::{stage_builder::stage_creator::StageCreator, stage_objects::StageObject}, ground::Ground};
+use crate::{ground::Ground, stage::{stage_builder::stage_creator::StageCreator, stage_objects::StageObject}, wall::Wall};
 
 
 const TILE_SIZE: f32 = 32.0;
@@ -27,7 +27,8 @@ pub struct PhysicalTileBundle {
 #[derive(Bundle)]
 pub struct GroundTileBundle {
     physical_tile_bundle: PhysicalTileBundle,
-    ground_marker: Ground
+    ground_marker: Ground,
+    wall_marker: Wall
 }
 
 
@@ -74,6 +75,7 @@ impl GroundTileBundle {
         GroundTileBundle {
             physical_tile_bundle: PhysicalTileBundle::new(stage_creator, grid_pos, atlas_rect),
             ground_marker: Ground,
+            wall_marker: Wall,
         }
     }
 }

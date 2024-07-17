@@ -78,6 +78,9 @@ Bugs
   - Seems like it's not scrubbing the current stage
   - Also might not be taking the user back to stage select
   - NOTE this happens when preloading the next, non-existent stage, in the BuildComplete event
+- Removing Groundable or Wallable component will not remove Grounded or TouchingWall component
+  - Can add a system to check Changed<Grounded> but for now, who cares?
+  - Consider removing groundable and wallable all together?
 
 Thoughts on Multiplayer
 
