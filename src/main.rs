@@ -15,7 +15,7 @@ use networking::{networked_players::{remove_disconnected_players, spawn_new_play
 
 mod stage_select;
 use obstacles::check_insta_kill_collisions;
-use player::{common::check_player_out_of_bounds, death::trigger_dead_local_player_respawn, horizontal_movement_controller::{move_airbourne_horizontal_controller, move_ground_horizontal_controller}, jump_controller::{begin_player_jump, is_coyote_grounded, check_jump_fall_states, maintain_player_jump, update_last_grounded}, spawner::spawn_local_players};
+use player::{common::check_player_out_of_bounds, death::trigger_dead_local_player_respawn, horizontal_movement_controller::{move_airbourne_horizontal_controller, move_ground_horizontal_controller}, jump_controller::{begin_player_jump, check_jump_fall_states, is_coyote_grounded, maintain_player_jump, update_last_grounded}, spawner::spawn_local_players, wall_jump_controller::begin_player_wall_jump};
 use ground::check_grounded;
 use stage::stage_builder::StageBuilderPlugin;
 use stage_select::StageSelectPlugin;
@@ -61,7 +61,7 @@ fn main() {
         //.add_plugins(RapierDebugRenderPlugin::default())
         .add_systems(Startup, spawn_camera)
         .add_systems(Update, (move_camera, close_on_esc, spawn_new_players, remove_disconnected_players))
-        .add_systems(Update, (wallupdate, check_touching_wall, shake, check_insta_kill_collisions, trigger_dead_local_player_respawn, spawn_local_players, check_grounded, check_player_out_of_bounds, move_airbourne_horizontal_controller, move_ground_horizontal_controller, update_last_grounded, maintain_player_jump, begin_player_jump, is_coyote_grounded, check_jump_fall_states, despawn_death_marked))
+        .add_systems(Update, (begin_player_wall_jump, wallupdate, check_touching_wall, shake, check_insta_kill_collisions, trigger_dead_local_player_respawn, spawn_local_players, check_grounded, check_player_out_of_bounds, move_airbourne_horizontal_controller, move_ground_horizontal_controller, update_last_grounded, maintain_player_jump, begin_player_jump, is_coyote_grounded, check_jump_fall_states, despawn_death_marked))
         .run();
 }
 

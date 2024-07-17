@@ -1,15 +1,19 @@
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
 
-use crate::{common::death::Killable, ground::Groundable, player::{death::Respawnable, horizontal_movement_controller::{AirbourneHorizontalMovementController, GroundedHorizontalMovementController}, jump_controller::JumpController}, stage::stage_objects::StageObject, wall::Wallable};
+use crate::{common::death::Killable, ground::Groundable, player::{death::Respawnable, horizontal_movement_controller::{AirbourneHorizontalMovementController, GroundedHorizontalMovementController}, jump_controller::JumpController, wall_jump_controller::WallJumpController}, stage::stage_objects::StageObject, wall::{Wall, Wallable}};
 
 const PLAYER_SIZE: Vec2 = Vec2::new(32.0, 32.0);
 const PLAYER_COLOR: Color = Color::rgb(0.0, 2.0, 0.0);
 const PLAYER_MAX_SPEED: Vec2 = Vec2::new(300.0, 1000.0);
 const PLAYER_ACCELERATION: f32 = 2000.0;
 const PLAYER_HORIZONTAL_FRICTION: f32 = 600.0;
+
 const PLAYER_JUMP_SPEED: f32 = 300.0;
 const PLAYER_JUMP_DURATION: f64 = 0.3;
+const PLAYER_WALL_JUMP_IN_FORCE: Vec2 = Vec2::new(250.0, 300.0);
+const PLAYER_WALL_JUMP_OUT_FORCE: Vec2 = Vec2::new(250.0, 300.0);
+
 const PLAYER_RESPAWN_DELAY: f64 = 0.5;
 
 #[derive(Component)]
@@ -30,6 +34,7 @@ pub struct LocalPlayerBundle {
     wallable_marker: Wallable,
     colliding_entities: CollidingEntities,
     jump_controller: JumpController,
+    wall_jump_controller: WallJumpController,
     grounded_horizontal_movement_controller: GroundedHorizontalMovementController,
     airbourne_horizontal_movement_controller: AirbourneHorizontalMovementController,
     respawnable: Respawnable,
@@ -77,6 +82,10 @@ impl Default for LocalPlayerBundle {
                 last_jump_released_time: 0.0,
                 last_grounded: 0.0,
                 coyote_time: 0.3,
+            },
+            wall_jump_controller: WallJumpController {
+                force_in: PLAYER_WALL_JUMP_IN_FORCE,
+                force_out: PLAYER_WALL_JUMP_OUT_FORCE,
             },
             grounded_horizontal_movement_controller: GroundedHorizontalMovementController {
                 left_key: KeyCode::KeyA,

@@ -10,7 +10,7 @@ pub struct Wallable;
 
 /// varients describe the side of the wall, not which side the wall is on
 #[derive(Component)]
-pub enum TouchingWall{
+pub enum TouchingWall {
     Left,
     Right
 }
