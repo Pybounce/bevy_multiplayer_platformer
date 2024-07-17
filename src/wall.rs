@@ -17,32 +17,28 @@ pub enum TouchingWall {
     Right
 }
 
+
 pub fn check_touching_wall(
     mut commands: Commands,
-    wallable_query: Query<(Entity, &CollidingEntities), With<Wallable>>,
+    wallable_query: Query<(Entity, &Transform), With<Wallable>>,
     wall_query: Query<(), With<Wall>>,
     rapier_context: Res<RapierContext>
 ) {
-    for (entity, colliding_entities) in &wallable_query {
+    for (entity, transform) in &wallable_query {
         let mut colliding_left = false;
         let mut colliding_right = false;
 
-        for colliding_entity in colliding_entities.iter() {
-            if let Ok(_) = wall_query.get(colliding_entity) {
-                if let Some(contact_pair) = rapier_context.contact_pair(entity, colliding_entity) {
-                    let mut normal_sign = 1.0;
-                    if contact_pair.collider1() == entity {
-                        normal_sign = -1.0;
-                    }
+        let ray_pos = transform.translation.truncate();
+        let ray_dir = Vec2::new(-1.0, 0.0);
+        let max_toi = 20.0;
+        let solid = true;
 
-                    for manifold in contact_pair.manifolds() {
-                        colliding_right = manifold.normal().x * normal_sign > 0.5;
-                        colliding_left = manifold.normal().x * normal_sign < -0.5;
-                    };
+        let filter = QueryFilter::new()
+        .exclude_sensors()
+        .exclude_rigid_body(entity);
 
-                }
-            }
-
+        if let Some((entity, toi)) = rapier_context.cast_ray(ray_pos, ray_dir, max_toi, solid, filter) {
+            colliding_right = true;
         }
 
         if colliding_left {
@@ -72,5 +68,4 @@ pub fn asdfdasd2(
     }
 }
 
-//TODO - SPlit out the WallStuck into a separate function that looks for the current TouchingWall and compares it with WallStuck, then adds or removes
 

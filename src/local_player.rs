@@ -5,14 +5,14 @@ use crate::{common::death::Killable, ground::Groundable, player::{death::Respawn
 
 const PLAYER_SIZE: Vec2 = Vec2::new(32.0, 32.0);
 const PLAYER_COLOR: Color = Color::rgb(0.0, 2.0, 0.0);
-const PLAYER_MAX_SPEED: Vec2 = Vec2::new(300.0, 1000.0);
+const PLAYER_MAX_SPEED: Vec2 = Vec2::new(1000.0, 1000.0);
 const PLAYER_ACCELERATION: f32 = 2000.0;
 const PLAYER_HORIZONTAL_FRICTION: f32 = 600.0;
 
 const PLAYER_JUMP_SPEED: f32 = 300.0;
 const PLAYER_JUMP_DURATION: f64 = 0.3;
 const PLAYER_WALL_JUMP_IN_FORCE: Vec2 = Vec2::new(250.0, 300.0);
-const PLAYER_WALL_JUMP_OUT_FORCE: Vec2 = Vec2::new(250.0, 300.0);
+const PLAYER_WALL_JUMP_OUT_FORCE: Vec2 = Vec2::new(300.0, 350.0);
 const PLAYER_WALL_FRICTION_COEFFICIENT: f32 = 0.03;
 
 const PLAYER_RESPAWN_DELAY: f64 = 0.5;
