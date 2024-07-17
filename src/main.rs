@@ -57,7 +57,7 @@ fn main() {
         .add_plugins(StageSelectPlugin)
         .add_plugins(GamePlugin)
         .add_plugins(GameNetworkingPlugin)
-        .add_plugins(RapierPhysicsPlugin::<NoUserData>::pixels_per_meter(100.0))
+        //.add_plugins(RapierPhysicsPlugin::<NoUserData>::pixels_per_meter(100.0))
         .add_plugins(RapierDebugRenderPlugin::default())
         .add_systems(Startup, spawn_camera)
         .add_systems(Update, (move_camera, close_on_esc, spawn_new_players, remove_disconnected_players))

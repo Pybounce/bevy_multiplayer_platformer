@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use bevy_rapier2d::{na::ComplexField, prelude::*};
+use bevy_rapier2d::prelude::*;
 
 use crate::{ground::Grounded, wall::TouchingWall};
 

@@ -1,6 +1,6 @@
 
 use bevy::prelude::*;
-use bevy_rapier2d::{na::ComplexField, prelude::*};
+use bevy_rapier2d::prelude::*;
 
 use crate::{ground::Grounded, wall::TouchingWall};
 
@@ -59,7 +59,7 @@ pub struct AirbourneHorizontalMovementController {
 
 
 pub fn move_airbourne_horizontal_controller(
-    mut query: Query<(&mut Velocity, &AirbourneHorizontalMovementController, Option<&WallStuck>), (Without<Grounded>)>,    //todo: need an airbourne state, right now there are seaprate states for jumping
+    mut query: Query<(&mut Velocity, &AirbourneHorizontalMovementController, Option<&WallStuck>), Without<Grounded>>,    //todo: need an airbourne state, right now there are seaprate states for jumping
     input: Res<ButtonInput<KeyCode>>,
     time: Res<Time>
 ) {

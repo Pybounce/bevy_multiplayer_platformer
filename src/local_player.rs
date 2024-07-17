@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
 
-use crate::{common::death::Killable, ground::Groundable, player::{death::Respawnable, horizontal_movement_controller::{AirbourneHorizontalMovementController, GroundedHorizontalMovementController}, jump_controller::JumpController, wall_jump_controller::{WallJumpController, WallStickable}}, stage::stage_objects::StageObject, wall::{Wall, Wallable}};
+use crate::{common::death::Killable, ground::Groundable, player::{death::Respawnable, horizontal_movement_controller::{AirbourneHorizontalMovementController, GroundedHorizontalMovementController}, jump_controller::JumpController, wall_jump_controller::{WallJumpController, WallStickable}}, stage::stage_objects::StageObject, wall::Wallable};
 
 const PLAYER_SIZE: Vec2 = Vec2::new(32.0, 32.0);
 const PLAYER_COLOR: Color = Color::rgb(0.0, 2.0, 0.0);
@@ -91,7 +91,7 @@ impl Default for LocalPlayerBundle {
                 friction_coefficient: PLAYER_WALL_FRICTION_COEFFICIENT,
             },
             wall_stickable: WallStickable {
-                wall_stick_time: 1.0,
+                wall_stick_time: 0.3,
             },
             grounded_horizontal_movement_controller: GroundedHorizontalMovementController {
                 left_key: KeyCode::KeyA,

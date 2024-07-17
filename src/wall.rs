@@ -20,13 +20,13 @@ pub enum TouchingWall {
 
 pub fn check_touching_wall(
     mut commands: Commands,
-    wallable_query: Query<(Entity, &Transform), With<Wallable>>,
+    wallable_query: Query<(Entity, &Transform, Option<&TouchingWall>), With<Wallable>>,
     wall_query: Query<(), With<Wall>>,
     rapier_context: Res<RapierContext>
 ) {
-    for (entity, transform) in &wallable_query {
-        let mut colliding_left = false;
-        let mut colliding_right = false;
+    for (entity, transform, tw_opt) in &wallable_query {
+        let mut new_left_collision = false;
+        let mut new_right_collision = false;
 
         let ray_pos = transform.translation.truncate();
         let ray_dir = Vec2::new(-1.0, 0.0);
@@ -38,16 +38,28 @@ pub fn check_touching_wall(
         .exclude_rigid_body(entity);
 
         if let Some((entity, toi)) = rapier_context.cast_ray(ray_pos, ray_dir, max_toi, solid, filter) {
-            colliding_right = true;
+            new_right_collision = true;
+        }
+        
+        // if it's the new collision is already set, continue.
+        if let Some(tw) = tw_opt {
+            match tw {
+                TouchingWall::Left => {
+                    if new_left_collision { continue; }
+                },
+                TouchingWall::Right => {
+                    if new_right_collision { continue; }
+                },
+            }
         }
 
-        if colliding_left {
+        if new_left_collision {
             commands.entity(entity).try_insert(TouchingWall::Left);
         }
-        else if colliding_right {
+        else if new_right_collision {
             commands.entity(entity).try_insert(TouchingWall::Right);
         }
-        else if !colliding_right && !colliding_left {
+        else if !new_right_collision && !new_left_collision {
             commands.entity(entity).remove::<TouchingWall>();
         }
     }

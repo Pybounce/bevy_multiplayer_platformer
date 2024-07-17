@@ -28,25 +28,6 @@ pub struct WallJumpController {
     pub friction_coefficient: f32,
 }
 
-pub fn begin_player_wall_jump2(
-    mut query: Query<(&mut Velocity, &mut JumpController, &TouchingWall, &WallJumpController), 
-        (Without<Grounded>, Without<CoyoteGrounded>)>,
-    time: Res<Time>,
-    input: Res<ButtonInput<KeyCode>>
-) {
-    for (mut v, mut jc, w, wjc) in &mut query {
-        if input.just_pressed(jc.key) {
-            v.linvel = match w {
-                TouchingWall::Left => wjc.force_in * Vec2::new(-1.0, 1.0),
-                TouchingWall::Right => wjc.force_in,
-            }; 
-            wjc.force_out;
-            jc.last_grounded -= jc.coyote_time; //todo: this sucks but it fixes being able to jump from the ground, and then jump again during coyote time
-            jc.last_jump_pressed_time = time.elapsed_seconds_f64(); //todo: wrapped??
-        }
-    }
-}
-
 pub fn begin_player_wall_jump(
     mut query: Query<(&mut Velocity, &mut JumpController, &TouchingWall, &WallJumpController, &AirbourneHorizontalMovementController), 
         (Without<Grounded>, Without<CoyoteGrounded>)>,
@@ -73,7 +54,6 @@ pub fn begin_player_wall_jump(
                     }
                 },
             }; 
-            wjc.force_out;
             jc.last_grounded -= jc.coyote_time; //todo: this sucks but it fixes being able to jump from the ground, and then jump again during coyote time
             jc.last_jump_pressed_time = time.elapsed_seconds_f64(); //todo: wrapped??
         }
@@ -116,11 +96,12 @@ pub fn update_wall_stuck(
 }
 
 pub fn add_wall_stuck(
-    mut query: Query<(Entity, &TouchingWall), (With<TouchingWall>, Without<WallStuck>, With<WallStickable>)>,
+    mut query: Query<(Entity, &TouchingWall), (Without<WallStuck>, Changed<TouchingWall>)>,
     mut commands: Commands,
     time: Res<Time>
 ) {
     for (e, tw) in &mut query {
+        warn!("adding");
         commands.entity(e).try_insert(WallStuck {
             touching_wall: *tw,
             last_unstuck_time: time.elapsed_seconds_f64(),
@@ -133,6 +114,7 @@ pub fn remove_wall_stuck(
     mut commands: Commands,
 ) {
     for e in &mut query {
+        warn!("removing");
         commands.entity(e).remove::<WallStuck>();
     }
 }
