@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
 
-use crate::{common::death::Killable, ground::Groundable, player::{death::Respawnable, horizontal_movement_controller::{AirbourneHorizontalMovementController, GroundedHorizontalMovementController}, jump_controller::JumpController, wall_jump_controller::{WallJumpController, WallStickable}}, stage::stage_objects::StageObject, wall::Wallable};
+use crate::{common::death::Killable, ground::Groundable, player::{death::Respawnable, horizontal_movement_controller::{AirbourneHorizontalMovementController, GroundedHorizontalMovementController}, jump_controller::JumpController, physics_controller::PhysicsController, wall_jump_controller::{WallJumpController, WallStickable}}, stage::stage_objects::StageObject, wall::Wallable};
 
 const PLAYER_SIZE: Vec2 = Vec2::new(32.0, 32.0);
 const PLAYER_COLOR: Color = Color::rgb(0.0, 2.0, 0.0);
@@ -9,6 +9,8 @@ const PLAYER_ACCELERATION: f32 = 2000.0;
 const PLAYER_DECELERATION: f32 = 2000.0;
 const MAX_HORIZONTAL_SPEED: f32 = 450.0;
 
+const PLAYER_MIN_VELOCITY: Vec2 = Vec2::new(-1000.0, -800.0);
+const PLAYER_MAX_VELOCITY: Vec2 = Vec2::new(1000.0, 800.0);
 const PLAYER_JUMP_SPEED: f32 = 400.0;
 const PLAYER_JUMP_DURATION: f64 = 0.3;
 const PLAYER_WALL_JUMP_IN_FORCE: Vec2 = Vec2::new(300.0, 400.0);
@@ -34,6 +36,7 @@ pub struct LocalPlayerBundle {
     groundable_marker: Groundable,
     wallable_marker: Wallable,
     colliding_entities: CollidingEntities,
+    physics_controller: PhysicsController,
     jump_controller: JumpController,
     wall_jump_controller: WallJumpController,
     wall_stickable: WallStickable,
@@ -76,6 +79,10 @@ impl Default for LocalPlayerBundle {
             gravity_scale: GravityScale(2.0),
             groundable_marker: Groundable,
             colliding_entities: CollidingEntities::default(),
+            physics_controller: PhysicsController {
+                max_velocity: PLAYER_MAX_VELOCITY,
+                min_velocity: PLAYER_MIN_VELOCITY,
+            },
             jump_controller: JumpController {
                 key: KeyCode::KeyW,
                 force: PLAYER_JUMP_SPEED,
@@ -103,7 +110,7 @@ impl Default for LocalPlayerBundle {
             airbourne_horizontal_movement_controller: AirbourneHorizontalMovementController {
                 left_key: KeyCode::KeyA,
                 right_key: KeyCode::KeyD,
-                acceleration: PLAYER_ACCELERATION / 1.3,
+                acceleration: PLAYER_ACCELERATION / 1.0,
                 deceleration: PLAYER_DECELERATION,
                 max_speed: MAX_HORIZONTAL_SPEED,
             },
