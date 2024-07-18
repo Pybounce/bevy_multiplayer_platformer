@@ -34,7 +34,7 @@ pub fn check_touching_wall(
         .exclude_rigid_body(entity)
         .groups(CollisionGroups::new(Group::GROUP_1, Group::GROUP_1));
 
-        let max_toi = (transform.scale.x / 2.0) + 2.0;
+        let max_toi = (transform.scale.x / 2.0) - 5.0;
         let solid = true;
         let ray_count = 3;
 
