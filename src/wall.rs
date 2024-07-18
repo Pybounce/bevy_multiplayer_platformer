@@ -31,7 +31,8 @@ pub fn check_touching_wall(
 
         let filter = QueryFilter::new()
         .exclude_sensors()
-        .exclude_rigid_body(entity);
+        .exclude_rigid_body(entity)
+        .groups(CollisionGroups::new(Group::GROUP_1, Group::GROUP_1));
 
         let max_toi = (transform.scale.x / 2.0) + 2.0;
         let solid = true;
@@ -48,8 +49,6 @@ pub fn check_touching_wall(
             }
         }
 
-
-        
         // if it's the new collision is already set, continue.
         if let Some(tw) = tw_opt {
             match tw {

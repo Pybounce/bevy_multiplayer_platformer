@@ -28,7 +28,8 @@ pub struct PhysicalTileBundle {
 pub struct GroundTileBundle {
     physical_tile_bundle: PhysicalTileBundle,
     ground_marker: Ground,
-    wall_marker: Wall
+    wall_marker: Wall,
+    collision_groups: CollisionGroups
 }
 
 
@@ -76,6 +77,7 @@ impl GroundTileBundle {
             physical_tile_bundle: PhysicalTileBundle::new(stage_creator, grid_pos, atlas_rect),
             ground_marker: Ground,
             wall_marker: Wall,
+            collision_groups: CollisionGroups::new(Group::GROUP_1, Group::ALL),
         }
     }
 }
