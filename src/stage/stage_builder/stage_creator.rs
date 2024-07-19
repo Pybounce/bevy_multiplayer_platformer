@@ -1,4 +1,4 @@
-use crate::{player::spawner::LocalPlayerSpawner, stage::stage_objects::{goal::GoalBundle, spike::SpikeBundle, tiles::{GroundTileBundle, TileBundle}}};
+use crate::{common::checkpoint::CheckpointBundle, player::spawner::LocalPlayerSpawner, stage::stage_objects::{goal::GoalBundle, spike::SpikeBundle, tiles::{GroundTileBundle, TileBundle}}};
 
 use super::stage_asset::Stage;
 use bevy::prelude::*;
@@ -35,6 +35,7 @@ impl<'a> StageCreator<'a> {
         && build_spikes(self, commands)
         && build_far_background(self, commands)
         && build_player_spawner(self, commands)
+        && build_checkpoints(self, commands)
 
     }
 
@@ -137,6 +138,23 @@ fn build_spikes(stage_creator: &StageCreator, commands: &mut Commands) -> bool {
 
     return true;
 }
+
+fn build_checkpoints(stage_creator: &StageCreator, commands: &mut Commands) -> bool {
+    let sprite_rect_x = (ColourPaletteAtlasIndex::_Misc as usize % 5) as f32;
+    let sprite_rect_y = (ColourPaletteAtlasIndex::_Misc as usize / 5) as f32;
+    let sprite_rect = Rect::new(sprite_rect_x, sprite_rect_y, sprite_rect_x + 1.0, sprite_rect_y + 1.0);
+    
+
+    for checkpoint in &stage_creator.stage.checkpoints {
+        commands.spawn(CheckpointBundle::new(
+            stage_creator, 
+            checkpoint.grid_pos, 
+            sprite_rect));
+    }
+
+    return true;
+}
+
 fn build_ground_tile(commands: &mut Commands, stage_creator: &StageCreator, grid_x: f32, grid_y: f32) {
 
     let sprite_rect_x = (ColourPaletteAtlasIndex::Ground as usize % 5) as f32;

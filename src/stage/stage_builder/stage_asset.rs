@@ -15,6 +15,7 @@ pub struct Stage {
     pub id: usize,
     pub ground_tiles: Vec<GroundTile>,
     pub spikes: Vec<Spike>,
+    pub checkpoints: Vec<Checkpoint>,
     pub grid_width: usize,
     pub grid_height: usize,
     pub spawn_grid_pos: Vec2,
@@ -28,6 +29,11 @@ pub struct GroundTile {
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Spike {
+    pub grid_pos: Vec2
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct Checkpoint {
     pub grid_pos: Vec2
 }
 

@@ -5,7 +5,7 @@ use bevy::{
     prelude::*,
 };
 
-use crate::stage::stage_builder::stage_asset::{GroundTile, Spike, Stage};
+use crate::stage::stage_builder::stage_asset::{GroundTile, Spike, Stage, Checkpoint};
 
 pub fn save_stage() {
     //save_stage_0();
@@ -83,7 +83,7 @@ pub fn save_stage_2() {
         0, 0, 0, 0, 0, 0, 0, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
         0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 3, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 2, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 3, 3, 0, 0, 0, 0, 5, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 2, 0, 0,
         1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1,
         3, 3, 3, 3, 3, 3, 0, 1, 1, 0, 3, 3, 3, 3, 3, 3, 3, 0, 1, 1, 0, 3, 3, 3, 3, 3, 3, 3, 3, 0, 1, 1, 0, 3, 3, 3, 3, 3, 3, 3, 3, 0, 1, 1, 0, 3, 3, 3, 3, 3, 3, 3, 3,
         0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -126,6 +126,7 @@ pub fn save_stage_3() {
 fn stage_from_grid(layout: Vec<usize>, width: usize, height: usize, id: usize) {
     let mut ground_tiles: Vec<GroundTile> = vec![];
     let mut spikes: Vec<Spike> = vec![];
+    let mut checkpoints: Vec<Checkpoint> = vec![];
     let mut goal_grid_pos: Vec2 = Vec2::default();
     let mut spawn_grid_pos: Vec2 = Vec2::default();
 
@@ -146,6 +147,10 @@ fn stage_from_grid(layout: Vec<usize>, width: usize, height: usize, id: usize) {
             //spawn
             spawn_grid_pos = Vec2::new(x as f32, y as f32);
         }
+        else if layout[i] == 5 {
+            //checkpoint
+            checkpoints.push(Checkpoint {grid_pos: Vec2::new(x as f32, y as f32)});
+        }
         else {
 
             ground_tiles.push(GroundTile {grid_pos: Vec2::new(x as f32, y as f32)});
@@ -160,7 +165,8 @@ fn stage_from_grid(layout: Vec<usize>, width: usize, height: usize, id: usize) {
         spikes: spikes,
         grid_width: width,
         grid_height: height,
-        goal_grid_pos
+        goal_grid_pos,
+        checkpoints: checkpoints,
     };
 
     let mut bytes: Vec<u8> = vec![];
