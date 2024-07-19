@@ -6,13 +6,13 @@ Random Ideas
 
 ## Alpha 1.0 Checklist
 
-[ ] 3 full levels with checkpoints and difficulty
-[ ] Spectate mode
-[ ] Main menu UI
-[ ] New stage mechanics
-[ ] Networked player names
-[ ] Player death juice
-[ ] Player death counter?
+- [ ] 3 full levels with checkpoints and difficulty
+- [ ] Spectate mode
+- [ ] Main menu UI
+- [ ] New stage mechanics
+- [ ] Networked player names
+- [ ] Player death juice
+- [ ] Player death counter?
 
 ## To Do
 
