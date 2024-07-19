@@ -44,7 +44,7 @@ impl<'a> StageCreator<'a> {
 fn build_player_spawner(stage_creator: &StageCreator, commands: &mut Commands) -> bool {
     commands.spawn(LocalPlayerSpawner {
         spawn_time: 0.0,
-        translation: stage_creator.stage.spawn_translation,
+        translation: (stage_creator.stage.spawn_grid_pos * TILE_SIZE).extend(0.0),
     });
     return true;
 }

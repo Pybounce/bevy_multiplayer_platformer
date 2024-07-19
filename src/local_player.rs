@@ -3,7 +3,7 @@ use bevy_rapier2d::prelude::*;
 
 use crate::{common::death::Killable, ground::Groundable, player::{death::Respawnable, horizontal_movement_controller::{AirbourneHorizontalMovementController, GroundedHorizontalMovementController}, jump_controller::JumpController, physics_controller::PhysicsController, wall_jump_controller::{WallJumpController, WallStickable}}, stage::stage_objects::StageObject, wall::Wallable};
 
-const PLAYER_SIZE: Vec2 = Vec2::new(32.0, 32.0);
+const PLAYER_SIZE: Vec2 = Vec2::new(32.0 * 0.8, 32.0 * 0.8);
 const PLAYER_COLOR: Color = Color::rgb(0.0, 2.0, 0.0);
 const PLAYER_ACCELERATION: f32 = 2000.0;
 const PLAYER_DECELERATION: f32 = 2000.0;
@@ -11,10 +11,10 @@ const MAX_HORIZONTAL_SPEED: f32 = 450.0;
 
 const PLAYER_MIN_VELOCITY: Vec2 = Vec2::new(-1000.0, -800.0);
 const PLAYER_MAX_VELOCITY: Vec2 = Vec2::new(1000.0, 800.0);
-const PLAYER_JUMP_SPEED: f32 = 400.0;
-const PLAYER_JUMP_DURATION: f64 = 0.3;
+const PLAYER_JUMP_SPEED: f32 = 350.0;
+const PLAYER_JUMP_DURATION: f64 = 0.4;
 const PLAYER_WALL_JUMP_IN_FORCE: Vec2 = Vec2::new(300.0, 400.0);
-const PLAYER_WALL_JUMP_OUT_FORCE: Vec2 = Vec2::new(550.0, 450.0);
+const PLAYER_WALL_JUMP_OUT_FORCE: Vec2 = Vec2::new(550.0, 400.0);
 const PLAYER_WALL_FRICTION_COEFFICIENT: f32 = 0.03;
 
 const PLAYER_RESPAWN_DELAY: f64 = 0.5;
