@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
 
-use crate::{common::death::Killable, ground::Groundable, player::{death::Respawnable, horizontal_movement_controller::{AirbourneHorizontalMovementController, GroundedHorizontalMovementController}, jump_controller::JumpController, physics_controller::PhysicsController, wall_jump_controller::{WallJumpController, WallStickable}}, stage::stage_objects::StageObject, wall::Wallable};
+use crate::{common::death::Killable, ground::Groundable, player::{death::Respawnable, gravity::Gravity, horizontal_movement_controller::{AirbourneHorizontalMovementController, GroundedHorizontalMovementController}, jump_controller::JumpController, physics_controller::PhysicsController, wall_jump_controller::{WallJumpController, WallStickable}}, stage::stage_objects::StageObject, wall::Wallable};
 
 const PLAYER_SIZE: Vec2 = Vec2::new(32.0 * 0.8, 32.0 * 0.8);
 const PLAYER_COLOR: Color = Color::rgb(0.0, 2.0, 0.0);
@@ -9,13 +9,16 @@ const PLAYER_ACCELERATION: f32 = 2000.0;
 const PLAYER_DECELERATION: f32 = 2000.0;
 const MAX_HORIZONTAL_SPEED: f32 = 450.0;
 
-const PLAYER_MIN_VELOCITY: Vec2 = Vec2::new(-1000.0, -800.0);
+const PLAYER_MIN_VELOCITY: Vec2 = Vec2::new(-1400.0, -800.0);
 const PLAYER_MAX_VELOCITY: Vec2 = Vec2::new(1000.0, 800.0);
-const PLAYER_JUMP_SPEED: f32 = 350.0;
+const PLAYER_JUMP_SPEED: f32 = 400.0;
 const PLAYER_JUMP_DURATION: f64 = 0.4;
 const PLAYER_WALL_JUMP_IN_FORCE: Vec2 = Vec2::new(300.0, 400.0);
 const PLAYER_WALL_JUMP_OUT_FORCE: Vec2 = Vec2::new(550.0, 400.0);
 const PLAYER_WALL_FRICTION_COEFFICIENT: f32 = 0.03;
+
+const PLAYER_MAX_GRAVITY: f32 = 2000.0;
+const PLAYER_GRAVITY_ACCELERATION: f32 = 2000.0;
 
 const PLAYER_RESPAWN_DELAY: f64 = 0.5;
 
@@ -24,7 +27,7 @@ pub struct LocalPlayer;
 
 #[derive(Bundle)]
 pub struct LocalPlayerBundle {
-    local_player_market: LocalPlayer,
+    local_player_marker: LocalPlayer,
     sprite_bundle: SpriteBundle,
     rigid_body: RigidBody,
     ccd: Ccd,
@@ -32,7 +35,8 @@ pub struct LocalPlayerBundle {
     restitution: Restitution,
     friction: Friction,
     velocity: Velocity,
-    gravity_scale: GravityScale,
+    gravity: Gravity,
+    rapier_gravity_scale: GravityScale,
     groundable_marker: Groundable,
     wallable_marker: Wallable,
     colliding_entities: CollidingEntities,
@@ -58,7 +62,7 @@ impl LocalPlayerBundle {
 impl Default for LocalPlayerBundle {
     fn default() -> Self {
         LocalPlayerBundle {
-            local_player_market: LocalPlayer,
+            local_player_marker: LocalPlayer,
             sprite_bundle: SpriteBundle {
                 transform: Transform {
                     scale: PLAYER_SIZE.extend(1.0),
@@ -76,7 +80,12 @@ impl Default for LocalPlayerBundle {
             restitution: Restitution::coefficient(0.0),
             friction: Friction::coefficient(0.0),
             velocity: Velocity::linear(Vec2::ZERO),
-            gravity_scale: GravityScale(2.0),
+            gravity: Gravity {
+                max_force: PLAYER_MAX_GRAVITY,
+                current_force: 0.0,
+                acceleration: PLAYER_GRAVITY_ACCELERATION,
+            },
+            rapier_gravity_scale: GravityScale(0.0),
             groundable_marker: Groundable,
             colliding_entities: CollidingEntities::default(),
             physics_controller: PhysicsController {

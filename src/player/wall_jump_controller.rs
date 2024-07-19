@@ -3,7 +3,7 @@ use bevy_rapier2d::prelude::*;
 
 use crate::{ground::Grounded, wall::TouchingWall};
 
-use super::{horizontal_movement_controller::AirbourneHorizontalMovementController, jump_controller::{CoyoteGrounded, JumpController}};
+use super::{gravity::Gravity, horizontal_movement_controller::AirbourneHorizontalMovementController, jump_controller::{CoyoteGrounded, JumpController}};
 
 #[derive(Component)]
 pub struct WallStickable {
@@ -29,12 +29,12 @@ pub struct WallJumpController {
 }
 
 pub fn begin_player_wall_jump(
-    mut query: Query<(&mut Velocity, &mut JumpController, &TouchingWall, &WallJumpController, &AirbourneHorizontalMovementController), 
+    mut query: Query<(&mut Gravity, &mut Velocity, &mut JumpController, &TouchingWall, &WallJumpController, &AirbourneHorizontalMovementController), 
         (Without<Grounded>, Without<CoyoteGrounded>)>,
     time: Res<Time>,
     input: Res<ButtonInput<KeyCode>>
 ) {
-    for (mut v, mut jc, w, wjc, ahmc) in &mut query {
+    for (mut g, mut v, mut jc, w, wjc, ahmc) in &mut query {
         if input.just_pressed(jc.key) {
             v.linvel = match w {
                 TouchingWall::Left => {
@@ -54,6 +54,7 @@ pub fn begin_player_wall_jump(
                     }
                 },
             }; 
+            g.current_force = 0.0;
             jc.last_grounded -= jc.coyote_time; //todo: this sucks but it fixes being able to jump from the ground, and then jump again during coyote time
             jc.last_jump_pressed_time = time.elapsed_seconds_f64(); //todo: wrapped??
         }

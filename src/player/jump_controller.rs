@@ -3,7 +3,7 @@ use bevy_rapier2d::prelude::*;
 
 use crate::{ground::Grounded, wall::TouchingWall};
 
-use super::wall_jump_controller::WallJumpController;
+use super::{gravity::Gravity, wall_jump_controller::WallJumpController};
 
 
 
@@ -40,19 +40,18 @@ pub fn apply_wall_friction(
 }
 
 pub fn maintain_player_jump(
-    mut query: Query<(Entity, &mut JumpController)>,
+    mut query: Query<(&mut JumpController, &mut Gravity)>,
     time: Res<Time>,
-    input: Res<ButtonInput<KeyCode>>,
-    mut commands: Commands
+    input: Res<ButtonInput<KeyCode>>
 ) {
-    for (e, mut jc) in &mut query {
+    for (mut jc, mut g) in &mut query {
         if input.pressed(jc.key) 
         && time.elapsed_seconds_f64() - jc.last_jump_pressed_time < jc.duration 
         && jc.last_jump_released_time < jc.last_jump_pressed_time {
-            commands.entity(e).try_insert(GravityScale(0.0));
+
         }
         else {
-            commands.entity(e).try_insert(GravityScale(2.0));
+            g.current_force = g.max_force;
         }
         if input.just_released(jc.key) {
             jc.last_jump_released_time = time.elapsed_seconds_f64(); //todo: wrapped??
@@ -61,12 +60,13 @@ pub fn maintain_player_jump(
 }
 
 pub fn begin_player_jump(
-    mut query: Query<(&mut Velocity, &mut JumpController), Or<(With<Grounded>, With<CoyoteGrounded>)>>,
+    mut query: Query<(&mut Velocity, &mut JumpController, &mut Gravity), Or<(With<Grounded>, With<CoyoteGrounded>)>>,
     time: Res<Time>,
     input: Res<ButtonInput<KeyCode>>
 ) {
-    for (mut v, mut jc) in &mut query {
+    for (mut v, mut jc, mut g) in &mut query {
         if input.pressed(jc.key) {
+            g.current_force = 0.0;
             v.linvel.y = jc.force;
             jc.last_grounded -= jc.coyote_time; //todo: this sucks but it fixes being able to jump from the ground, and then jump again during coyote time
             jc.last_jump_pressed_time = time.elapsed_seconds_f64(); //todo: wrapped??
