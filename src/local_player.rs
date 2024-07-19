@@ -1,15 +1,29 @@
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
 
-use crate::{common::death::Killable, player::{death::Respawnable, horizontal_movement_controller::{AirbourneHorizontalMovementController, GroundedHorizontalMovementController}, jump_controller::JumpController}, stage::stage_objects::StageObject, ground::Groundable};
+use crate::{common::death::Killable, ground::Groundable, player::{death::Respawnable, gravity::Gravity, horizontal_movement_controller::{AirbourneHorizontalMovementController, GroundedHorizontalMovementController}, jump_controller::JumpController, physics_controller::PhysicsController, wall_jump_controller::{WallJumpController, WallStickable}}, stage::stage_objects::StageObject, wall::Wallable};
 
-const PLAYER_SIZE: Vec2 = Vec2::new(32.0, 32.0);
+const PLAYER_SIZE: Vec2 = Vec2::new(32.0 * 0.8, 32.0 * 0.8);
 const PLAYER_COLOR: Color = Color::rgb(0.0, 2.0, 0.0);
-const PLAYER_MAX_SPEED: Vec2 = Vec2::new(300.0, 1000.0);
 const PLAYER_ACCELERATION: f32 = 2000.0;
-const PLAYER_HORIZONTAL_FRICTION: f32 = 600.0;
-const PLAYER_JUMP_SPEED: f32 = 300.0;
-const PLAYER_JUMP_DURATION: f64 = 0.3;
+const PLAYER_DECELERATION: f32 = 2000.0;
+const MAX_HORIZONTAL_SPEED: f32 = 450.0;
+
+const PLAYER_MIN_VELOCITY: Vec2 = Vec2::new(-1400.0, -800.0);
+const PLAYER_MAX_VELOCITY: Vec2 = Vec2::new(1000.0, 800.0);
+
+const PLAYER_JUMP_SPEED: f32 = 400.0;
+const PLAYER_JUMP_DURATION: f64 = 0.4;
+const PLAYER_COYOTE_TIME: f64 = 0.1;
+
+const PLAYER_WALL_JUMP_IN_FORCE: Vec2 = Vec2::new(300.0, 400.0);
+const PLAYER_WALL_JUMP_OUT_FORCE: Vec2 = Vec2::new(550.0, 400.0);
+const PLAYER_WALL_FRICTION_COEFFICIENT: f32 = 0.03;
+const PLAYER_WALL_STICK_DURATION: f64 = 0.3;
+
+const PLAYER_MAX_GRAVITY: f32 = 2000.0;
+const PLAYER_GRAVITY_ACCELERATION: f32 = 2000.0;
+
 const PLAYER_RESPAWN_DELAY: f64 = 0.5;
 
 #[derive(Component)]
@@ -17,7 +31,7 @@ pub struct LocalPlayer;
 
 #[derive(Bundle)]
 pub struct LocalPlayerBundle {
-    local_player_market: LocalPlayer,
+    local_player_marker: LocalPlayer,
     sprite_bundle: SpriteBundle,
     rigid_body: RigidBody,
     ccd: Ccd,
@@ -25,10 +39,15 @@ pub struct LocalPlayerBundle {
     restitution: Restitution,
     friction: Friction,
     velocity: Velocity,
-    gravity_scale: GravityScale,
+    gravity: Gravity,
+    rapier_gravity_scale: GravityScale,
     groundable_marker: Groundable,
+    wallable_marker: Wallable,
     colliding_entities: CollidingEntities,
+    physics_controller: PhysicsController,
     jump_controller: JumpController,
+    wall_jump_controller: WallJumpController,
+    wall_stickable: WallStickable,
     grounded_horizontal_movement_controller: GroundedHorizontalMovementController,
     airbourne_horizontal_movement_controller: AirbourneHorizontalMovementController,
     respawnable: Respawnable,
@@ -47,7 +66,7 @@ impl LocalPlayerBundle {
 impl Default for LocalPlayerBundle {
     fn default() -> Self {
         LocalPlayerBundle {
-            local_player_market: LocalPlayer,
+            local_player_marker: LocalPlayer,
             sprite_bundle: SpriteBundle {
                 transform: Transform {
                     scale: PLAYER_SIZE.extend(1.0),
@@ -65,9 +84,18 @@ impl Default for LocalPlayerBundle {
             restitution: Restitution::coefficient(0.0),
             friction: Friction::coefficient(0.0),
             velocity: Velocity::linear(Vec2::ZERO),
-            gravity_scale: GravityScale(2.0),
+            gravity: Gravity {
+                max_force: PLAYER_MAX_GRAVITY,
+                current_force: 0.0,
+                acceleration: PLAYER_GRAVITY_ACCELERATION,
+            },
+            rapier_gravity_scale: GravityScale(0.0),
             groundable_marker: Groundable,
             colliding_entities: CollidingEntities::default(),
+            physics_controller: PhysicsController {
+                max_velocity: PLAYER_MAX_VELOCITY,
+                min_velocity: PLAYER_MIN_VELOCITY,
+            },
             jump_controller: JumpController {
                 key: KeyCode::KeyW,
                 force: PLAYER_JUMP_SPEED,
@@ -75,21 +103,29 @@ impl Default for LocalPlayerBundle {
                 last_jump_pressed_time: 0.0,
                 last_jump_released_time: 0.0,
                 last_grounded: 0.0,
-                coyote_time: 0.3,
+                coyote_time: PLAYER_COYOTE_TIME,
+            },
+            wall_jump_controller: WallJumpController {
+                force_in: PLAYER_WALL_JUMP_IN_FORCE,
+                force_out: PLAYER_WALL_JUMP_OUT_FORCE,
+                friction_coefficient: PLAYER_WALL_FRICTION_COEFFICIENT,
+            },
+            wall_stickable: WallStickable {
+                wall_stick_time: PLAYER_WALL_STICK_DURATION,
             },
             grounded_horizontal_movement_controller: GroundedHorizontalMovementController {
                 left_key: KeyCode::KeyA,
                 right_key: KeyCode::KeyD,
                 acceleration: PLAYER_ACCELERATION,
-                resistance: PLAYER_HORIZONTAL_FRICTION,
-                max_speed: PLAYER_MAX_SPEED.x,
+                deceleration: PLAYER_DECELERATION,
+                max_speed: MAX_HORIZONTAL_SPEED,
             },
             airbourne_horizontal_movement_controller: AirbourneHorizontalMovementController {
                 left_key: KeyCode::KeyA,
                 right_key: KeyCode::KeyD,
-                acceleration: PLAYER_ACCELERATION / 2.0,
-                resistance: PLAYER_HORIZONTAL_FRICTION / 2.0,
-                max_speed: PLAYER_MAX_SPEED.x,
+                acceleration: PLAYER_ACCELERATION / 1.0,
+                deceleration: PLAYER_DECELERATION,
+                max_speed: MAX_HORIZONTAL_SPEED,
             },
             respawnable: Respawnable {
                 translation: Vec3::default(),
@@ -97,6 +133,7 @@ impl Default for LocalPlayerBundle {
             },
             stage_object: StageObject { stage_id: usize::max_value() },
             killable: Killable,
+            wallable_marker: Wallable,
         }
     }
 }

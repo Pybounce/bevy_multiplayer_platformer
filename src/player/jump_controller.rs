@@ -1,7 +1,9 @@
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
 
-use crate::ground::Grounded;
+use crate::{ground::Grounded, wall::TouchingWall};
+
+use super::{gravity::Gravity, wall_jump_controller::WallJumpController};
 
 
 
@@ -13,30 +15,43 @@ pub struct JumpController {
     pub last_jump_pressed_time: f64,
     pub last_jump_released_time: f64,
     pub last_grounded: f64,
-    pub coyote_time: f64
+    pub coyote_time: f64,
 }
 
 #[derive(Component)]
-pub struct CanJump;
+pub struct CoyoteGrounded;
 #[derive(Component)]
 pub struct Jumping;
 #[derive(Component)]
 pub struct Falling;
 
-pub fn maintain_player_jump(
-    mut query: Query<(Entity, &mut JumpController)>,
-    time: Res<Time>,
-    input: Res<ButtonInput<KeyCode>>,
-    mut commands: Commands
+pub fn apply_wall_friction(
+    mut query: Query<(&mut Velocity, &WallJumpController), With<TouchingWall>>,
+    time: Res<Time>
 ) {
-    for (e, mut jc) in &mut query {
+    for (mut v, wjc) in &mut query {
+        if v.linvel.y < 0.0 {
+            // we want to simulate grabbing the wall
+            // which would only happen when sliding down
+            // sliding up should be fast
+            v.linvel.y -= wjc.friction_coefficient * v.linvel.y.powi(2) * v.linvel.y.signum() * time.delta_seconds();
+        }
+    }
+}
+
+pub fn maintain_player_jump(
+    mut query: Query<(&mut JumpController, &mut Gravity)>,
+    time: Res<Time>,
+    input: Res<ButtonInput<KeyCode>>
+) {
+    for (mut jc, mut g) in &mut query {
         if input.pressed(jc.key) 
         && time.elapsed_seconds_f64() - jc.last_jump_pressed_time < jc.duration 
         && jc.last_jump_released_time < jc.last_jump_pressed_time {
-            commands.entity(e).try_insert(GravityScale(0.0));
+
         }
         else {
-            commands.entity(e).try_insert(GravityScale(2.0));
+            g.current_force = g.max_force;
         }
         if input.just_released(jc.key) {
             jc.last_jump_released_time = time.elapsed_seconds_f64(); //todo: wrapped??
@@ -45,12 +60,13 @@ pub fn maintain_player_jump(
 }
 
 pub fn begin_player_jump(
-    mut query: Query<(&mut Velocity, &mut JumpController), With<CanJump>>,
+    mut query: Query<(&mut Velocity, &mut JumpController, &mut Gravity), Or<(With<Grounded>, With<CoyoteGrounded>)>>,
     time: Res<Time>,
     input: Res<ButtonInput<KeyCode>>
 ) {
-    for (mut v, mut jc) in &mut query {
+    for (mut v, mut jc, mut g) in &mut query {
         if input.pressed(jc.key) {
+            g.current_force = 0.0;
             v.linvel.y = jc.force;
             jc.last_grounded -= jc.coyote_time; //todo: this sucks but it fixes being able to jump from the ground, and then jump again during coyote time
             jc.last_jump_pressed_time = time.elapsed_seconds_f64(); //todo: wrapped??
@@ -58,17 +74,17 @@ pub fn begin_player_jump(
     }
 }
 
-pub fn can_jump(
-    query: Query<(Entity, &JumpController)>,
+pub fn is_coyote_grounded(
+    query: Query<(Entity, &JumpController), Without<Grounded>>,
     time: Res<Time>,
     mut commands: Commands
 ) {
     for (e, jc) in &query {
         if time.elapsed_seconds_f64() - jc.last_grounded < jc.coyote_time {
-            commands.entity(e).try_insert(CanJump);
+            commands.entity(e).try_insert(CoyoteGrounded);
         }
         else {
-            commands.entity(e).remove::<CanJump>();
+            commands.entity(e).remove::<CoyoteGrounded>();
         }
     }
 }

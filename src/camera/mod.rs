@@ -22,8 +22,7 @@ pub fn spawn_camera(mut commands: Commands) {
 
 pub fn move_camera(
     mut camera_query: Query<(&mut Velocity, &Transform), With<Camera>>,
-    player_query: Query<&Transform, (With<LocalPlayer>, Without<Camera>)>,
-    time: Res<Time>
+    player_query: Query<&Transform, (With<LocalPlayer>, Without<Camera>)>
 ) {
     let (mut cv, ct) = camera_query.single_mut();
     let pt = player_query.get_single();

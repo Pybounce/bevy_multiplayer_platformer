@@ -17,7 +17,7 @@ pub struct Stage {
     pub spikes: Vec<Spike>,
     pub grid_width: usize,
     pub grid_height: usize,
-    pub spawn_translation: Vec3,
+    pub spawn_grid_pos: Vec2,
     pub goal_grid_pos: Vec2
 }
 
