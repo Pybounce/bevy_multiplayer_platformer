@@ -4,12 +4,22 @@ Random Ideas
 
 - Ability to mute (/automute) other players
 
-To Do #1
+## Alpha 1.0 Checklist
+
+[ ] 3 full levels with checkpoints and difficulty
+[ ] Spectate mode
+[ ] Main menu UI
+[ ] New stage mechanics
+[ ] Networked player names
+[ ] Player death juice
+[ ] Player death counter?
+
+## To Do
 
 - Make the player explode into many tiny squares with collision (good ol' ECS)
 - Move all that player config into a component for the player?
 
-To Theory Craft
+## To Theory Craft
 
 - Player mechanics
 - Obstacles
@@ -18,7 +28,7 @@ To Theory Craft
 - Fancy stage loading (fancy animation for a stage being loaded/unloaded)
 - Stage mechanic where blocks swich on and off in intervals, so player must jump on them with correct timing
 
-Stage Mechanics
+## Stage Mechanics
 
 - Triggers
   - Many types of stage mechanic will be a trigger, such as:
@@ -58,7 +68,7 @@ Stage Mechanics
   - Can act as a door if it subscribes to a non timer trigger?
   - Will crush the player if they hit the bottom or top of it as well as touching ground/ceiling
 
-Player Mechanics
+## Player Mechanics
 
 - Dash
   - Works on ground and air
@@ -71,7 +81,7 @@ Player Mechanics
   - Gives a bit of a boost in speed like dash? (might be weird in air to slide transition)
   - Player becomes shorter and can slide under things
 
-Bugs
+## Bugs
 
 - Cannot preload (with a stage load event) on build complete, will try building that stage immediately and fail
   - Need to test the build failed events at different points (1 stage in, 0 stages in etc)
@@ -84,7 +94,7 @@ Bugs
   - Same thing with controllers Changed<JumpController>
   - NOTE: Changed isn't how you track removed components, that is something different
 
-Thoughts on Multiplayer
+## Thoughts on Multiplayer
 
 - Main issue is that small short stages will become cluttered with players
 - Fix #1: Can instead move to the server relay architecture with matchmaking
