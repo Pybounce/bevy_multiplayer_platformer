@@ -11,11 +11,15 @@ const MAX_HORIZONTAL_SPEED: f32 = 450.0;
 
 const PLAYER_MIN_VELOCITY: Vec2 = Vec2::new(-1400.0, -800.0);
 const PLAYER_MAX_VELOCITY: Vec2 = Vec2::new(1000.0, 800.0);
+
 const PLAYER_JUMP_SPEED: f32 = 400.0;
 const PLAYER_JUMP_DURATION: f64 = 0.4;
+const PLAYER_COYOTE_TIME: f64 = 0.1;
+
 const PLAYER_WALL_JUMP_IN_FORCE: Vec2 = Vec2::new(300.0, 400.0);
 const PLAYER_WALL_JUMP_OUT_FORCE: Vec2 = Vec2::new(550.0, 400.0);
 const PLAYER_WALL_FRICTION_COEFFICIENT: f32 = 0.03;
+const PLAYER_WALL_STICK_DURATION: f64 = 0.3;
 
 const PLAYER_MAX_GRAVITY: f32 = 2000.0;
 const PLAYER_GRAVITY_ACCELERATION: f32 = 2000.0;
@@ -99,7 +103,7 @@ impl Default for LocalPlayerBundle {
                 last_jump_pressed_time: 0.0,
                 last_jump_released_time: 0.0,
                 last_grounded: 0.0,
-                coyote_time: 0.3,
+                coyote_time: PLAYER_COYOTE_TIME,
             },
             wall_jump_controller: WallJumpController {
                 force_in: PLAYER_WALL_JUMP_IN_FORCE,
@@ -107,7 +111,7 @@ impl Default for LocalPlayerBundle {
                 friction_coefficient: PLAYER_WALL_FRICTION_COEFFICIENT,
             },
             wall_stickable: WallStickable {
-                wall_stick_time: 0.3,
+                wall_stick_time: PLAYER_WALL_STICK_DURATION,
             },
             grounded_horizontal_movement_controller: GroundedHorizontalMovementController {
                 left_key: KeyCode::KeyA,

@@ -21,7 +21,7 @@ pub enum TouchingWall {
 pub fn check_touching_wall(
     mut commands: Commands,
     wallable_query: Query<(Entity, &Transform, Option<&TouchingWall>), With<Wallable>>,
-    wall_query: Query<(), With<Wall>>,
+    _wall_query: Query<(), With<Wall>>,
     rapier_context: Res<RapierContext>
 ) {
     for (entity, transform, tw_opt) in &wallable_query {
