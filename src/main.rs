@@ -39,12 +39,12 @@ fn main() {
     let window_settings = WindowPlugin {
         primary_window: Some(Window {
             title: "Legend of the Octo-Parakeet".into(),
-            name: Some("Legend of the Octo-Parakeet".into()),
+            name: Some("bevy_quickstart".into()),
             canvas: Some("#bevy".to_string()),
             fit_canvas_to_parent: true,
             prevent_default_event_handling: true,
-            resolution: (1600.0, 900.0).into(),
-            present_mode: PresentMode::Immediate,
+            //resolution: (1600.0, 900.0).into(),
+            //present_mode: PresentMode::Immediate,
             ..default()
         }),
         ..default()
@@ -54,7 +54,6 @@ fn main() {
     App::new()
         .insert_resource(winit_settings)
         .insert_resource(Msaa::Off)
-        //.add_plugins(DefaultPlugins.set(window_settings).)
         .add_plugins(DefaultPlugins.set(window_settings).set(AssetPlugin {
             meta_check: AssetMetaCheck::Never,
             ..default()
