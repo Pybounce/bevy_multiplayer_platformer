@@ -13,6 +13,23 @@ Random Ideas
 - [ ] Networked player names
 - [ ] Player death juice
 - [ ] Player death counter?
+- [ ] Web build
+
+## Web Build
+
+- Use wss protocol for matchbox server
+  - Also please add in a better way of joining networking
+  - Right now it sets up the socket and then says it's connected
+  - But that setup might fail, so there will need to be a check
+  - You can use ws protocol on firefox to replicate it failing
+- Make player physics purely raycast based
+  - Raycast down 1.1m
+  - If intersection dist < 1
+  - Set player.y == intersection.y + 1
+  - That way, when they jump, they won't get reset back down to 1, during that 0.1m overlap
+  - But when they get set to 1, the 0.1m overlap will still recognise that they are grounded
+- Make networked players predictive
+  - Add velocity to their message and set it on read
 
 ## To Do
 

@@ -19,6 +19,3 @@ target/
 # Added by cargo
 
 /target
-
-# Trunk builds
-/web/dist/

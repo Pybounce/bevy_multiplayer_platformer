@@ -25,7 +25,7 @@ impl Plugin for GameNetworkingPlugin {
             .run_if(in_state(NetworkingState::Connected)))
         .add_systems(
             Update,
-            send_message.run_if(on_timer(Duration::from_millis(100 / 6))).run_if(in_state(NetworkingState::Connected)),
+            send_message.run_if(on_timer(Duration::from_millis(16))).run_if(in_state(NetworkingState::Connected)),
         );
     }
 }
