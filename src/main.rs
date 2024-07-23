@@ -1,7 +1,7 @@
 
 
 use bevy::{
-    prelude::*, window::{ close_on_esc, PresentMode }, winit::{ UpdateMode, WinitSettings }
+    asset::AssetMetaCheck, prelude::*, window::PresentMode, winit::{ UpdateMode, WinitSettings }
 };
 
 mod local_player;
@@ -40,6 +40,9 @@ fn main() {
         primary_window: Some(Window {
             title: "Legend of the Octo-Parakeet".into(),
             name: Some("Legend of the Octo-Parakeet".into()),
+            canvas: Some("#bevy".to_string()),
+            fit_canvas_to_parent: true,
+            prevent_default_event_handling: true,
             resolution: (1600.0, 900.0).into(),
             present_mode: PresentMode::Immediate,
             ..default()
@@ -51,7 +54,11 @@ fn main() {
     App::new()
         .insert_resource(winit_settings)
         .insert_resource(Msaa::Off)
-        .add_plugins(DefaultPlugins.set(window_settings).set(ImagePlugin::default_nearest()))
+        //.add_plugins(DefaultPlugins.set(window_settings).)
+        .add_plugins(DefaultPlugins.set(window_settings).set(AssetPlugin {
+            meta_check: AssetMetaCheck::Never,
+            ..default()
+        }).set(ImagePlugin::default_nearest()))
         .add_plugins(StatesPlugin)
         .add_plugins(StageBuilderPlugin)
         .add_plugins(StageSelectPlugin)
@@ -60,7 +67,7 @@ fn main() {
         .add_plugins(RapierPhysicsPlugin::<NoUserData>::pixels_per_meter(100.0))
         //.add_plugins(RapierDebugRenderPlugin::default())
         .add_systems(Startup, spawn_camera)
-        .add_systems(Update, (move_camera, close_on_esc, spawn_new_players, remove_disconnected_players))
+        .add_systems(Update, (move_camera, spawn_new_players, remove_disconnected_players))
         .add_systems(Update, (check_touching_wall, update_wall_stuck_time, apply_wall_friction, begin_player_wall_jump, shake, check_insta_kill_collisions, trigger_dead_local_player_respawn, spawn_local_players, check_grounded, check_player_out_of_bounds, move_airbourne_horizontal_controller, move_ground_horizontal_controller, update_last_grounded, maintain_player_jump, begin_player_jump, is_coyote_grounded, check_jump_fall_states, despawn_death_marked))
         .add_systems(Update, (apply_physics_controller_limits, add_wall_stuck, update_wall_stuck, remove_wall_stuck, asdfdasd, asdfdasd2))
         .add_systems(Update, (simulate_gravity, check_checkpoint_reached))

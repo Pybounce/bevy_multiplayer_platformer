@@ -8,21 +8,21 @@ use super::{messages::NewLocationMessage, networked_players::NetworkedPlayer, Cu
 
 pub fn connect_socket(
     mut commands: Commands,
-    stage_data: Res<CurrentStageData>,
+    stage_data: Option<Res<CurrentStageData>>,
     mut networking_state: ResMut<NextState<NetworkingState>>,
 ) {
-    let mut room_url = String::from("ws://20.90.116.144:3536/game_name_");
-    //let mut room_url = String::from("ws://localhost:3536/");
-
-    room_url.push_str(&stage_data.stage_id.to_string());
-    let socket = MatchboxSocket::new_reliable(room_url);
-
-    //commands.insert_resource(socket);
-    commands.insert_resource(CurrrentNetworkData {
-        socket,
-        stage_id: stage_data.stage_id,
-    });
-    networking_state.set(NetworkingState::Connected);
+    //let mut room_url = String::from("ws://20.90.116.144:3536/game_name_");
+    ////let mut room_url = String::from("ws://localhost:3536/");
+//
+    //room_url.push_str(&stage_data.stage_id.to_string());
+    //let socket = MatchboxSocket::new_reliable(room_url);
+//
+    ////commands.insert_resource(socket);
+    //commands.insert_resource(CurrrentNetworkData {
+    //    socket,
+    //    stage_id: stage_data.stage_id,
+    //});
+    //networking_state.set(NetworkingState::Connected);
 }
 
 pub fn disconnect_socket(

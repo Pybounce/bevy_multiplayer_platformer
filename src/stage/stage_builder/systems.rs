@@ -33,7 +33,7 @@ pub fn try_build_stage(
         },
         bevy::asset::LoadState::Loading => { return; },
         bevy::asset::LoadState::Loaded => (),
-        bevy::asset::LoadState::Failed => {
+        bevy::asset::LoadState::Failed(_) => {
             failed_event_writer.send(StageBuildFailedEvent { stage_id: stage_builder_data.stage_id });
             return;
         },

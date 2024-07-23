@@ -18,6 +18,11 @@ pub fn spawn_camera(mut commands: Commands) {
         })
         .insert(Velocity::default())
         .insert(RigidBody::Dynamic);
+
+    commands.spawn(Text2dBundle {
+        text: Text::from_section("value", TextStyle::default()),
+        ..default()
+    });
 }
 
 pub fn move_camera(

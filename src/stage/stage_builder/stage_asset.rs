@@ -1,14 +1,12 @@
 
-use bevy::utils::thiserror;
+
 use bevy::{
     asset::{io::Reader, ron, AssetLoader, AsyncReadExt, LoadContext},
     prelude::*,
     reflect::TypePath,
-    utils::BoxedFuture,
 };
-use serde::{Deserialize, Serialize};
+use serde::{ Deserialize, Serialize};
 use thiserror::Error;
-
 
 #[derive(Asset, TypePath, Debug, Deserialize, Serialize)]
 pub struct Stage {
@@ -58,19 +56,17 @@ impl AssetLoader for StageLoader {
     type Settings = ();
     type Error = StageLoaderError;
 
-    fn load<'a>(
+    async fn load<'a>(
         &'a self,
-        reader: &'a mut Reader,
+        reader: &'a mut Reader<'_>,
         _settings: &'a (),
-        _load_context: &'a mut LoadContext,
-    ) -> BoxedFuture<'a, Result<Self::Asset, Self::Error>> {
-        Box::pin(async move {
+        _load_context: &'a mut LoadContext<'_>,
+    ) -> Result<Self::Asset, Self::Error> {
             let mut bytes = Vec::new();
             reader.read_to_end(&mut bytes).await?;
 
             let custom_asset = ron::de::from_bytes::<Stage>(&bytes)?;
             Ok(custom_asset)
-        })
     }
 
     fn extensions(&self) -> &[&str] {

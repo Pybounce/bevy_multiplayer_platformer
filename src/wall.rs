@@ -77,14 +77,14 @@ pub fn asdfdasd(
     mut query: Query<&mut Sprite, (Without<TouchingWall>, With<WallStickable>)>
 ) {
     for mut s in &mut query {
-        s.color = Color::RED;
+        s.color = Color::linear_rgb(1.0, 0.0, 0.0);
     }
 }
 pub fn asdfdasd2(
     mut query: Query<&mut Sprite, (With<TouchingWall>, With<WallStickable>)>
 ) {
     for mut s in &mut query {
-        s.color = Color::GREEN;
+        s.color = Color::linear_rgb(0.0, 1.0, 0.0);
     }
 }
 
