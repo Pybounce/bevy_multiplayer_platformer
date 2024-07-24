@@ -2,6 +2,7 @@ use crate::{common::checkpoint::CheckpointBundle, player::spawner::LocalPlayerSp
 
 use super::stage_asset::Stage;
 use bevy::prelude::*;
+use bevy_rapier2d::prelude::{CollisionGroups, Group};
 
 pub const TILE_SIZE: f32 = 32.0;
 
@@ -119,7 +120,7 @@ fn build_goal(stage_creator: &StageCreator, commands: &mut Commands) -> bool {
     commands.spawn(GoalBundle::new(
         &stage_creator, 
         stage_creator.stage.goal_grid_pos, 
-        sprite_rect));
+        sprite_rect)).try_insert(CollisionGroups::new(Group::GROUP_3, Group::ALL));
     return true;
 }
 
@@ -133,7 +134,7 @@ fn build_spikes(stage_creator: &StageCreator, commands: &mut Commands) -> bool {
         commands.spawn(SpikeBundle::new(
             stage_creator, 
             spike.grid_pos, 
-            sprite_rect));
+            sprite_rect)).try_insert(CollisionGroups::new(Group::GROUP_2, Group::ALL));
     }
 
     return true;
