@@ -25,7 +25,7 @@ pub fn check_grounded(
         .exclude_rigid_body(entity)
         .groups(CollisionGroups::new(Group::GROUP_1, Group::GROUP_1));
 
-        let raycast_buffer = 5.0;
+        let raycast_buffer = 2.0;
         let raycast_length = transform.scale.y / 2.0;
         let solid = false;
         let ray_count = 3;
