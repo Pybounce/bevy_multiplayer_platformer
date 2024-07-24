@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
 
-use crate::player::wall_jump_controller::WallStickable;
+use crate::{ground::{Groundable, Grounded}, player::wall_jump_controller::WallStickable};
 
 
 
@@ -74,14 +74,14 @@ pub fn check_touching_wall(
 }
 
 pub fn asdfdasd(
-    mut query: Query<&mut Sprite, (Without<TouchingWall>, With<WallStickable>)>
+    mut query: Query<&mut Sprite, (Without<Grounded>, With<Groundable>)>
 ) {
     for mut s in &mut query {
         s.color = Color::RED;
     }
 }
 pub fn asdfdasd2(
-    mut query: Query<&mut Sprite, (With<TouchingWall>, With<WallStickable>)>
+    mut query: Query<&mut Sprite, (With<Grounded>, With<Groundable>)>
 ) {
     for mut s in &mut query {
         s.color = Color::GREEN;
