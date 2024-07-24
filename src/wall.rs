@@ -20,11 +20,11 @@ pub enum TouchingWall {
 
 pub fn check_touching_wall(
     mut commands: Commands,
-    wallable_query: Query<(Entity, &Transform, Option<&TouchingWall>), With<Wallable>>,
+    mut wallable_query: Query<(Entity, &mut Transform, &mut Velocity, Option<&TouchingWall>), With<Wallable>>,
     _wall_query: Query<(), With<Wall>>,
     rapier_context: Res<RapierContext>
 ) {
-    for (entity, transform, tw_opt) in &wallable_query {
+    for (entity, mut transform, mut velocity, tw_opt) in &mut wallable_query {
         let mut new_left_collision = false;
         let mut new_right_collision = false;
 
@@ -34,18 +34,32 @@ pub fn check_touching_wall(
         .exclude_rigid_body(entity)
         .groups(CollisionGroups::new(Group::GROUP_1, Group::GROUP_1));
 
-        let max_toi = (transform.scale.x / 2.0) - 5.0;
-        let solid = true;
+
+
+
+        let raycast_buffer = 5.0;
+        let raycast_length = transform.scale.y / 2.0;
+        let solid = false;
         let ray_count = 3;
 
-        let mut ray_pos = transform.translation.truncate() - (transform.scale.y / 2.0);
+        let mut ray_pos = Vec2::new(transform.translation.x, transform.translation.y - (transform.scale.y / 2.0));
+        
         for _ in 0..ray_count {
-            ray_pos += transform.scale.y / (ray_count + 1) as f32;
-            if let Some((_entity, _toi)) = rapier_context.cast_ray(ray_pos, Vec2::new(-1.0, 0.0), max_toi, solid, filter) {
+            ray_pos.y += transform.scale.y / (ray_count + 1) as f32;
+
+            if let Some((_entity, toi)) = rapier_context.cast_ray(ray_pos, Vec2::new(-1.0, 0.0), raycast_length + raycast_buffer , solid, filter) {
                 new_right_collision = true;
+                if toi <= raycast_length {
+                    velocity.linvel.x = velocity.linvel.x.max(0.0);
+                    transform.translation.x += raycast_length - toi;
+                }
             }
-            if let Some((_entity, _toi)) = rapier_context.cast_ray(ray_pos, Vec2::new(1.0, 0.0), max_toi, solid, filter) {
+            if let Some((_entity, toi)) = rapier_context.cast_ray(ray_pos, Vec2::new(1.0, 0.0), raycast_length + raycast_buffer, solid, filter) {
                 new_left_collision = true;
+                if toi <= raycast_length {
+                    velocity.linvel.x = velocity.linvel.x.min(0.0);
+                    transform.translation.x -= raycast_length - toi;
+                }
             }
         }
 
