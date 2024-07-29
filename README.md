@@ -13,7 +13,7 @@ Random Ideas
 - [ ] Networked player names
 - [ ] Player death juice
 - [ ] Player death counter?
-- [ ] Web build
+- [x] Web build
 - [ ] Basic art
 - [ ] Web build networking
 
@@ -35,7 +35,9 @@ Random Ideas
   - Reliable will contain events such as player death and spawn (also time? - does reliable keep ordering)
   - Unreliable will contain messages like position update
 - [ ] Must cater to multiple message types in a message
-- [ ] Fix the networking state machine to handle the socket not connecting
+- [x] Fix the networking state machine to handle the socket not connecting
+- [ ] Network Retries
+  - Retry count derived from NetworkingPreferences, describes how many times it should auto retry, before requiring manual intervention
 
 ## To Do
 
