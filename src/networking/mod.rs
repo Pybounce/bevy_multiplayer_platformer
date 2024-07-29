@@ -15,7 +15,7 @@ pub struct GameNetworkingPlugin;
 impl Plugin for GameNetworkingPlugin {
     fn build(&self, app: &mut App) {
         app
-        .insert_resource(NetworkingPreferences { online: true })
+        .insert_resource(NetworkingPreferences { online: true, retry_count: 3 })
         .add_event::<PeerConnectionEvent>()
         .add_event::<PeerDisconnectionEvent>()
         .add_systems(Update, check_connection.run_if(in_state(NetworkingState::Connected).or_else(in_state(NetworkingState::Disconnected))))      
@@ -35,9 +35,28 @@ pub struct CurrrentNetworkData {
     socket: MatchboxSocket<SingleChannel>,
     stage_id: usize
 }
+
+impl CurrrentNetworkData {
+    pub fn is_valid(optional_data: &mut Option<ResMut<CurrrentNetworkData>>) -> bool {
+        //check connection is open and it's SOME
+        match optional_data {
+            Some(x) => {
+                if x.socket.is_closed() {
+                    return false;
+                }
+                else {
+                    return true;
+                }
+            },
+            None => false,
+        }
+    }
+}
+
 #[derive(Resource)]
 pub struct NetworkingPreferences {
-    online: bool
+    online: bool,
+    retry_count: u8
 }
 
 fn check_connection(
@@ -51,7 +70,7 @@ fn check_connection(
         Some(stage_data) => {
             match current_network_data {
                 Some(network_data) => {
-                    if network_data.stage_id != stage_data.stage_id {
+                    if network_data.stage_id != stage_data.stage_id || network_data.socket.is_closed() {
                         // disconnect current connection
                         networking_state.set(NetworkingState::Disconnecting);
                     }

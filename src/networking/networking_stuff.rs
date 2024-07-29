@@ -11,11 +11,14 @@ pub fn connect_socket(
     stage_data_opt: Option<Res<CurrentStageData>>,
     mut networking_state: ResMut<NextState<NetworkingState>>,
 ) {
-    return;
+    //return;
     if let None = stage_data_opt { return; }
     let stage_data = stage_data_opt.unwrap();
 
-    let mut room_url = String::from("wss://20.90.116.144:3536/game_name_");
+    //let mut room_url = String::from("ws://20.90.116.144:3536/game_name_");
+    //let mut room_url = String::from("wss://4.158.59.49:443/game_name_");
+    //let mut room_url = String::from("ws://4.158.59.49:80/game_name_");
+    let mut room_url = String::from("wss://platformer.skybounce.io:443/game_name_");
     ////let mut room_url = String::from("ws://localhost:3536/");
 
     room_url.push_str(&stage_data.stage_id.to_string());
@@ -28,13 +31,17 @@ pub fn connect_socket(
     networking_state.set(NetworkingState::Connected);
 }
 
+
+
 pub fn disconnect_socket(
     mut networking_data_opt: Option<ResMut<CurrrentNetworkData>>,
     mut networking_state: ResMut<NextState<NetworkingState>>,
     mut commands: Commands
 ) {
     if let Some(networking_data) = &mut networking_data_opt { 
-        networking_data.socket.close();
+        if !networking_data.socket.is_closed() {
+            networking_data.socket.close();
+        }
         commands.remove_resource::<CurrrentNetworkData>();
         networking_state.set(NetworkingState::Disconnected);
     }
@@ -45,7 +52,8 @@ pub fn send_message(
     mut networking_data_opt: Option<ResMut<CurrrentNetworkData>>,
     local_player_query: Query<&Transform, (With<LocalPlayer>, Without<NetworkedPlayer>)>
 ) {
-    if let Some(networking_data) = &mut networking_data_opt { 
+    if CurrrentNetworkData::is_valid(&mut networking_data_opt) { 
+        let mut networking_data = networking_data_opt.unwrap();
         let peers: Vec<_> = networking_data.socket.connected_peers().collect();
 
         for peer in peers {
@@ -66,7 +74,8 @@ pub fn receive_messages(
     mut networking_data_opt: Option<ResMut<CurrrentNetworkData>>,
     mut player_query: Query<&mut Transform, (Without<LocalPlayer>, With<NetworkedPlayer>)>
 ) {
-    if let Some(networking_data) = &mut networking_data_opt { 
+    if CurrrentNetworkData::is_valid(&mut networking_data_opt) { 
+        let mut networking_data = networking_data_opt.unwrap();
         for (_id, message) in networking_data.socket.receive() {
             let message: NewLocationMessage = bincode::deserialize(&message[..]).unwrap();
             for mut t in &mut player_query {
@@ -92,7 +101,9 @@ pub fn check_peer_connections(
     mut connection_event_writer: EventWriter<PeerConnectionEvent>,
     mut disconnection_event_writer: EventWriter<PeerDisconnectionEvent>
 ) {
-    if let Some(networking_data) = &mut networking_data_opt { 
+    if CurrrentNetworkData::is_valid(&mut networking_data_opt) { 
+        let mut networking_data = networking_data_opt.unwrap();
+
         for (id, state) in networking_data.socket.update_peers().into_iter() {
             match state {
                 PeerState::Connected => {
