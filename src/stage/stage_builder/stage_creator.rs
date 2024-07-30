@@ -73,9 +73,8 @@ fn build_ground(stage_creator: &StageCreator, commands: &mut Commands) -> bool {
 }
 
 fn build_background(stage_creator: &StageCreator, commands: &mut Commands) -> bool {
-    let sprite_rect_x = (ColourPaletteAtlasIndex::Background as usize % 5) as f32;
-    let sprite_rect_y = (ColourPaletteAtlasIndex::Background as usize / 5) as f32;
-    let sprite_rect = Rect::new(sprite_rect_x, sprite_rect_y, sprite_rect_x + 1.0, sprite_rect_y + 1.0);
+
+    let sprite_rect = colour_palette_rect_from_index(ColourPaletteAtlasIndex::Background);
 
     let mut background = TileBundle::new(
         stage_creator, 
@@ -93,9 +92,8 @@ fn build_background(stage_creator: &StageCreator, commands: &mut Commands) -> bo
 }
 
 fn build_far_background(stage_creator: &StageCreator, commands: &mut Commands) -> bool {
-    let sprite_rect_x = (ColourPaletteAtlasIndex::Ground as usize % 5) as f32;
-    let sprite_rect_y = (ColourPaletteAtlasIndex::Ground as usize / 5) as f32;
-    let sprite_rect = Rect::new(sprite_rect_x, sprite_rect_y, sprite_rect_x + 1.0, sprite_rect_y + 1.0);
+
+    let sprite_rect = colour_palette_rect_from_index(ColourPaletteAtlasIndex::Ground);
 
     let mut background = TileBundle::new(
         stage_creator, 
@@ -113,9 +111,8 @@ fn build_far_background(stage_creator: &StageCreator, commands: &mut Commands) -
 }
 
 fn build_goal(stage_creator: &StageCreator, commands: &mut Commands) -> bool {
-    let sprite_rect_x = (ColourPaletteAtlasIndex::Goal as usize % 5) as f32;
-    let sprite_rect_y = (ColourPaletteAtlasIndex::Goal as usize / 5) as f32;
-    let sprite_rect = Rect::new(sprite_rect_x, sprite_rect_y, sprite_rect_x + 1.0, sprite_rect_y + 1.0);
+
+    let sprite_rect = colour_palette_rect_from_index(ColourPaletteAtlasIndex::Goal);
     
     commands.spawn(GoalBundle::new(
         &stage_creator, 
@@ -125,10 +122,8 @@ fn build_goal(stage_creator: &StageCreator, commands: &mut Commands) -> bool {
 }
 
 fn build_spikes(stage_creator: &StageCreator, commands: &mut Commands) -> bool {
-    let sprite_rect_x = (ColourPaletteAtlasIndex::Obstacle as usize % 5) as f32;
-    let sprite_rect_y = (ColourPaletteAtlasIndex::Obstacle as usize / 5) as f32;
-    let sprite_rect = Rect::new(sprite_rect_x, sprite_rect_y, sprite_rect_x + 1.0, sprite_rect_y + 1.0);
-    
+
+    let sprite_rect = colour_palette_rect_from_index(ColourPaletteAtlasIndex::Obstacle);
 
     for spike in &stage_creator.stage.spikes {
         commands.spawn(SpikeBundle::new(
@@ -141,10 +136,8 @@ fn build_spikes(stage_creator: &StageCreator, commands: &mut Commands) -> bool {
 }
 
 fn build_checkpoints(stage_creator: &StageCreator, commands: &mut Commands) -> bool {
-    let sprite_rect_x = (ColourPaletteAtlasIndex::_Misc as usize % 5) as f32;
-    let sprite_rect_y = (ColourPaletteAtlasIndex::_Misc as usize / 5) as f32;
-    let sprite_rect = Rect::new(sprite_rect_x, sprite_rect_y, sprite_rect_x + 1.0, sprite_rect_y + 1.0);
-    
+
+    let sprite_rect = colour_palette_rect_from_index(ColourPaletteAtlasIndex::_Misc);
 
     for checkpoint in &stage_creator.stage.checkpoints {
         commands.spawn(CheckpointBundle::new(
@@ -157,11 +150,7 @@ fn build_checkpoints(stage_creator: &StageCreator, commands: &mut Commands) -> b
 }
 
 fn build_ground_tile(commands: &mut Commands, stage_creator: &StageCreator, grid_x: f32, grid_y: f32) {
-
-    let sprite_rect_x = (ColourPaletteAtlasIndex::Ground as usize % 5) as f32;
-    let sprite_rect_y = (ColourPaletteAtlasIndex::Ground as usize / 5) as f32;
-    let sprite_rect = Rect::new(sprite_rect_x, sprite_rect_y, sprite_rect_x + 1.0, sprite_rect_y + 1.0);
-
+    let sprite_rect = colour_palette_rect_from_index(ColourPaletteAtlasIndex::Ground);
 
     commands.spawn(GroundTileBundle::new(
         stage_creator, 
@@ -171,3 +160,21 @@ fn build_ground_tile(commands: &mut Commands, stage_creator: &StageCreator, grid
 }
 
 
+fn colour_palette_rect_from_index(index: ColourPaletteAtlasIndex) -> Rect {
+
+    let i_index = index as i32;
+    let padding = 1.0;
+    let upper_left = IVec2::new(i_index % 5, i_index / 5).as_vec2();
+    let lower_right = Vec2::new(upper_left.x, upper_left.y);
+
+    return Rect::new(
+        index_to_padded_index(upper_left.x, padding), 
+        index_to_padded_index(upper_left.y, padding), 
+        index_to_padded_index(lower_right.x, padding) + 0.0, 
+        index_to_padded_index(lower_right.y, padding) + 0.0, 
+    );
+}
+
+fn index_to_padded_index(index: f32, padding: f32) -> f32 {
+    padding + (index * ((2.0 * padding) + 1.0))
+}

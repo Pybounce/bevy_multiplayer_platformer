@@ -73,23 +73,23 @@ fn check_state_transitions(
         match state_lifetime {
             DespawnOnStateExit::App(x) => {
                 for ste in &app_state_events {
-                    if x == &ste.before {
-                        commands.entity(entity).despawn();
-                    }
+                    //if x == &ste.before {
+                    //    commands.entity(entity).despawn();
+                    //}
                 }
             }
             DespawnOnStateExit::Game(x) => {
                 for ste in &game_state_events {
-                    if x == &ste.before {
-                        commands.entity(entity).despawn();
-                    }
+                    //if x == &ste.before {
+                   //     commands.entity(entity).despawn();
+                    //}
                 }
             }
             DespawnOnStateExit::Networking(x) => {
                 for ste in &networking_state_events {
-                    if x == &ste.before {
-                        commands.entity(entity).despawn();
-                    }
+                   // if x == &ste.before {
+                   //     commands.entity(entity).despawn();
+                   // }
                 }
             }
         }
@@ -102,23 +102,23 @@ fn check_state_transitions(
         match state_lifetime {
             DespawnOnStateEnter::App(x) => {
                 for ste in &app_state_events {
-                    if x == &ste.after {
-                        commands.entity(entity).despawn();
-                    }
+                   // if x == &ste.after {
+                    //    commands.entity(entity).despawn();
+                   // }
                 }
             }
             DespawnOnStateEnter::Game(x) => {
                 for ste in &game_state_events {
-                    if x == &ste.after {
-                        commands.entity(entity).despawn();
-                    }
+                   // if x == &ste.after {
+                   //     commands.entity(entity).despawn();
+                   // }
                 }
             }
             DespawnOnStateEnter::Networking(x) => {
                 for ste in &networking_state_events {
-                    if x == &ste.after {
-                        commands.entity(entity).despawn();
-                    }
+                   // if x == &ste.after {
+                   //     commands.entity(entity).despawn();
+                   // }
                 }
             }
         }

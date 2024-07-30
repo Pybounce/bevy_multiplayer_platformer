@@ -13,6 +13,31 @@ Random Ideas
 - [ ] Networked player names
 - [ ] Player death juice
 - [ ] Player death counter?
+- [x] Web build
+- [ ] Basic art
+- [ ] Web build networking
+
+## Web Build
+
+- [ ] Use wss protocol for matchbox server
+  - Also please add in a better way of joining networking
+  - Right now it sets up the socket and then says it's connected
+  - But that setup might fail, so there will need to be a check
+  - You can use ws protocol on firefox to replicate it failing
+- [ ] Figure out stuttering
+  - Perhaps only move the player down if they are not touching ground
+- [ ] Make networked players predictive
+  - Add velocity to their message and set it on read
+
+## Networking
+
+- [ ] Have 2 channels for reliable and unreliable
+  - Reliable will contain events such as player death and spawn (also time? - does reliable keep ordering)
+  - Unreliable will contain messages like position update
+- [ ] Must cater to multiple message types in a message
+- [x] Fix the networking state machine to handle the socket not connecting
+- [ ] Network Retries
+  - Retry count derived from NetworkingPreferences, describes how many times it should auto retry, before requiring manual intervention
 
 ## To Do
 
@@ -73,8 +98,6 @@ Random Ideas
 - Dash
   - Works on ground and air
   - Restores after touching ground (+delay) or wall
-- Wall jumping
-  - Literally just the bees knees, what more must be said
 - Slide
   - Press down to trigger
   - Only works when grounded

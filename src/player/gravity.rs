@@ -1,6 +1,8 @@
 use bevy::prelude::*;
 use bevy_rapier2d::dynamics::Velocity;
 
+use crate::ground::Grounded;
+
 #[derive(Component)]
 pub struct Gravity {
     pub max_force: f32,
@@ -9,7 +11,7 @@ pub struct Gravity {
 }
 
 pub fn simulate_gravity(
-    mut query: Query<(&mut Velocity, &mut Gravity)>,
+    mut query: Query<(&mut Velocity, &mut Gravity), Without<Grounded>>,
     time: Res<Time>
 ) {
     for (mut v, mut g) in &mut query {

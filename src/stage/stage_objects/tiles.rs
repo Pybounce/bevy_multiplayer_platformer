@@ -2,10 +2,9 @@
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
 
-use crate::{ground::Ground, stage::{stage_builder::stage_creator::StageCreator, stage_objects::StageObject}, wall::Wall};
+use crate::{ground::Ground, stage::{stage_builder::stage_creator::{StageCreator, TILE_SIZE}, stage_objects::StageObject}, wall::Wall};
 
 
-const TILE_SIZE: f32 = 32.0;
 
 #[derive(Bundle)]
 pub struct TileBundle {
