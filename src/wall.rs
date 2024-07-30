@@ -43,7 +43,20 @@ pub fn check_touching_wall(
         let ray_count = 3;
 
         let mut ray_pos = Vec2::new(transform.translation.x, transform.translation.y - (transform.scale.y / 2.0));
-        
+        for _ in 0..ray_count {
+            ray_pos.y += transform.scale.y / (ray_count + 1) as f32;
+
+            if let Some((_entity, toi)) = rapier_context.cast_ray(ray_pos, Vec2::new(1.0, 0.0), raycast_length + raycast_buffer, solid, filter) {
+                new_left_collision = true;
+                if toi <= raycast_length {
+                    velocity.linvel.x = velocity.linvel.x.min(0.0);
+                    transform.translation.x -= raycast_length - toi;
+                    break;
+                }
+            }
+        }
+
+        ray_pos = Vec2::new(transform.translation.x, transform.translation.y - (transform.scale.y / 2.0));
         for _ in 0..ray_count {
             ray_pos.y += transform.scale.y / (ray_count + 1) as f32;
 
@@ -52,17 +65,10 @@ pub fn check_touching_wall(
                 if toi <= raycast_length {
                     velocity.linvel.x = velocity.linvel.x.max(0.0);
                     transform.translation.x += raycast_length - toi;
-                }
-            }
-            if let Some((_entity, toi)) = rapier_context.cast_ray(ray_pos, Vec2::new(1.0, 0.0), raycast_length + raycast_buffer, solid, filter) {
-                new_left_collision = true;
-                if toi <= raycast_length {
-                    velocity.linvel.x = velocity.linvel.x.min(0.0);
-                    transform.translation.x -= raycast_length - toi;
+                    break;
                 }
             }
         }
-
         // if it's the new collision is already set, continue.
         if let Some(tw) = tw_opt {
             match tw {
