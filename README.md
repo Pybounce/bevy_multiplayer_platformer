@@ -19,14 +19,12 @@ Random Ideas
 
 ## Web Build
 
-- [ ] Use wss protocol for matchbox server
+- Use wss protocol for matchbox server
   - Also please add in a better way of joining networking
   - Right now it sets up the socket and then says it's connected
   - But that setup might fail, so there will need to be a check
   - You can use ws protocol on firefox to replicate it failing
-- [ ] Figure out stuttering
-  - Perhaps only move the player down if they are not touching ground
-- [ ] Make networked players predictive
+- Make networked players predictive
   - Add velocity to their message and set it on read
 
 ## Networking
