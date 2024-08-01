@@ -22,7 +22,8 @@ pub struct Stage {
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct GroundTile {
-    pub grid_pos: Vec2
+    pub grid_pos: Vec2,
+    pub tilemap_index: usize
 }
 
 #[derive(Debug, Deserialize, Serialize)]

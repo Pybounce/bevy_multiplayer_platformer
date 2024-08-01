@@ -15,10 +15,11 @@ pub fn connect_socket(
     if let None = stage_data_opt { return; }
     let stage_data = stage_data_opt.unwrap();
 
-    //let mut room_url = String::from("ws://20.90.116.144:3536/game_name_");
+    let mut room_url = String::from("ws://20.90.116.144:3536/game_name_");
     //let mut room_url = String::from("wss://4.158.59.49:443/game_name_");
     //let mut room_url = String::from("ws://4.158.59.49:80/game_name_");
-    let mut room_url = String::from("wss://platformer.skybounce.io:443/game_name_");
+    //let mut room_url = String::from("wss://platformer.skybounce.io:443/game_name_");
+    //let mut room_url = String::from("ws://platformer.skybounce.io:80/game_name_");
     ////let mut room_url = String::from("ws://localhost:3536/");
 
     room_url.push_str(&stage_data.stage_id.to_string());
