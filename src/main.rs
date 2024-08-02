@@ -53,6 +53,7 @@ fn main() {
     
     App::new()
         .insert_resource(winit_settings)
+        .insert_resource(Msaa::Off)
         .add_plugins(DefaultPlugins.set(window_settings).set(AssetPlugin {
             meta_check: AssetMetaCheck::Never,
             ..default()
