@@ -159,7 +159,7 @@ fn stage_from_grid(mut layout: String, width: usize, height: usize, id: usize) {
         else if tile == '⬛' {
             ground_tiles.push(GroundTile {
                 grid_pos: Vec2::new(x as f32, y as f32),
-                tilemap_index: 0
+                tilemap_index: get_ground_atlas_index(&layout, i, width)
             });
         }
         else {
@@ -190,8 +190,12 @@ fn stage_from_grid(mut layout: String, width: usize, height: usize, id: usize) {
 }
 
 
+fn get_ground_atlas_index(layout: &String, index: usize, width: usize) -> usize {
+    let bitmask = get_surrounding_tile_bitmask(layout, index, width);
+    return map_surrounding_ground_bitmask_to_tilemap_index(bitmask);
+}
 
-fn get_surrounding_tile_bitmask(layout: &String, index: usize, width: usize, height: usize) -> u8 {
+fn get_surrounding_tile_bitmask(layout: &String, index: usize, width: usize) -> u8 {
     let i_index = index as isize;
     let i_width = width as isize;
 
@@ -310,14 +314,146 @@ fn map_surrounding_ground_bitmask_to_tilemap_index(bitmask: u8) -> usize {
         70 => 48,
         71 => 3,
         72 => 53,
-        73 => 0,
-        74 => 0,
-        75 => 0,
-        76 => 0,
-        77 => 0,
-        78 => 0,
-        79 => 0,
-        _ => todo!()
+        73 => 11,
+        74 => 53,
+        75 => 11,
+        76 => 48,
+        77 => 7,
+        78 => 48,
+        79 => 3,
+
+        80 => 47,
+        81 => 6,
+        82 => 47,
+        83 => 6,
+        84 => 52,
+        85 => 36,
+        86 => 52,
+        87 => 32,
+        88 => 47,
+        89 => 6,
+
+        90 => 47,
+        91 => 6,
+        92 => 58,
+        93 => 33,
+        94 => 58,
+        95 => 29,
+        96 => 53,
+        97 => 11,
+        98 => 53,
+        99 => 11,
+
+        100 => 48,
+        101 => 7,
+        102 => 48,
+        103 => 3,
+        104 => 53,
+        105 => 22,
+        106 => 53,
+        107 => 11,
+        108 => 48,
+        109 => 7,
+
+        110 => 52,
+        111 => 3,
+        112 => 55,
+        113 => 45,
+        114 => 55,
+        115 => 45,
+        116 => 50,
+        117 => 34,
+        118 => 50,
+        119 => 42,
+
+        120 => 55,
+        121 => 45,
+        122 => 55,
+        123 => 45,
+        124 => 1,
+        125 => 30,
+        126 => 1,
+        127 => 38,
+        128 => 56,
+        129 => 22,
+
+        130 => 56,
+        131 => 22,
+        132 => 54,
+        133 => 12,
+        134 => 54,
+        135 => 18,
+        136 => 56,
+        137 => 22,
+        138 => 56,
+        139 => 22,
+
+        140 => 54,
+        141 => 12,
+        142 => 54,
+        143 => 18,
+        144 => 57,
+        145 => 26,
+        146 => 57,
+        147 => 26,
+        148 => 51,
+        149 => 8,
+
+        150 => 51,
+        151 => 43,
+        152 => 57,
+        153 => 26,
+        154 => 57,
+        155 => 26,
+        156 => 49,
+        157 => 4,
+        158 => 49,
+        159 => 15,
+
+        160 => 56,
+        161 => 22,
+        162 => 56,
+        163 => 22,
+        164 => 54,
+        165 => 12,
+        166 => 54,
+        167 => 18,
+        168 => 56,
+        169 => 22,
+
+        170 => 56,
+        171 => 22,
+        172 => 54,
+        173 => 12,
+        174 => 54,
+        175 => 18,
+        176 => 57,
+        177 => 26,
+        178 => 57,
+        179 => 26,
+
+        180 => 51,
+        181 => 8,
+        182 => 57,
+        183 => 26,
+        184 => 57,
+        185 => 26,
+        186 => 57,
+        187 => 26,
+        188 => 49,
+        189 => 4,
+
+        190 => 0,
+        191 => 0,
+        192 => 0,
+        193 => 0,
+        194 => 0,
+        195 => 0,
+        196 => 0,
+        197 => 0,
+        198 => 0,
+        199 => 0,
+        _ => 0
     }
 }
 
