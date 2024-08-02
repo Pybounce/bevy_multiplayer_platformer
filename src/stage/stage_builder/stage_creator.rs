@@ -157,8 +157,7 @@ fn build_ground_tile(commands: &mut Commands, stage_creator: &StageCreator, grid
     let upper_left = Vec2::new((atlas_index as f32 % tilemap_size as f32) as f32 * tilemap_tile_size, (atlas_index / tilemap_size) as f32 * tilemap_tile_size);
     let lower_right = Vec2::new(upper_left.x + tilemap_tile_size , upper_left.y + tilemap_tile_size);
     let sprite_rect = Rect::new(upper_left.x, upper_left.y, lower_right.x, lower_right.y);
-    error!("rect upper {}", upper_left);
-    error!("rect lower {}", lower_right);
+
     commands.spawn(GroundTileBundle::new(
         stage_creator, 
         Vec2::new(grid_x, grid_y), 

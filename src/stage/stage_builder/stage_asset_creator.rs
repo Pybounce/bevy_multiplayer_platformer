@@ -8,11 +8,11 @@ use bevy::{
 use crate::stage::stage_builder::stage_asset::{GroundTile, Spike, Stage, Checkpoint};
 
 pub fn save_stage() {
-    save_stage_0();
-    save_stage_1();
-    save_stage_2();
-    save_stage_3();
-    save_stage_4();
+    //save_stage_0();
+    //save_stage_1();
+    //save_stage_2();
+    //save_stage_3();
+    //save_stage_4();
 }
 
 pub fn save_stage_0() {
@@ -223,7 +223,7 @@ fn stage_from_grid(mut layout: String, width: usize, height: usize, id: usize) {
 fn get_ground_atlas_index(layout: &String, index: usize, width: usize) -> usize {
     let bitmask = get_surrounding_tile_bitmask(layout, index, width);
     let atlas_index = map_surrounding_ground_bitmask_to_tilemap_index(bitmask);
-    error!("atlas_index {}", atlas_index);
+
     return atlas_index;
 }
 
@@ -249,7 +249,6 @@ fn get_surrounding_tile_bitmask(layout: &String, index: usize, width: usize) -> 
         }
         current_bit <<= 1;
     }
-    error!("bitmask {}", bitmask);
     return bitmask;
 }
 
