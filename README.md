@@ -39,6 +39,10 @@ Random Ideas
 
 ## To Do
 
+- SpriteAnimator component
+  - Takes in target_fps, atlas_index_range
+  - Keeps track of current atlas index, and timing
+  - Runs on entities with Sprite component etc
 - Make the player explode into many tiny squares with collision (good ol' ECS)
 - Move all that player config into a component for the player?
 
