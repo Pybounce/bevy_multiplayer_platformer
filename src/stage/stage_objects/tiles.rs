@@ -42,7 +42,7 @@ impl TileBundle {
                     translation: Vec3::new(grid_pos.x * TILE_SIZE, grid_pos.y * TILE_SIZE, 0.0),
                     ..default()
                 },
-                texture: stage_creator.colour_palettes.clone(),
+                texture: stage_creator.tilemap.clone(),
                 sprite: Sprite {
                     custom_size: Some(Vec2::new(1.0, 1.0)),
                     rect: Some(atlas_rect),

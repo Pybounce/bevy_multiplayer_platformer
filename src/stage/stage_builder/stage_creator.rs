@@ -8,7 +8,8 @@ pub const TILE_SIZE: f32 = 32.0;
 
 pub struct StageCreator<'a> {
     pub stage: &'a Stage, 
-    pub colour_palettes: &'a Handle<Image>
+    pub colour_palettes: &'a Handle<Image>,
+    pub tilemap: &'a Handle<Image>
 }
 
 pub enum ColourPaletteAtlasIndex {
@@ -21,20 +22,21 @@ pub enum ColourPaletteAtlasIndex {
 
 impl<'a> StageCreator<'a> {
 
-    pub fn new(stage: &'a Stage, colour_palettes: &'a Handle<Image>) -> Self {
+    pub fn new(stage: &'a Stage, colour_palettes: &'a Handle<Image>, tilemap: &'a Handle<Image>) -> Self {
         StageCreator {
             stage,
-            colour_palettes
+            colour_palettes,
+            tilemap
         }
     }
 
     pub fn build(&self, commands: &mut Commands) -> bool {
-        build_perimeter(self, commands) 
-        && build_ground(self, commands)
+        build_ground(self, commands)
+        //build_perimeter(self, commands) 
         && build_goal(self, commands)
-        && build_background(self, commands)
+        //&& build_background(self, commands)
         && build_spikes(self, commands)
-        && build_far_background(self, commands)
+        //&& build_far_background(self, commands)
         && build_player_spawner(self, commands)
         && build_checkpoints(self, commands)
 
@@ -53,13 +55,13 @@ fn build_player_spawner(stage_creator: &StageCreator, commands: &mut Commands) -
 
 fn build_perimeter(stage_creator: &StageCreator, commands: &mut Commands) -> bool {
     for x in 0..stage_creator.stage.grid_width + 2{
-        build_ground_tile(commands, stage_creator, x as f32 - 1.0, -1.0);
-        build_ground_tile(commands, stage_creator, x as f32 - 1.0, stage_creator.stage.grid_height as f32);
+        build_ground_tile(commands, stage_creator, x as f32 - 1.0, -1.0, 0);
+        build_ground_tile(commands, stage_creator, x as f32 - 1.0, stage_creator.stage.grid_height as f32, 0);
 
     }
     for y in 0..stage_creator.stage.grid_height + 2{
-        build_ground_tile(commands, stage_creator, -1.0, y as f32 - 1.0);
-        build_ground_tile(commands, stage_creator, stage_creator.stage.grid_width as f32, y as f32 - 1.0);
+        build_ground_tile(commands, stage_creator, -1.0, y as f32 - 1.0, 0);
+        build_ground_tile(commands, stage_creator, stage_creator.stage.grid_width as f32, y as f32 - 1.0, 0);
 
     }
     return true;
@@ -67,7 +69,7 @@ fn build_perimeter(stage_creator: &StageCreator, commands: &mut Commands) -> boo
 
 fn build_ground(stage_creator: &StageCreator, commands: &mut Commands) -> bool {
     for tile in &stage_creator.stage.ground_tiles {
-        build_ground_tile(commands, stage_creator, tile.grid_pos.x, tile.grid_pos.y);
+        build_ground_tile(commands, stage_creator, tile.grid_pos.x, tile.grid_pos.y, tile.tilemap_index);
     }
     return true;
 }
@@ -149,9 +151,14 @@ fn build_checkpoints(stage_creator: &StageCreator, commands: &mut Commands) -> b
     return true;
 }
 
-fn build_ground_tile(commands: &mut Commands, stage_creator: &StageCreator, grid_x: f32, grid_y: f32) {
-    let sprite_rect = colour_palette_rect_from_index(ColourPaletteAtlasIndex::Ground);
-
+fn build_ground_tile(commands: &mut Commands, stage_creator: &StageCreator, grid_x: f32, grid_y: f32, atlas_index: usize) {
+    let tilemap_size = 8;
+    let tilemap_tile_size = 16.0;
+    let upper_left = Vec2::new((atlas_index as f32 % tilemap_size as f32) as f32 * tilemap_tile_size, (atlas_index / tilemap_size) as f32 * tilemap_tile_size);
+    let lower_right = Vec2::new(upper_left.x + tilemap_tile_size , upper_left.y + tilemap_tile_size);
+    let sprite_rect = Rect::new(upper_left.x, upper_left.y, lower_right.x, lower_right.y);
+    error!("rect upper {}", upper_left);
+    error!("rect lower {}", lower_right);
     commands.spawn(GroundTileBundle::new(
         stage_creator, 
         Vec2::new(grid_x, grid_y), 
