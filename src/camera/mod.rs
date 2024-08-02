@@ -8,6 +8,7 @@ pub fn spawn_camera(mut commands: Commands) {
     commands
         .spawn(Camera2dBundle {
             camera: Camera {
+                clear_color: ClearColorConfig::Custom(Color::linear_rgb(0.25, 0.5, 0.7)),
                 ..default()
             },
             transform: Transform {
