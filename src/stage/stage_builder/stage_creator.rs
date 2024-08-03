@@ -176,7 +176,7 @@ fn build_checkpoints(stage_creator: &StageCreator, commands: &mut Commands) -> b
 }
 
 fn build_ground_tile(commands: &mut Commands, stage_creator: &StageCreator, grid_x: f32, grid_y: f32, atlas_index: usize) {
-    let tilemap_size = 8;
+    let tilemap_size = 7;
     let tilemap_tile_size = 16.0;
     let upper_left = Vec2::new((atlas_index as f32 % tilemap_size as f32) as f32 * tilemap_tile_size, (atlas_index / tilemap_size) as f32 * tilemap_tile_size);
     let lower_right = Vec2::new(upper_left.x + tilemap_tile_size , upper_left.y + tilemap_tile_size);
