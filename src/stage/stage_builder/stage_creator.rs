@@ -1,4 +1,4 @@
-use crate::{common::checkpoint::CheckpointBundle, player::spawner::LocalPlayerSpawner, stage::stage_objects::{goal::GoalBundle, spike::SpikeBundle, tiles::{GroundTileBundle, TileBundle}}};
+use crate::{common::checkpoint::CheckpointBundle, player::spawner::LocalPlayerSpawner, stage::{self, stage_objects::{goal::GoalBundle, half_saw::HalfSawBundle, spike::SpikeBundle, tiles::{GroundTileBundle, TileBundle}}}};
 
 use super::stage_asset::Stage;
 use bevy::prelude::*;
@@ -9,7 +9,8 @@ pub const TILE_SIZE: f32 = 32.0;
 pub struct StageCreator<'a> {
     pub stage: &'a Stage, 
     pub colour_palettes: &'a Handle<Image>,
-    pub tilemap: &'a Handle<Image>
+    pub tilemap: &'a Handle<Image>,
+    pub object_tilemap: &'a Handle<Image>
 }
 
 pub enum ColourPaletteAtlasIndex {
@@ -22,11 +23,12 @@ pub enum ColourPaletteAtlasIndex {
 
 impl<'a> StageCreator<'a> {
 
-    pub fn new(stage: &'a Stage, colour_palettes: &'a Handle<Image>, tilemap: &'a Handle<Image>) -> Self {
+    pub fn new(stage: &'a Stage, colour_palettes: &'a Handle<Image>, tilemap: &'a Handle<Image>, object_tilemap: &'a Handle<Image>) -> Self {
         StageCreator {
             stage,
             colour_palettes,
-            tilemap
+            tilemap,
+            object_tilemap
         }
     }
 
@@ -39,6 +41,7 @@ impl<'a> StageCreator<'a> {
         //&& build_far_background(self, commands)
         && build_player_spawner(self, commands)
         && build_checkpoints(self, commands)
+        && build_half_saws(self, commands)
 
     }
 
@@ -82,7 +85,7 @@ fn build_background(stage_creator: &StageCreator, commands: &mut Commands) -> bo
         stage_creator, 
         Vec2::new((stage_creator.stage.grid_width as f32 - 1.0) / 2.0, 
         (stage_creator.stage.grid_height as f32 - 1.0) / 2.0), 
-        sprite_rect);
+        sprite_rect, 0.0, stage_creator.tilemap);
     background.sprite_bundle.transform.translation.z = -10.0;
     background.sprite_bundle.transform.scale = Vec3::new(
         stage_creator.stage.grid_width as f32 * TILE_SIZE,
@@ -101,7 +104,7 @@ fn build_far_background(stage_creator: &StageCreator, commands: &mut Commands) -
         stage_creator, 
         Vec2::new((stage_creator.stage.grid_width as f32 - 1.0) / 2.0, 
         (stage_creator.stage.grid_height as f32 - 1.0) / 2.0), 
-        sprite_rect);
+        sprite_rect, 0.0, stage_creator.tilemap);
     background.sprite_bundle.transform.translation.z = -20.0;
     background.sprite_bundle.transform.scale = Vec3::new(
         stage_creator.stage.grid_width as f32 * TILE_SIZE * 10.0,
@@ -137,6 +140,27 @@ fn build_spikes(stage_creator: &StageCreator, commands: &mut Commands) -> bool {
     return true;
 }
 
+fn build_half_saws(stage_creator: &StageCreator, commands: &mut Commands) -> bool {
+
+    let atlas_rects = vec![
+        get_object_tilemap_rect_from_index(0),
+        get_object_tilemap_rect_from_index(1),
+        get_object_tilemap_rect_from_index(2),
+        get_object_tilemap_rect_from_index(3),
+    ];
+
+    for half_saw in &stage_creator.stage.half_saws {
+        commands.spawn(HalfSawBundle::new(
+            stage_creator,
+            half_saw.grid_pos,
+            atlas_rects.clone(),
+            half_saw.rotation
+        ));
+    }
+
+    return true;
+}
+
 fn build_checkpoints(stage_creator: &StageCreator, commands: &mut Commands) -> bool {
 
     let sprite_rect = colour_palette_rect_from_index(ColourPaletteAtlasIndex::_Misc);
@@ -165,6 +189,14 @@ fn build_ground_tile(commands: &mut Commands, stage_creator: &StageCreator, grid
 
 }
 
+fn get_object_tilemap_rect_from_index(index: usize) -> Rect {
+    let tilemap_size = 16;
+    let tilemap_tile_size = 16.0;
+
+    let upper_left = Vec2::new((index as f32 % tilemap_size as f32) as f32 * tilemap_tile_size, (index / tilemap_size) as f32 * tilemap_tile_size);
+    let lower_right = Vec2::new(upper_left.x + tilemap_tile_size, upper_left.y + tilemap_tile_size);
+    Rect::new(upper_left.x, upper_left.y, lower_right.x, lower_right.y)
+}
 
 fn colour_palette_rect_from_index(index: ColourPaletteAtlasIndex) -> Rect {
 

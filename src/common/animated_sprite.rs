@@ -1,10 +1,5 @@
 use bevy::prelude::*;
 
-pub struct AnimatedSpriteInput {
-    ///Milliseconds between each frame
-    frame_delay: u128,
-    atlas_rects: Vec<Rect>
-}
 
 #[derive(Component)]
 pub struct AnimatedSprite {
@@ -16,10 +11,10 @@ pub struct AnimatedSprite {
 }
 
 impl AnimatedSprite {
-    pub fn new(input: &AnimatedSpriteInput) -> AnimatedSprite {
+    pub fn new(frame_delay: u128, atlas_rects: Vec<Rect>) -> AnimatedSprite {
         AnimatedSprite {
-            frame_delay: input.frame_delay,
-            atlas_rects: input.atlas_rects.clone(),
+            frame_delay: frame_delay,
+            atlas_rects: atlas_rects.clone(),
             current_atlas_index: 0,
             current_time: 0,
         }

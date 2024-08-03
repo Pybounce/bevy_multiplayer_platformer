@@ -33,16 +33,17 @@ pub struct GroundTileBundle {
 
 
 impl TileBundle {
-    pub fn new(stage_creator: &StageCreator, grid_pos: Vec2, atlas_rect: Rect) -> Self {
+    pub fn new(stage_creator: &StageCreator, grid_pos: Vec2, atlas_rect: Rect, tile_rotation: f32, image_handle: &Handle<Image>) -> Self {
 
         TileBundle {
             sprite_bundle: SpriteBundle {
                 transform: Transform {
+                    rotation: Quat::from_rotation_z(tile_rotation),
                     scale: Vec3::new(TILE_SIZE, TILE_SIZE, 1.0),
                     translation: Vec3::new(grid_pos.x * TILE_SIZE, grid_pos.y * TILE_SIZE, 0.0),
                     ..default()
                 },
-                texture: stage_creator.tilemap.clone(),
+                texture: image_handle.clone(),
                 sprite: Sprite {
                     custom_size: Some(Vec2::new(1.0, 1.0)),
                     rect: Some(atlas_rect),
@@ -57,9 +58,9 @@ impl TileBundle {
 }
 
 impl PhysicalTileBundle {
-    pub fn new(stage_creator: &StageCreator, grid_pos: Vec2, atlas_rect: Rect) -> Self {
+    pub fn new(stage_creator: &StageCreator, grid_pos: Vec2, atlas_rect: Rect, tile_rotation: f32, image_handle: &Handle<Image>) -> Self {
         PhysicalTileBundle {
-            tile_bundle: TileBundle::new(stage_creator, grid_pos, atlas_rect),
+            tile_bundle: TileBundle::new(stage_creator, grid_pos, atlas_rect, tile_rotation, image_handle),
             rigidbody: RigidBody::Fixed,
             collider: Collider::cuboid(0.5, 0.5),
             restitution: Restitution::coefficient(0.0),
@@ -73,7 +74,7 @@ impl PhysicalTileBundle {
 impl GroundTileBundle {
     pub fn new(stage_creator: &StageCreator, grid_pos: Vec2, atlas_rect: Rect) -> Self {
         GroundTileBundle {
-            physical_tile_bundle: PhysicalTileBundle::new(stage_creator, grid_pos, atlas_rect),
+            physical_tile_bundle: PhysicalTileBundle::new(stage_creator, grid_pos, atlas_rect, 0.0, stage_creator.tilemap),
             ground_marker: Ground,
             wall_marker: Wall,
             collision_groups: CollisionGroups::new(Group::GROUP_1, Group::ALL),

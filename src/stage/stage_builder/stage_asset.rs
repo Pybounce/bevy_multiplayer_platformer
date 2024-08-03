@@ -13,6 +13,7 @@ pub struct Stage {
     pub id: usize,
     pub ground_tiles: Vec<GroundTile>,
     pub spikes: Vec<Spike>,
+    pub half_saws: Vec<HalfSaw>,
     pub checkpoints: Vec<Checkpoint>,
     pub grid_width: usize,
     pub grid_height: usize,
@@ -29,6 +30,12 @@ pub struct GroundTile {
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Spike {
     pub grid_pos: Vec2
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct HalfSaw {
+    pub grid_pos: Vec2,
+    pub rotation: f32
 }
 
 #[derive(Debug, Deserialize, Serialize)]

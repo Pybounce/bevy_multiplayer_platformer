@@ -17,7 +17,7 @@ pub struct GoalBundle {
 impl GoalBundle {
     pub fn new(stage_creator: &StageCreator, grid_pos: Vec2, atlas_rect: Rect) -> Self {
         GoalBundle {
-            physical_tile_bundle: PhysicalTileBundle::new(stage_creator, grid_pos, atlas_rect),
+            physical_tile_bundle: PhysicalTileBundle::new(stage_creator, grid_pos, atlas_rect, 0.0, stage_creator.tilemap),
             goal_marker: StageGoal,
         }
     }
