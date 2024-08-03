@@ -7,7 +7,7 @@ use bevy::{
 mod local_player;
 use bevy_rapier2d::{plugin::{NoUserData, RapierPhysicsPlugin}, render::RapierDebugRenderPlugin};
 use camera::{move_camera, spawn_camera};
-use common::{checkpoint::check_checkpoint_reached, death::despawn_death_marked, shake::shake, states::StatesPlugin};
+use common::{animated_sprite::animate_sprites, checkpoint::check_checkpoint_reached, death::despawn_death_marked, shake::shake, states::StatesPlugin};
 use game::GamePlugin;
 
 mod networking;
@@ -69,7 +69,7 @@ fn main() {
         .add_systems(Update, (move_camera, spawn_new_players, remove_disconnected_players))
         .add_systems(Update, (check_touching_wall, update_wall_stuck_time, apply_wall_friction, begin_player_wall_jump, shake, check_insta_kill_collisions, trigger_dead_local_player_respawn, spawn_local_players, check_grounded, check_player_out_of_bounds, move_airbourne_horizontal_controller, move_ground_horizontal_controller, update_last_grounded, maintain_player_jump, begin_player_jump, is_coyote_grounded, check_jump_fall_states, despawn_death_marked))
         .add_systems(Update, (apply_physics_controller_limits, add_wall_stuck, update_wall_stuck, remove_wall_stuck, asdfdasd, asdfdasd2))
-        .add_systems(Update, (simulate_gravity, check_checkpoint_reached))
+        .add_systems(Update, (simulate_gravity, check_checkpoint_reached, animate_sprites))
         .run();
 }
 
