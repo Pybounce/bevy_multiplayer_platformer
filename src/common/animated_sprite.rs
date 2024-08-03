@@ -4,19 +4,17 @@ use bevy::prelude::*;
 #[derive(Component)]
 pub struct AnimatedSprite {
     ///Milliseconds between each frame
-    frame_delay: u128,
     atlas_rects: Vec<Rect>,
     current_atlas_index: usize,
-    current_time: u128
+    timer: Timer
 }
 
 impl AnimatedSprite {
     pub fn new(frame_delay: u128, atlas_rects: Vec<Rect>) -> AnimatedSprite {
         AnimatedSprite {
-            frame_delay: frame_delay,
             atlas_rects: atlas_rects.clone(),
             current_atlas_index: 0,
-            current_time: 0,
+            timer: Timer::from_seconds(frame_delay as f32 / 1000.0, TimerMode::Repeating)
         }
     }
     pub fn increment_atlas_index(&mut self) {
@@ -36,15 +34,10 @@ pub fn animate_sprites(
 ) {
     for (mut anim_sprite, mut sprite) in &mut query {
 
-        anim_sprite.current_time += time.delta().as_millis();
-
-        if anim_sprite.current_time >= anim_sprite.frame_delay {
-
-            anim_sprite.current_time -= anim_sprite.frame_delay;
+        anim_sprite.timer.tick(time.delta());
+        if anim_sprite.timer.just_finished() {
             anim_sprite.increment_atlas_index();
-
             sprite.rect = Some(anim_sprite.get_current_atlas_rect());
-
         }
     }
 }
