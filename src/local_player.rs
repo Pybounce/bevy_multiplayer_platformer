@@ -4,7 +4,7 @@ use bevy_rapier2d::prelude::*;
 use crate::{common::death::Killable, ground::Groundable, player::{death::Respawnable, gravity::Gravity, horizontal_movement_controller::{AirbourneHorizontalMovementController, GroundedHorizontalMovementController}, jump_controller::JumpController, physics_controller::PhysicsController, wall_jump_controller::{WallJumpController, WallStickable}}, stage::stage_objects::StageObject, wall::Wallable};
 
 const PLAYER_SIZE: Vec2 = Vec2::new(32.0 * 0.8, 32.0 * 0.8);
-const PLAYER_COLOR: Color = Color::rgb(0.0, 2.0, 0.0);
+const PLAYER_COLOR: Color = Color::linear_rgb(0.0, 2.0, 0.0);
 const PLAYER_ACCELERATION: f32 = 2000.0;
 const PLAYER_DECELERATION: f32 = 2000.0;
 const MAX_HORIZONTAL_SPEED: f32 = 450.0;

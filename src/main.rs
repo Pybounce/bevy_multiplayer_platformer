@@ -1,7 +1,7 @@
 
 
 use bevy::{
-    asset::AssetMetaCheck, prelude::*, window::PresentMode, winit::{ UpdateMode, WinitSettings }
+    asset::AssetMetaCheck, prelude::*, winit::{ UpdateMode, WinitSettings }
 };
 
 mod local_player;
