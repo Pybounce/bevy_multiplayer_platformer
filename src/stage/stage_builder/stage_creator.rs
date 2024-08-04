@@ -1,4 +1,4 @@
-use crate::{common::checkpoint::CheckpointBundle, player::spawner::LocalPlayerSpawner, stage::{self, stage_objects::{goal::GoalBundle, half_saw::HalfSawBundle, spike::SpikeBundle, tiles::{GroundTileBundle, TileBundle}}}};
+use crate::{common::checkpoint::CheckpointBundle, player::spawner::LocalPlayerSpawner, stage::{self, stage_objects::{goal::GoalBundle, half_saw::HalfSawBundle, spike::SpikeBundle, tiles::{GroundTileBundle, TileBundle}, StageObject}}};
 
 use super::stage_asset::Stage;
 use bevy::prelude::*;
@@ -39,7 +39,7 @@ impl<'a> StageCreator<'a> {
     pub fn build(&self, commands: &mut Commands) -> bool {
         build_ground(self, commands)
         && build_goal(self, commands)
-        //&& build_background(self, commands)
+        && build_background(self, commands)
         && build_spikes(self, commands)
         && build_far_background(self, commands)
         && build_player_spawner(self, commands)
@@ -69,19 +69,25 @@ fn build_ground(stage_creator: &StageCreator, commands: &mut Commands) -> bool {
 
 fn build_background(stage_creator: &StageCreator, commands: &mut Commands) -> bool {
 
-    let sprite_rect = colour_palette_rect_from_index(ColourPaletteAtlasIndex::Background);
-
-    let mut background = TileBundle::new(
-        stage_creator, 
-        Vec2::new((stage_creator.stage.grid_width as f32 - 1.0) / 2.0, 
-        (stage_creator.stage.grid_height as f32 - 1.0) / 2.0), 
-        sprite_rect, 0.0, stage_creator.tilemap);
-    background.sprite_bundle.transform.translation.z = -10.0;
-    background.sprite_bundle.transform.scale = Vec3::new(
-        stage_creator.stage.grid_width as f32 * TILE_SIZE,
-        stage_creator.stage.grid_height as f32 * TILE_SIZE,
-        1.0);
-    commands.spawn(background);
+    let grid_pos = Vec2::new((stage_creator.stage.grid_width as f32 - 1.0) / 2.0, 
+    (stage_creator.stage.grid_height as f32 - 1.0) / 2.0);
+    
+    commands.spawn(
+        SpriteBundle {
+            transform: Transform {
+                scale: Vec3::new(TILE_SIZE * stage_creator.stage.grid_width as f32, TILE_SIZE * stage_creator.stage.grid_height as f32, 1.0),
+                translation: Vec3::new(grid_pos.x * TILE_SIZE, grid_pos.y * TILE_SIZE, -10.0),
+                ..default()
+            },
+            sprite: Sprite {
+                custom_size: Some(Vec2::new(1.0, 1.0)),
+                color: Color::linear_rgb(0.76, 0.95, 1.0),
+                ..default()
+            },
+            ..default()
+        }
+    )
+    .insert(StageObject { stage_id: stage_creator.stage.id });
 
     return true;
 }
