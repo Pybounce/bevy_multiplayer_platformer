@@ -4,7 +4,7 @@ use super::stage_asset::Stage;
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::{CollisionGroups, Group};
 
-pub const TILE_SIZE: f32 = 32.0;
+pub const TILE_SIZE: f32 = 16.0;
 
 pub struct StageCreator<'a> {
     pub stage: &'a Stage, 
@@ -38,7 +38,7 @@ impl<'a> StageCreator<'a> {
         && build_goal(self, commands)
         //&& build_background(self, commands)
         && build_spikes(self, commands)
-        //&& build_far_background(self, commands)
+        && build_far_background(self, commands)
         && build_player_spawner(self, commands)
         && build_checkpoints(self, commands)
         && build_half_saws(self, commands)
@@ -98,7 +98,11 @@ fn build_background(stage_creator: &StageCreator, commands: &mut Commands) -> bo
 
 fn build_far_background(stage_creator: &StageCreator, commands: &mut Commands) -> bool {
 
-    let sprite_rect = colour_palette_rect_from_index(ColourPaletteAtlasIndex::Ground);
+    let tilemap_size = 7;
+    let tilemap_tile_size = 16.0;
+    let upper_left = Vec2::new((52 as f32 % tilemap_size as f32) as f32 * tilemap_tile_size, (52 / tilemap_size) as f32 * tilemap_tile_size);
+    let lower_right = Vec2::new(upper_left.x + tilemap_tile_size , upper_left.y + tilemap_tile_size);
+    let sprite_rect = Rect::new(upper_left.x, upper_left.y, lower_right.x, lower_right.y);
 
     let mut background = TileBundle::new(
         stage_creator, 

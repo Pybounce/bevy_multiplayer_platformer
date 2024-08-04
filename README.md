@@ -118,6 +118,7 @@ Random Ideas
   - Consider removing groundable and wallable all together?
   - Same thing with controllers Changed<JumpController>
   - NOTE: Changed isn't how you track removed components, that is something different
+- Stupid texture bleeding comes back if the PC is trash (such as NU's laptop)
 
 ## Thoughts on Multiplayer
 
