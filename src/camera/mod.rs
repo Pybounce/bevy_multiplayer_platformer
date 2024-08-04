@@ -6,14 +6,8 @@ use crate::local_player::LocalPlayer;
 
 const CAMERA_ZOOM: u16 = 1;
 
-pub fn spawn_camera(mut commands: Commands, query: Query<&Window>) {
-    let window = query.single();
-    error!("{}", window.resolution.physical_width());
-    error!("{}", window.resolution.physical_height());
-    error!("{}", window.resolution.scale_factor());
-    if let Some(x) = window.resolution.scale_factor_override() {
-        error!("{}", x);
-    }
+pub fn spawn_camera(mut commands: Commands) {
+
     commands
         .spawn(Camera2dBundle {
             projection : OrthographicProjection {
