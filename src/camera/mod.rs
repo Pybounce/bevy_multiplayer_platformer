@@ -1,8 +1,10 @@
 
-use bevy::{core_pipeline::bloom::BloomSettings, prelude::*, render::camera::ScalingMode, scene::ron::de};
+use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
 
 use crate::local_player::LocalPlayer;
+
+const CAMERA_ZOOM: u16 = 1;
 
 pub fn spawn_camera(mut commands: Commands, query: Query<&Window>) {
     let window = query.single();
@@ -18,7 +20,7 @@ pub fn spawn_camera(mut commands: Commands, query: Query<&Window>) {
                 far: 1000.,
                 near: -1000.,
                 //scaling_mode: ScalingMode::FixedHorizontal(1280.0),
-                scale: 1.0 / 3.0,
+                scale: 1.0 / (CAMERA_ZOOM as f32),
                 ..default()
             },
             camera: Camera {
@@ -45,29 +47,6 @@ pub fn spawn_camera(mut commands: Commands, query: Query<&Window>) {
         ..default()
     });
 }
-
-pub fn move_camera_old(
-    mut camera_query: Query<(&mut Velocity, &Transform), With<Camera>>,
-    player_query: Query<&Transform, (With<LocalPlayer>, Without<Camera>)>
-) {
-    let (mut cv, ct) = camera_query.single_mut();
-    let pt = player_query.get_single();
-    match pt {
-        Ok(pt) => {
-            let distance = ct.translation.truncate().distance(pt.translation.truncate());
-            let speed = distance * 2.5;
-            let dir = (pt.translation - ct.translation).truncate().normalize();
-
-            if distance < 10.0 {
-                cv.linvel = Vec2::ZERO;
-                return;
-            }
-            cv.linvel = dir * speed;
-        }
-        Err(_) => (),
-    }
-}
-
 
 pub fn move_camera(
     mut camera_query: Query<&mut PixelPerfection, With<Camera>>,
