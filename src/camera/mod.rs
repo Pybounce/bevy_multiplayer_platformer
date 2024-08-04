@@ -29,8 +29,9 @@ pub fn spawn_camera(mut commands: Commands) {
         //.insert(BloomSettings::default())
         .insert(Velocity::default())
         .insert(RigidBody::Dynamic)
-        .insert(PixelPerfection {
-            translation: Vec3::default()
+        .insert(PixelPerfectTranslation {
+            translation: Vec3::default(),
+            factor: CAMERA_ZOOM as u32
         });
 
     commands.spawn(Text2dBundle {
@@ -40,7 +41,7 @@ pub fn spawn_camera(mut commands: Commands) {
 }
 
 pub fn move_camera(
-    mut camera_query: Query<&mut PixelPerfection, With<Camera>>,
+    mut camera_query: Query<&mut PixelPerfectTranslation, With<Camera>>,
     player_query: Query<&Transform, (With<LocalPlayer>, Without<Camera>)>,
     time: Res<Time>
 ) {
@@ -59,22 +60,23 @@ pub fn move_camera(
     }
 }
 
-pub fn move_pixel_perfect_bois(
-    mut query : Query<(&mut Transform, &PixelPerfection)>,
+pub fn move_pixel_perfect_translations(
+    mut query : Query<(&mut Transform, &PixelPerfectTranslation)>,
 ) {
     for (mut t, pp) in &mut query {
         t.translation = Vec3::new(
-            round_by_zoom(pp.translation.x, CAMERA_ZOOM), 
-            round_by_zoom(pp.translation.y, CAMERA_ZOOM), 
-            round_by_zoom(pp.translation.z, CAMERA_ZOOM)); 
+            round_by_factor(pp.translation.x, pp.factor), 
+            round_by_factor(pp.translation.y, pp.factor), 
+            round_by_factor(pp.translation.z, pp.factor)); 
     }
 }
 
-fn round_by_zoom(val: f32, zoom: u16) -> f32 {
-    (val * zoom as f32).trunc() / zoom as f32
+fn round_by_factor(val: f32, factor: u32) -> f32 {
+    (val * factor as f32).trunc() / factor as f32
 }
 
 #[derive(Component)]
-pub struct PixelPerfection {
-    pub translation: Vec3
+pub struct PixelPerfectTranslation {
+    pub translation: Vec3,
+    pub factor: u32
 }
