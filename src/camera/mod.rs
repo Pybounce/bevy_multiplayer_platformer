@@ -4,7 +4,7 @@ use bevy_rapier2d::prelude::*;
 
 use crate::local_player::LocalPlayer;
 
-const CAMERA_ZOOM: u16 = 1;
+const CAMERA_ZOOM: u16 = 2;
 
 pub fn spawn_camera(mut commands: Commands) {
 
@@ -13,13 +13,10 @@ pub fn spawn_camera(mut commands: Commands) {
             projection : OrthographicProjection {
                 far: 1000.,
                 near: -1000.,
-                //scaling_mode: ScalingMode::FixedHorizontal(1280.0),
                 scale: 1.0 / (CAMERA_ZOOM as f32),
                 ..default()
             },
             camera: Camera {
-                hdr: true,
-                //clear_color: ClearColorConfig::Custom(Color::linear_rgb(0.5, 0.5, 0.5)),
                 clear_color: ClearColorConfig::Custom(Color::linear_rgb(1.0, 0.5, 0.5)),
                 ..default()
             },
@@ -47,7 +44,7 @@ pub fn move_camera(
     player_query: Query<&Transform, (With<LocalPlayer>, Without<Camera>)>,
     time: Res<Time>
 ) {
-    let (mut ct) = camera_query.single_mut();
+    let mut ct = camera_query.single_mut();
     let pt = player_query.get_single();
     match pt {
         Ok(pt) => {
@@ -66,11 +63,16 @@ pub fn move_pixel_perfect_bois(
     mut query : Query<(&mut Transform, &PixelPerfection)>,
 ) {
     for (mut t, pp) in &mut query {
-        t.translation = Vec3::new(pp.translation.x.trunc(), pp.translation.y.trunc(), pp.translation.z.trunc())
+        t.translation = Vec3::new(
+            round_by_zoom(pp.translation.x, CAMERA_ZOOM), 
+            round_by_zoom(pp.translation.y, CAMERA_ZOOM), 
+            round_by_zoom(pp.translation.z, CAMERA_ZOOM)); 
     }
 }
 
-
+fn round_by_zoom(val: f32, zoom: u16) -> f32 {
+    (val * zoom as f32).trunc() / zoom as f32
+}
 
 #[derive(Component)]
 pub struct PixelPerfection {
