@@ -2,7 +2,7 @@
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
 
-use crate::{ground::Ground, stage::{stage_builder::stage_creator::{StageCreator, TILE_SIZE}, stage_objects::StageObject}, wall::Wall};
+use crate::{ground::Ground, stage::{stage_builder::stage_creator::{StageCreator, TILE_SIZE, TILE_SIZE_HALF}, stage_objects::StageObject}, wall::Wall};
 
 
 
@@ -39,13 +39,12 @@ impl TileBundle {
             sprite_bundle: SpriteBundle {
                 transform: Transform {
                     rotation: Quat::from_rotation_z(tile_rotation),
-                    scale: Vec3::new(TILE_SIZE, TILE_SIZE, 1.0),
                     translation: Vec3::new(grid_pos.x * TILE_SIZE, grid_pos.y * TILE_SIZE, 0.0),
                     ..default()
                 },
                 texture: image_handle.clone(),
                 sprite: Sprite {
-                    custom_size: Some(Vec2::new(1.0, 1.0)),
+                    custom_size: Some(Vec2::new(TILE_SIZE, TILE_SIZE)),
                     rect: Some(atlas_rect),
                     ..default()
                 },
@@ -62,7 +61,7 @@ impl PhysicalTileBundle {
         PhysicalTileBundle {
             tile_bundle: TileBundle::new(stage_creator, grid_pos, atlas_rect, tile_rotation, image_handle),
             rigidbody: RigidBody::Fixed,
-            collider: Collider::cuboid(0.5, 0.5),
+            collider: Collider::cuboid(TILE_SIZE_HALF, TILE_SIZE_HALF),
             restitution: Restitution::coefficient(0.0),
             friction: Friction::coefficient(0.0),
             gravity_scale: GravityScale(0.0),

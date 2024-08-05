@@ -4,6 +4,7 @@ use super::stage_asset::Stage;
 use bevy::prelude::*;
 
 pub const TILE_SIZE: f32 = 16.0;
+pub const TILE_SIZE_HALF: f32 = TILE_SIZE / 2.0;
 const TILEMAP_SIZE: usize = 7;
 const TILEMAP_TILE_SIZE: f32 = 16.0;
 const OBJECT_TILEMAP_SIZE: usize = 16;
