@@ -1,8 +1,7 @@
-use crate::{common::checkpoint::CheckpointBundle, player::spawner::LocalPlayerSpawner, stage::{self, stage_objects::{goal::GoalBundle, half_saw::HalfSawBundle, spike::SpikeBundle, tiles::{GroundTileBundle, TileBundle}, StageObject}}};
+use crate::{common::checkpoint::CheckpointBundle, player::spawner::LocalPlayerSpawner, stage::{self, stage_objects::{goal::GoalBundle, half_saw::HalfSawBundle, spike::SpikeFactory, tiles::{GroundTileBundle, TileBundle}, StageObject}}};
 
 use super::stage_asset::Stage;
 use bevy::prelude::*;
-use bevy_rapier2d::prelude::{CollisionGroups, Group};
 
 pub const TILE_SIZE: f32 = 16.0;
 const TILEMAP_SIZE: usize = 7;
@@ -130,10 +129,11 @@ fn build_spikes(stage_creator: &StageCreator, commands: &mut Commands) -> bool {
 
     for spike in &stage_creator.stage.spikes {
 
-        commands.spawn(SpikeBundle::new(
-            stage_creator, 
-            spike.grid_pos, 
-            sprite_rect));
+        SpikeFactory::spawn(commands, stage_creator, spike.grid_pos, sprite_rect);
+        //commands.spawn(SpikeBundle::new(
+        //    stage_creator, 
+        //    spike.grid_pos, 
+        //    sprite_rect));
     }
 
     return true;
@@ -184,6 +184,7 @@ fn build_ground_tile(commands: &mut Commands, stage_creator: &StageCreator, grid
         stage_creator, 
         Vec2::new(grid_x, grid_y), 
         sprite_rect));
+
 
 }
 
