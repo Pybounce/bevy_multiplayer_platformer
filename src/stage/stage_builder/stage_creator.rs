@@ -126,7 +126,7 @@ fn build_goal(stage_creator: &StageCreator, commands: &mut Commands) -> bool {
 
 fn build_spikes(stage_creator: &StageCreator, commands: &mut Commands) -> bool {
 
-    let sprite_rect = colour_palette_rect_from_index(ColourPaletteAtlasIndex::Obstacle);
+    let sprite_rect = get_object_tilemap_rect_from_index(4);
 
     for spike in &stage_creator.stage.spikes {
         commands.spawn(SpikeBundle::new(
