@@ -14,13 +14,14 @@ pub struct TileBundle {
 
 #[derive(Bundle)]
 pub struct PhysicalTileBundle {
-    tile_bundle: TileBundle,
-    rigidbody: RigidBody,
-    collider: Collider,
-    restitution: Restitution,
-    friction: Friction,
-    gravity_scale: GravityScale,
-    active_events: ActiveEvents,
+    pub tile_bundle: TileBundle,
+    pub rigidbody: RigidBody,
+    pub collider: Collider,
+    pub restitution: Restitution,
+    pub friction: Friction,
+    pub gravity_scale: GravityScale,
+    pub active_events: ActiveEvents,
+    pub collision_groups: CollisionGroups
 }
 
 #[derive(Bundle)]
@@ -28,7 +29,6 @@ pub struct GroundTileBundle {
     physical_tile_bundle: PhysicalTileBundle,
     ground_marker: Ground,
     wall_marker: Wall,
-    collision_groups: CollisionGroups
 }
 
 
@@ -58,7 +58,7 @@ impl TileBundle {
 }
 
 impl PhysicalTileBundle {
-    pub fn new(stage_creator: &StageCreator, grid_pos: Vec2, atlas_rect: Rect, tile_rotation: f32, image_handle: &Handle<Image>) -> Self {
+    pub fn new(stage_creator: &StageCreator, grid_pos: Vec2, atlas_rect: Rect, tile_rotation: f32, image_handle: &Handle<Image>, collision_groups: CollisionGroups) -> Self {
         PhysicalTileBundle {
             tile_bundle: TileBundle::new(stage_creator, grid_pos, atlas_rect, tile_rotation, image_handle),
             rigidbody: RigidBody::Fixed,
@@ -67,6 +67,7 @@ impl PhysicalTileBundle {
             friction: Friction::coefficient(0.0),
             gravity_scale: GravityScale(0.0),
             active_events: ActiveEvents::COLLISION_EVENTS,
+            collision_groups
         }
     }
 }
@@ -74,10 +75,9 @@ impl PhysicalTileBundle {
 impl GroundTileBundle {
     pub fn new(stage_creator: &StageCreator, grid_pos: Vec2, atlas_rect: Rect) -> Self {
         GroundTileBundle {
-            physical_tile_bundle: PhysicalTileBundle::new(stage_creator, grid_pos, atlas_rect, 0.0, stage_creator.tilemap),
+            physical_tile_bundle: PhysicalTileBundle::new(stage_creator, grid_pos, atlas_rect, 0.0, stage_creator.tilemap, CollisionGroups::new(Group::GROUP_1, Group::ALL)),
             ground_marker: Ground,
             wall_marker: Wall,
-            collision_groups: CollisionGroups::new(Group::GROUP_1, Group::ALL),
         }
     }
 }

@@ -120,7 +120,7 @@ fn build_goal(stage_creator: &StageCreator, commands: &mut Commands) -> bool {
     commands.spawn(GoalBundle::new(
         &stage_creator, 
         stage_creator.stage.goal_grid_pos, 
-        sprite_rect)).try_insert(CollisionGroups::new(Group::GROUP_3, Group::ALL));
+        sprite_rect));
     return true;
 }
 
@@ -129,10 +129,11 @@ fn build_spikes(stage_creator: &StageCreator, commands: &mut Commands) -> bool {
     let sprite_rect = get_object_tilemap_rect_from_index(4);
 
     for spike in &stage_creator.stage.spikes {
+
         commands.spawn(SpikeBundle::new(
             stage_creator, 
             spike.grid_pos, 
-            sprite_rect)).try_insert(CollisionGroups::new(Group::GROUP_2, Group::ALL));
+            sprite_rect));
     }
 
     return true;
@@ -153,7 +154,7 @@ fn build_half_saws(stage_creator: &StageCreator, commands: &mut Commands) -> boo
             half_saw.grid_pos,
             atlas_rects.clone(),
             half_saw.rotation
-        )).try_insert(CollisionGroups::new(Group::GROUP_2, Group::ALL));
+        ));
     }
 
     return true;

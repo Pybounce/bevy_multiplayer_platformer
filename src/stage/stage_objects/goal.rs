@@ -1,4 +1,5 @@
 use bevy::prelude::*;
+use bevy_rapier2d::prelude::{CollisionGroups, Group};
 
 use crate::stage::stage_builder::stage_creator::StageCreator;
 
@@ -17,7 +18,7 @@ pub struct GoalBundle {
 impl GoalBundle {
     pub fn new(stage_creator: &StageCreator, grid_pos: Vec2, atlas_rect: Rect) -> Self {
         GoalBundle {
-            physical_tile_bundle: PhysicalTileBundle::new(stage_creator, grid_pos, atlas_rect, 0.0, stage_creator.tilemap),
+            physical_tile_bundle: PhysicalTileBundle::new(stage_creator, grid_pos, atlas_rect, 0.0, stage_creator.tilemap, CollisionGroups::new(Group::GROUP_3, Group::ALL)),
             goal_marker: StageGoal,
         }
     }
