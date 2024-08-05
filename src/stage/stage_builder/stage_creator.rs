@@ -153,7 +153,7 @@ fn build_half_saws(stage_creator: &StageCreator, commands: &mut Commands) -> boo
             half_saw.grid_pos,
             atlas_rects.clone(),
             half_saw.rotation
-        ));
+        )).try_insert(CollisionGroups::new(Group::GROUP_2, Group::ALL));
     }
 
     return true;
