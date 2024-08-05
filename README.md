@@ -1,12 +1,8 @@
-# bevy_multiplayer_platformer
-
-Random Ideas
-
-- Ability to mute (/automute) other players
+# Bevy Multiplayer Platformer
 
 ## Alpha 1.0 Checklist
 
-- [ ] 3 full levels with checkpoints and difficulty
+- [ ] Many full levels with checkpoints and difficulty
 - [ ] Spectate mode
 - [ ] Main menu UI
 - [ ] New stage mechanics
@@ -14,8 +10,43 @@ Random Ideas
 - [ ] Player death juice
 - [ ] Player death counter?
 - [x] Web build
-- [ ] Basic art
+- [x] Basic art
 - [ ] Web build networking
+
+## To Do
+
+- Make the player explode into many tiny squares with collision (good ol' ECS)
+- Move all that player config into a component for the player?
+
+## To Theory Craft
+
+- Moustache/player appearance (floating hats, such as a crown, and googly eyes)
+- Fancy stage loading (fancy animation for a stage being loaded/unloaded)
+- Stage mechanic where blocks swich on and off in intervals, so player must jump on them with correct timing
+- Saws currently look like little donuts
+
+## Critical Bugs
+
+- Can jump on spikes and sawblades
+- Spike and sawblade hitboxes are too large
+- Player spawns a little above the ground and doesn't fall all the way down
+  - This links to the player being able to jump before hitting the ground
+    - Likely just need to lower the raycast padding
+- Spikes cannot be rotated
+
+## Bugs
+
+- Cannot preload (with a stage load event) on build complete, will try building that stage immediately and fail
+  - Need to test the build failed events at different points (1 stage in, 0 stages in etc)
+  - Seems like it's not scrubbing the current stage
+  - Also might not be taking the user back to stage select
+  - NOTE this happens when preloading the next, non-existent stage, in the BuildComplete event
+- Removing Groundable or Wallable component will not remove Grounded or TouchingWall component
+  - Can add a system to check Changed<Groundedable> but for now, who cares?
+  - Consider removing groundable and wallable all together?
+  - Same thing with controllers Changed<JumpController>
+  - NOTE: Changed isn't how you track removed components, that is something different
+- Stupid texture bleeding comes back if the PC is trash (such as NU's laptop)
 
 ## Web Build
 
@@ -36,24 +67,6 @@ Random Ideas
 - [x] Fix the networking state machine to handle the socket not connecting
 - [ ] Network Retries
   - Retry count derived from NetworkingPreferences, describes how many times it should auto retry, before requiring manual intervention
-
-## To Do
-
-- SpriteAnimator component
-  - Takes in target_fps, atlas_index_range
-  - Keeps track of current atlas index, and timing
-  - Runs on entities with Sprite component etc
-- Make the player explode into many tiny squares with collision (good ol' ECS)
-- Move all that player config into a component for the player?
-
-## To Theory Craft
-
-- Player mechanics
-- Obstacles
-- Moustache/player appearance (floating hats, such as a crown, and googly eyes)
-- Fancy backgrounds (ones that are parallaxed or move in a nice animation by themselves)
-- Fancy stage loading (fancy animation for a stage being loaded/unloaded)
-- Stage mechanic where blocks swich on and off in intervals, so player must jump on them with correct timing
 
 ## Stage Mechanics
 
@@ -106,20 +119,6 @@ Random Ideas
   - Gives a bit of a boost in speed like dash? (might be weird in air to slide transition)
   - Player becomes shorter and can slide under things
 
-## Bugs
-
-- Cannot preload (with a stage load event) on build complete, will try building that stage immediately and fail
-  - Need to test the build failed events at different points (1 stage in, 0 stages in etc)
-  - Seems like it's not scrubbing the current stage
-  - Also might not be taking the user back to stage select
-  - NOTE this happens when preloading the next, non-existent stage, in the BuildComplete event
-- Removing Groundable or Wallable component will not remove Grounded or TouchingWall component
-  - Can add a system to check Changed<Groundedable> but for now, who cares?
-  - Consider removing groundable and wallable all together?
-  - Same thing with controllers Changed<JumpController>
-  - NOTE: Changed isn't how you track removed components, that is something different
-- Stupid texture bleeding comes back if the PC is trash (such as NU's laptop)
-
 ## Thoughts on Multiplayer
 
 - Main issue is that small short stages will become cluttered with players
@@ -135,3 +134,7 @@ Random Ideas
 - Fix #3: Combine #1 and #2, make lobbies with long stages
   - Scales to many players well
   - You still get to play with the same players
+
+## Random Ideas
+
+- Ability to mute (/automute) other players
