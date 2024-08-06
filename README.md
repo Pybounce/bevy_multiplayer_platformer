@@ -47,6 +47,11 @@
   - NOTE: Changed isn't how you track removed components, that is something different
 - Stupid texture bleeding comes back if the PC is trash (such as NU's laptop)
 
+## Refactorings
+
+- Move the logic to get the atlas rect into the factories
+  - ie the obstacle factories like saw or spike
+
 ## Web Build
 
 - Use wss protocol for matchbox server
