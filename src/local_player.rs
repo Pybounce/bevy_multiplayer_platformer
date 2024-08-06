@@ -1,28 +1,30 @@
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
 
-use crate::{common::death::Killable, ground::Groundable, player::{death::Respawnable, gravity::Gravity, horizontal_movement_controller::{AirbourneHorizontalMovementController, GroundedHorizontalMovementController}, jump_controller::JumpController, physics_controller::PhysicsController, wall_jump_controller::{WallJumpController, WallStickable}}, stage::stage_objects::StageObject, wall::Wallable};
+use crate::{common::death::Killable, ground::Groundable, player::{death::Respawnable, gravity::Gravity, horizontal_movement_controller::{AirbourneHorizontalMovementController, GroundedHorizontalMovementController}, jump_controller::JumpController, physics_controller::PhysicsController, wall_jump_controller::{WallJumpController, WallStickable}}, stage::{stage_builder::stage_creator::TILE_SIZE, stage_objects::StageObject}, wall::Wallable};
 
-const PLAYER_SIZE: Vec2 = Vec2::new(32.0 * 0.8, 32.0 * 0.8);
-const PLAYER_COLOR: Color = Color::rgb(0.0, 2.0, 0.0);
-const PLAYER_ACCELERATION: f32 = 2000.0;
-const PLAYER_DECELERATION: f32 = 2000.0;
-const MAX_HORIZONTAL_SPEED: f32 = 450.0;
+const FORCE_MUL: f32 = TILE_SIZE / 16.0;
 
-const PLAYER_MIN_VELOCITY: Vec2 = Vec2::new(-1400.0, -800.0);
-const PLAYER_MAX_VELOCITY: Vec2 = Vec2::new(1000.0, 800.0);
+const PLAYER_SIZE: Vec2 = Vec2::new(TILE_SIZE * 0.8, TILE_SIZE * 0.8);
+const PLAYER_COLOR: Color = Color::linear_rgb(0.0, 2.0, 0.0);
+const PLAYER_ACCELERATION: f32 = 1000.0 * FORCE_MUL;
+const PLAYER_DECELERATION: f32 = 1000.0 * FORCE_MUL;
+const MAX_HORIZONTAL_SPEED: f32 = 225.0 * FORCE_MUL;
 
-const PLAYER_JUMP_SPEED: f32 = 400.0;
+const PLAYER_MIN_VELOCITY: Vec2 = Vec2::new(-700.0 * FORCE_MUL, -400.0 * FORCE_MUL);
+const PLAYER_MAX_VELOCITY: Vec2 = Vec2::new(500.0 * FORCE_MUL, 400.0 * FORCE_MUL);
+
+const PLAYER_JUMP_SPEED: f32 = 200.0 * FORCE_MUL;
 const PLAYER_JUMP_DURATION: f64 = 0.4;
 const PLAYER_COYOTE_TIME: f64 = 0.1;
 
-const PLAYER_WALL_JUMP_IN_FORCE: Vec2 = Vec2::new(300.0, 400.0);
-const PLAYER_WALL_JUMP_OUT_FORCE: Vec2 = Vec2::new(550.0, 400.0);
-const PLAYER_WALL_FRICTION_COEFFICIENT: f32 = 0.03;
+const PLAYER_WALL_JUMP_IN_FORCE: Vec2 = Vec2::new(150.0 * FORCE_MUL, 200.0 * FORCE_MUL);
+const PLAYER_WALL_JUMP_OUT_FORCE: Vec2 = Vec2::new(275.0 * FORCE_MUL, 200.0 * FORCE_MUL);
+const PLAYER_WALL_FRICTION_COEFFICIENT: f32 = 0.03 * FORCE_MUL;
 const PLAYER_WALL_STICK_DURATION: f64 = 0.3;
 
-const PLAYER_MAX_GRAVITY: f32 = 2000.0;
-const PLAYER_GRAVITY_ACCELERATION: f32 = 2000.0;
+const PLAYER_MAX_GRAVITY: f32 = 1000.0 * FORCE_MUL;
+const PLAYER_GRAVITY_ACCELERATION: f32 = 1000.0 * FORCE_MUL;
 
 const PLAYER_RESPAWN_DELAY: f64 = 0.5;
 

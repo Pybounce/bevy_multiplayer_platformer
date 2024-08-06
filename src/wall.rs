@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
 
-use crate::{ground::{Groundable, Grounded}, player::wall_jump_controller::WallStickable};
+use crate::ground::{Groundable, Grounded};
 
 
 

@@ -2,7 +2,7 @@
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
 
-use crate::{ground::Ground, stage::{stage_builder::stage_creator::{StageCreator, TILE_SIZE}, stage_objects::StageObject}, wall::Wall};
+use crate::{ground::Ground, stage::{stage_builder::stage_creator::{StageCreator, TILE_SIZE, TILE_SIZE_HALF}, stage_objects::StageObject}, wall::Wall};
 
 
 
@@ -14,13 +14,14 @@ pub struct TileBundle {
 
 #[derive(Bundle)]
 pub struct PhysicalTileBundle {
-    tile_bundle: TileBundle,
-    rigidbody: RigidBody,
-    collider: Collider,
-    restitution: Restitution,
-    friction: Friction,
-    gravity_scale: GravityScale,
-    active_events: ActiveEvents,
+    pub tile_bundle: TileBundle,
+    pub rigidbody: RigidBody,
+    pub collider: Collider,
+    pub restitution: Restitution,
+    pub friction: Friction,
+    pub gravity_scale: GravityScale,
+    pub active_events: ActiveEvents,
+    pub collision_groups: CollisionGroups
 }
 
 #[derive(Bundle)]
@@ -28,23 +29,22 @@ pub struct GroundTileBundle {
     physical_tile_bundle: PhysicalTileBundle,
     ground_marker: Ground,
     wall_marker: Wall,
-    collision_groups: CollisionGroups
 }
 
 
 impl TileBundle {
-    pub fn new(stage_creator: &StageCreator, grid_pos: Vec2, atlas_rect: Rect) -> Self {
+    pub fn new(stage_creator: &StageCreator, grid_pos: Vec2, atlas_rect: Rect, tile_rotation: f32, image_handle: &Handle<Image>) -> Self {
 
         TileBundle {
             sprite_bundle: SpriteBundle {
                 transform: Transform {
-                    scale: Vec3::new(TILE_SIZE, TILE_SIZE, 1.0),
+                    rotation: Quat::from_rotation_z(tile_rotation),
                     translation: Vec3::new(grid_pos.x * TILE_SIZE, grid_pos.y * TILE_SIZE, 0.0),
                     ..default()
                 },
-                texture: stage_creator.colour_palettes.clone(),
+                texture: image_handle.clone(),
                 sprite: Sprite {
-                    custom_size: Some(Vec2::new(1.0, 1.0)),
+                    custom_size: Some(Vec2::new(TILE_SIZE, TILE_SIZE)),
                     rect: Some(atlas_rect),
                     ..default()
                 },
@@ -57,15 +57,16 @@ impl TileBundle {
 }
 
 impl PhysicalTileBundle {
-    pub fn new(stage_creator: &StageCreator, grid_pos: Vec2, atlas_rect: Rect) -> Self {
+    pub fn new(stage_creator: &StageCreator, grid_pos: Vec2, atlas_rect: Rect, tile_rotation: f32, image_handle: &Handle<Image>, collision_groups: CollisionGroups) -> Self {
         PhysicalTileBundle {
-            tile_bundle: TileBundle::new(stage_creator, grid_pos, atlas_rect),
+            tile_bundle: TileBundle::new(stage_creator, grid_pos, atlas_rect, tile_rotation, image_handle),
             rigidbody: RigidBody::Fixed,
-            collider: Collider::cuboid(0.5, 0.5),
+            collider: Collider::cuboid(TILE_SIZE_HALF, TILE_SIZE_HALF),
             restitution: Restitution::coefficient(0.0),
             friction: Friction::coefficient(0.0),
             gravity_scale: GravityScale(0.0),
             active_events: ActiveEvents::COLLISION_EVENTS,
+            collision_groups
         }
     }
 }
@@ -73,10 +74,9 @@ impl PhysicalTileBundle {
 impl GroundTileBundle {
     pub fn new(stage_creator: &StageCreator, grid_pos: Vec2, atlas_rect: Rect) -> Self {
         GroundTileBundle {
-            physical_tile_bundle: PhysicalTileBundle::new(stage_creator, grid_pos, atlas_rect),
+            physical_tile_bundle: PhysicalTileBundle::new(stage_creator, grid_pos, atlas_rect, 0.0, stage_creator.tilemap, CollisionGroups::new(Group::GROUP_1, Group::ALL)),
             ground_marker: Ground,
             wall_marker: Wall,
-            collision_groups: CollisionGroups::new(Group::GROUP_1, Group::ALL),
         }
     }
 }

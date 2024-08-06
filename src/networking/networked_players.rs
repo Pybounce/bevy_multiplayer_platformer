@@ -5,7 +5,7 @@ use bevy_matchbox::matchbox_socket::PeerId;
 use crate::{common::states::{DespawnOnStateExit, NetworkingState}, networking::networking_stuff::{PeerConnectionEvent, PeerDisconnectionEvent}};
 
 const PLAYER_SIZE: Vec2 = Vec2::new(30.0, 30.0);
-const PLAYER_COLOR: Color = Color::rgb(0.0, 2.0, 2.0);
+const PLAYER_COLOR: Color = Color::linear_rgb(0.0, 2.0, 2.0);
 
 
 #[derive(Component)]

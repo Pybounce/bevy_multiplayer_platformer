@@ -40,11 +40,13 @@ pub fn try_build_stage(
     }
 
     let stage_asset = stage_assets.get(&stage_builder_data.stage_handle);
-    let texture_handle: Handle<Image> = asset_server.load("colour_palettes.png");
+    let colour_palette_handle: Handle<Image> = asset_server.load("colour_palettes.png");
+    let tilemap_handle: Handle<Image> = asset_server.load("tilemap.png");
+    let object_tilemap_handle: Handle<Image> = asset_server.load("object_tilemap.png");
 
     match stage_asset {
         Some(stage) => {
-            let stage_creator = StageCreator::new(&stage, &texture_handle);
+            let stage_creator = StageCreator::new(&stage, &colour_palette_handle, &tilemap_handle, &object_tilemap_handle);
             if stage_creator.build(&mut commands) {
                 commands.insert_resource(CurrentStageData {
                     stage_id: stage.id,
