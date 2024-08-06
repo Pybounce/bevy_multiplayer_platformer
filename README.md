@@ -27,11 +27,9 @@
 
 ## Critical Bugs
 
-- Spike and sawblade hitboxes are too large
 - Player spawns a little above the ground and doesn't fall all the way down
   - This links to the player being able to jump before hitting the ground
     - Likely just need to lower the raycast padding
-- Spikes cannot be rotated
 
 ## Bugs
 
