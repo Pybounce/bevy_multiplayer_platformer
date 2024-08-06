@@ -18,6 +18,14 @@
 - Make the player explode into many tiny squares with collision (good ol' ECS)
 - Move all that player config into a component for the player?
 
+## Animations in Networking
+
+- Cannot use inputs to deal with animations since you do not have the input of other players
+  - Will therefore need to use acceleration for eye animations
+- For collision particles (such as hitting the ground or jumping), will need to use IsGrounded states etc
+  - This also means maintaining those states for networked players
+  - Also making sure those states don't flicker and perhaps raise events for transitions? (ie leaving Grounded could mean you jumped or could mean you walked off an edge etc)
+
 ## To Theory Craft
 
 - Moustache/player appearance (floating hats, such as a crown, and googly eyes)

@@ -1,9 +1,6 @@
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
 
-use crate::ground::{Groundable, Grounded};
-
-
 
 #[derive(Component)]
 pub struct Wall;
@@ -90,21 +87,6 @@ pub fn check_touching_wall(
         else if !new_right_collision && !new_left_collision {
             commands.entity(entity).remove::<TouchingWall>();
         }
-    }
-}
-
-pub fn asdfdasd(
-    mut query: Query<&mut Sprite, (Without<Grounded>, With<Groundable>)>
-) {
-    for mut s in &mut query {
-        s.color = Color::linear_rgb(1.0, 0.0, 0.0);
-    }
-}
-pub fn asdfdasd2(
-    mut query: Query<&mut Sprite, (With<Grounded>, With<Groundable>)>
-) {
-    for mut s in &mut query {
-        s.color = Color::linear_rgb(0.0, 1.0, 0.0);
     }
 }
 

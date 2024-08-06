@@ -1,4 +1,4 @@
-use bevy::prelude::*;
+use bevy::{prelude::*, transform::commands};
 use bevy_rapier2d::prelude::*;
 
 use crate::{common::death::Killable, ground::Groundable, player::{death::Respawnable, gravity::Gravity, horizontal_movement_controller::{AirbourneHorizontalMovementController, GroundedHorizontalMovementController}, jump_controller::JumpController, physics_controller::PhysicsController, wall_jump_controller::{WallJumpController, WallStickable}}, stage::{stage_builder::stage_creator::TILE_SIZE, stage_objects::StageObject}, wall::Wallable};
@@ -76,7 +76,7 @@ impl Default for LocalPlayerBundle {
                     ..default()
                 },
                 sprite: Sprite {
-                    color: PLAYER_COLOR,
+                    //color: PLAYER_COLOR,
                     ..default()
                 },
                 ..default()
@@ -139,6 +139,37 @@ impl Default for LocalPlayerBundle {
             killable: Killable,
             wallable_marker: Wallable,
         }
+    }
+}
+
+//TODO: Remove this trash below
+
+pub fn load_player_sprite(
+    asset_server: Res<AssetServer>,
+    mut query: Query<(Entity, &mut Sprite), With<LocalPlayer>>,
+    mut commands: Commands
+) {
+    let tilemap: Handle<Image> = asset_server.load("object_tilemap.png");
+    let player_rect = Rect::new(TILE_SIZE * 2.0, TILE_SIZE, TILE_SIZE * 3.0, TILE_SIZE * 2.0);
+
+    if let Ok((e, mut s)) = query.get_single_mut() {
+        commands.entity(e).try_insert(tilemap);
+        s.rect = Some(player_rect);
+        s.custom_size = Some(Vec2::new(1.0, 1.0));
+    }
+}
+
+pub fn update_player_look_direction(
+    mut query: Query<(&Velocity, &mut Sprite), With<LocalPlayer>>,
+) {
+    
+    if let Ok((v, mut s)) = query.get_single_mut() {
+        if v.linvel.x >= 0.0 {
+            s.flip_x = false;
+        }
+        else {
+            s.flip_x = true;
+        }  
     }
 }
 
