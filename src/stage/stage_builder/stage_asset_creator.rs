@@ -9,10 +9,10 @@ use crate::stage::stage_builder::stage_asset::{Checkpoint, GroundTile, HalfSaw, 
 
 pub fn save_stage() {
     save_stage_0();
-    //save_stage_1();
+    save_stage_1();
     save_stage_2();
-    //save_stage_3();
-    //save_stage_4();
+    save_stage_3();
+    save_stage_4();
 }
 
 pub fn save_stage_0() {
@@ -178,7 +178,7 @@ fn stage_from_grid(mut layout: String, mut width: usize, mut height: usize, id: 
         }
         else if tile == '🟥' { 
             //spike
-            spikes.push(Spike {grid_pos: Vec2::new(x as f32, y as f32)});
+            spikes.push(Spike {grid_pos: Vec2::new(x as f32, y as f32), rotation: get_rotation(&layout, i, width)});
         }
         else if tile == '🔴' { 
             //spike

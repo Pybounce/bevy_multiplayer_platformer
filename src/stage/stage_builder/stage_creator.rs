@@ -132,7 +132,7 @@ fn build_spikes(stage_creator: &StageCreator, commands: &mut Commands) -> bool {
 
     for spike in &stage_creator.stage.spikes {
 
-        SpikeFactory::spawn(commands, stage_creator, spike.grid_pos, sprite_rect);
+        SpikeFactory::spawn(commands, stage_creator, spike.grid_pos, sprite_rect, spike.rotation);
     }
 
     return true;

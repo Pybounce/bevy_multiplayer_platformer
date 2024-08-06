@@ -29,7 +29,8 @@ pub struct GroundTile {
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Spike {
-    pub grid_pos: Vec2
+    pub grid_pos: Vec2,
+    pub rotation: f32
 }
 
 #[derive(Debug, Deserialize, Serialize)]

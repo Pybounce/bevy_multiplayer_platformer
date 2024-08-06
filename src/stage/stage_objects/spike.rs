@@ -13,10 +13,10 @@ pub struct Spike;
 pub struct SpikeFactory;
 
 impl SpikeFactory {
-    pub fn spawn(commands: &mut Commands, stage_creator: &StageCreator, grid_pos: Vec2, atlas_rect: Rect) {
+    pub fn spawn(commands: &mut Commands, stage_creator: &StageCreator, grid_pos: Vec2, atlas_rect: Rect, rotation: f32) {
         
         commands.spawn(
-            TileBundle::new(stage_creator, grid_pos, atlas_rect, 0.0, stage_creator.object_tilemap)
+            TileBundle::new(stage_creator, grid_pos, atlas_rect, rotation, stage_creator.object_tilemap)
         ).with_children(|parent| {
             parent.spawn((
                 Collider::cuboid(TILE_SIZE_HALF * 0.8, TILE_SIZE_HALF * 0.8),
