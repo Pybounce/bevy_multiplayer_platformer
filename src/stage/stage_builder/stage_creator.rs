@@ -1,4 +1,4 @@
-use crate::{common::checkpoint::CheckpointBundle, player::spawner::LocalPlayerSpawner, stage::{self, stage_objects::{goal::GoalBundle, half_saw::{HalfSawBundle, SawFactory}, spike::SpikeFactory, tiles::{GroundTileBundle, TileBundle}, StageObject}}};
+use crate::{common::checkpoint::CheckpointBundle, player::spawner::LocalPlayerSpawner, stage::stage_objects::{goal::GoalFactory, half_saw::SawFactory, spike::SpikeFactory, tiles::{GroundTileBundle, TileBundle}, StageObject}};
 
 use super::stage_asset::Stage;
 use bevy::prelude::*;
@@ -117,10 +117,12 @@ fn build_goal(stage_creator: &StageCreator, commands: &mut Commands) -> bool {
 
     let sprite_rect = colour_palette_rect_from_index(ColourPaletteAtlasIndex::Goal);
     
-    commands.spawn(GoalBundle::new(
+    GoalFactory::spawn(
+        commands,
         &stage_creator, 
         stage_creator.stage.goal_grid_pos, 
-        sprite_rect));
+        sprite_rect);
+        
     return true;
 }
 
@@ -131,10 +133,6 @@ fn build_spikes(stage_creator: &StageCreator, commands: &mut Commands) -> bool {
     for spike in &stage_creator.stage.spikes {
 
         SpikeFactory::spawn(commands, stage_creator, spike.grid_pos, sprite_rect);
-        //commands.spawn(SpikeBundle::new(
-        //    stage_creator, 
-        //    spike.grid_pos, 
-        //    sprite_rect));
     }
 
     return true;

@@ -1,9 +1,9 @@
-use bevy::{ecs::system::EntityCommands, prelude::*};
-use bevy_rapier2d::prelude::{ActiveEvents, Collider, CollisionEvent, CollisionGroups, Group, RigidBody};
+use bevy::prelude::*;
+use bevy_rapier2d::prelude::{ActiveEvents, Collider, CollisionGroups, Group, RigidBody};
 
-use crate::{obstacles::InstantKiller, stage::stage_builder::stage_creator::{StageCreator, TILE_SIZE, TILE_SIZE_HALF}};
+use crate::{obstacles::InstantKiller, stage::stage_builder::stage_creator::{StageCreator, TILE_SIZE_HALF}};
 
-use super::{tiles::{PhysicalTileBundle, TileBundle}, StageObject};
+use super::{tiles::TileBundle, StageObject};
 
 #[derive(Component)]
 pub struct Spike;
