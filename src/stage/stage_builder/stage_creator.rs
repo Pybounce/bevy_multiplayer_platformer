@@ -1,4 +1,4 @@
-use crate::{common::checkpoint::CheckpointBundle, player::spawner::LocalPlayerSpawner, stage::{self, stage_objects::{goal::GoalBundle, half_saw::HalfSawBundle, spike::SpikeFactory, tiles::{GroundTileBundle, TileBundle}, StageObject}}};
+use crate::{common::checkpoint::CheckpointBundle, player::spawner::LocalPlayerSpawner, stage::{self, stage_objects::{goal::GoalBundle, half_saw::{HalfSawBundle, SawFactory}, spike::SpikeFactory, tiles::{GroundTileBundle, TileBundle}, StageObject}}};
 
 use super::stage_asset::Stage;
 use bevy::prelude::*;
@@ -150,12 +150,7 @@ fn build_half_saws(stage_creator: &StageCreator, commands: &mut Commands) -> boo
     ];
 
     for half_saw in &stage_creator.stage.half_saws {
-        commands.spawn(HalfSawBundle::new(
-            stage_creator,
-            half_saw.grid_pos,
-            atlas_rects.clone(),
-            half_saw.rotation
-        ));
+        SawFactory::spawn_half(commands, stage_creator, half_saw.grid_pos, atlas_rects.clone(), half_saw.rotation);
     }
 
     return true;
