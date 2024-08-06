@@ -5,7 +5,7 @@ use crate::{common::death::Killable, ground::Groundable, player::{death::Respawn
 
 const FORCE_MUL: f32 = TILE_SIZE / 16.0;
 
-const PLAYER_SIZE: Vec2 = Vec2::new(TILE_SIZE * 0.8, TILE_SIZE * 0.8);
+const PLAYER_SIZE: Vec2 = Vec2::new(TILE_SIZE, TILE_SIZE);
 const PLAYER_COLOR: Color = Color::linear_rgb(0.0, 2.0, 0.0);
 const PLAYER_ACCELERATION: f32 = 1000.0 * FORCE_MUL;
 const PLAYER_DECELERATION: f32 = 1000.0 * FORCE_MUL;
