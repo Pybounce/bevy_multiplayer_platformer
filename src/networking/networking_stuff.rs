@@ -1,6 +1,7 @@
 
 use bevy::prelude::*;
 use bevy_matchbox::prelude::*;
+use bevy_rapier2d::prelude::Velocity;
 
 use crate::{common::states::NetworkingState, local_player::LocalPlayer, stage::stage_builder::CurrentStageData};
 
@@ -50,19 +51,21 @@ pub fn disconnect_socket(
 
 pub fn send_message(
     mut networking_data_opt: Option<ResMut<CurrrentNetworkData>>,
-    local_player_query: Query<&Transform, (With<LocalPlayer>, Without<NetworkedPlayer>)>
+    local_player_query: Query<(&Transform, &Velocity), (With<LocalPlayer>, Without<NetworkedPlayer>)>
 ) {
     if CurrrentNetworkData::is_valid(&mut networking_data_opt) { 
         let mut networking_data = networking_data_opt.unwrap();
         let peers: Vec<_> = networking_data.socket.connected_peers().collect();
 
         for peer in peers {
-            let t_result = local_player_query.get_single();
-            if let Ok(t) = t_result {
+            let query_result = local_player_query.get_single();
+            if let Ok((t, v)) = query_result {
                 let message = NewLocationMessage {
                     code: 0,
                     translation_x: t.translation.x,
                     translation_y: t.translation.y,
+                    velocity_x: v.linvel.x,
+                    velocity_y: v.linvel.y,
                 };
                 networking_data.socket.send(bincode::serialize(&message).unwrap().into(), peer);
             }
@@ -72,15 +75,16 @@ pub fn send_message(
 
 pub fn receive_messages(
     mut networking_data_opt: Option<ResMut<CurrrentNetworkData>>,
-    mut player_query: Query<(&mut Transform, &NetworkedPlayer)>
+    mut player_query: Query<(&mut Transform, &mut Velocity, &NetworkedPlayer)>
 ) {
     if CurrrentNetworkData::is_valid(&mut networking_data_opt) { 
         let mut networking_data = networking_data_opt.unwrap();
         for (id, message) in networking_data.socket.receive() {
             let message: NewLocationMessage = bincode::deserialize(&message[..]).unwrap();
-            for (mut t, np) in &mut player_query {
+            for (mut t, mut v, np) in &mut player_query {
                 if np.peer_id == id {
                     t.translation = Vec3::new(message.translation_x, message.translation_y, 0.0);
+                    v.linvel = Vec2::new(message.velocity_x, message.velocity_y);
                 }
             }
         }

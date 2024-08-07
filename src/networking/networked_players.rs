@@ -1,6 +1,7 @@
 
 use bevy::prelude::*;
 use bevy_matchbox::matchbox_socket::PeerId;
+use bevy_rapier2d::prelude::{GravityScale, RigidBody, Velocity};
 
 use crate::{common::states::{DespawnOnStateExit, NetworkingState}, local_player::PLAYER_SIZE, networking::networking_stuff::{PeerConnectionEvent, PeerDisconnectionEvent}};
 
@@ -23,7 +24,10 @@ pub fn spawn_new_players(
                 },
                 ..default()
             })
-            .insert(DespawnOnStateExit::Networking(NetworkingState::Connected));
+            .insert(DespawnOnStateExit::Networking(NetworkingState::Connected))
+            .insert(Velocity::default())
+            .insert(RigidBody::KinematicVelocityBased)
+            .insert(GravityScale(0.0));
     }
 }
 
