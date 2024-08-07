@@ -6,7 +6,7 @@ use crate::{common::states::{DespawnOnStateExit, NetworkingState}, local_player:
 
 #[derive(Component)]
 pub struct NetworkedPlayer {
-    peer_id: PeerId
+    pub peer_id: PeerId
 }
 
 pub fn spawn_new_players(

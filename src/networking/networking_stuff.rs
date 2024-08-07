@@ -4,7 +4,7 @@ use bevy_matchbox::prelude::*;
 
 use crate::{common::states::NetworkingState, local_player::LocalPlayer, stage::stage_builder::CurrentStageData};
 
-use super::{messages::NewLocationMessage, networked_players::NetworkedPlayer, CurrrentNetworkData};
+use super::{messages::NewLocationMessage, networked_players::{self, NetworkedPlayer}, CurrrentNetworkData};
 
 pub fn connect_socket(
     mut commands: Commands,
@@ -72,18 +72,19 @@ pub fn send_message(
 
 pub fn receive_messages(
     mut networking_data_opt: Option<ResMut<CurrrentNetworkData>>,
-    mut player_query: Query<&mut Transform, (Without<LocalPlayer>, With<NetworkedPlayer>)>
+    mut player_query: Query<(&mut Transform, &NetworkedPlayer)>
 ) {
     if CurrrentNetworkData::is_valid(&mut networking_data_opt) { 
         let mut networking_data = networking_data_opt.unwrap();
-        for (_id, message) in networking_data.socket.receive() {
+        for (id, message) in networking_data.socket.receive() {
             let message: NewLocationMessage = bincode::deserialize(&message[..]).unwrap();
-            for mut t in &mut player_query {
-                t.translation = Vec3::new(message.translation_x, message.translation_y, 0.0);
+            for (mut t, np) in &mut player_query {
+                if np.peer_id == id {
+                    t.translation = Vec3::new(message.translation_x, message.translation_y, 0.0);
+                }
             }
         }
     }
-
 }
 
 
