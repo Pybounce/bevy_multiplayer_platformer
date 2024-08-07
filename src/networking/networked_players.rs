@@ -39,3 +39,12 @@ pub fn remove_disconnected_players(
         }
     }
 }
+
+pub fn remove_all_networked_players(
+    networked_player_query: Query<Entity, With<NetworkedPlayer>>,
+    mut commands: Commands,
+) {
+    for e in &networked_player_query {
+        commands.entity(e).despawn();
+    }
+}
