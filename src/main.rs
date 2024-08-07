@@ -7,7 +7,7 @@ use bevy::{
 mod local_player;
 use bevy_rapier2d::{plugin::{NoUserData, RapierPhysicsPlugin}, render::RapierDebugRenderPlugin};
 use camera::{move_camera, move_pixel_perfect_translations, spawn_camera};
-use common::{animated_sprite::animate_sprites, checkpoint::check_checkpoint_reached, death::despawn_death_marked, shake::shake, states::StatesPlugin};
+use common::{animated_sprite::animate_sprites, checkpoint::check_checkpoint_reached, death::despawn_death_marked, physics::gravity::simulate_gravity, shake::shake, states::StatesPlugin};
 use game::GamePlugin;
 
 mod networking;
@@ -16,7 +16,7 @@ use networking::{networked_players::{remove_disconnected_players, spawn_new_play
 
 mod stage_select;
 use obstacles::check_insta_kill_collisions;
-use player::{common::check_player_out_of_bounds, death::trigger_dead_local_player_respawn, gravity::simulate_gravity, horizontal_movement_controller::{move_airbourne_horizontal_controller, move_ground_horizontal_controller}, jump_controller::{apply_wall_friction, begin_player_jump, check_jump_fall_states, is_coyote_grounded, maintain_player_jump, update_last_grounded}, physics_controller::apply_physics_controller_limits, spawner::spawn_local_players, wall_jump_controller::{add_wall_stuck, begin_player_wall_jump, remove_wall_stuck, update_wall_stuck, update_wall_stuck_time}};
+use player::{common::check_player_out_of_bounds, death::trigger_dead_local_player_respawn, horizontal_movement_controller::{move_airbourne_horizontal_controller, move_ground_horizontal_controller}, jump_controller::{apply_wall_friction, begin_player_jump, check_jump_fall_states, is_coyote_grounded, maintain_player_jump, update_last_grounded}, physics_controller::apply_physics_controller_limits, spawner::spawn_local_players, wall_jump_controller::{add_wall_stuck, begin_player_wall_jump, remove_wall_stuck, update_wall_stuck, update_wall_stuck_time}};
 use ground::check_grounded;
 use stage::stage_builder::StageBuilderPlugin;
 use stage_select::StageSelectPlugin;

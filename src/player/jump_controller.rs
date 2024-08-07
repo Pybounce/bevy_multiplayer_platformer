@@ -1,9 +1,9 @@
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
 
-use crate::{ground::Grounded, wall::TouchingWall};
+use crate::{common::physics::gravity::Gravity, ground::Grounded, wall::TouchingWall};
 
-use super::{gravity::Gravity, wall_jump_controller::WallJumpController};
+use super::wall_jump_controller::WallJumpController;
 
 
 
