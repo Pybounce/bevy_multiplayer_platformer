@@ -61,6 +61,7 @@
   - Using components as state works well for local players but not networked
   - Take look direction, if you press left it should be left, but we don't get input from networked players.
     - So to keep it as a state we need to add a looking state and update it for local and networked players
+  - This will become a larger issue when more effects are added for onJump or onDeath etc
 
 ## Web Build
 
