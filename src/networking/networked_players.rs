@@ -2,11 +2,7 @@
 use bevy::prelude::*;
 use bevy_matchbox::matchbox_socket::PeerId;
 
-use crate::{common::states::{DespawnOnStateExit, NetworkingState}, networking::networking_stuff::{PeerConnectionEvent, PeerDisconnectionEvent}};
-
-const PLAYER_SIZE: Vec2 = Vec2::new(30.0, 30.0);
-const PLAYER_COLOR: Color = Color::linear_rgb(0.0, 2.0, 2.0);
-
+use crate::{common::states::{DespawnOnStateExit, NetworkingState}, local_player::PLAYER_SIZE, networking::networking_stuff::{PeerConnectionEvent, PeerDisconnectionEvent}};
 
 #[derive(Component)]
 pub struct NetworkedPlayer {
@@ -23,10 +19,6 @@ pub fn spawn_new_players(
             .insert(SpriteBundle {
                 transform: Transform {
                     scale: PLAYER_SIZE.extend(1.0),
-                    ..default()
-                },
-                sprite: Sprite {
-                    color: PLAYER_COLOR,
                     ..default()
                 },
                 ..default()

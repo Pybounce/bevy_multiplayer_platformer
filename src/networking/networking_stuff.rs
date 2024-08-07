@@ -11,7 +11,6 @@ pub fn connect_socket(
     stage_data_opt: Option<Res<CurrentStageData>>,
     mut networking_state: ResMut<NextState<NetworkingState>>,
 ) {
-    return;
     if let None = stage_data_opt { return; }
     let stage_data = stage_data_opt.unwrap();
 
