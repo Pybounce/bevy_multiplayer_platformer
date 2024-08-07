@@ -31,7 +31,6 @@ pub fn move_ground_horizontal_controller(
             change -= con.acceleration * time.delta_seconds();
         }
 
-
         vel.linvel.x += change;
 
         if vel.linvel.x.abs() > con.max_speed {

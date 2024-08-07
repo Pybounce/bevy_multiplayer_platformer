@@ -1,9 +1,9 @@
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
 
-use crate::{ground::Grounded, wall::TouchingWall};
+use crate::{common::physics::gravity::Gravity, ground::Grounded, wall::TouchingWall};
 
-use super::{gravity::Gravity, horizontal_movement_controller::AirbourneHorizontalMovementController, jump_controller::{CoyoteGrounded, JumpController}};
+use super::{horizontal_movement_controller::AirbourneHorizontalMovementController, jump_controller::{CoyoteGrounded, JumpController}};
 
 #[derive(Component)]
 pub struct WallStickable {
