@@ -156,10 +156,10 @@ pub fn load_player_sprite(
 }
 
 pub fn update_player_look_direction(
-    mut query: Query<(&PlayerLookState, &mut Sprite), With<LocalPlayer>>,
+    mut query: Query<(&PlayerLookState, &mut Sprite)>,
 ) {
     
-    if let Ok((ls, mut s)) = query.get_single_mut() {
+    for (ls, mut s) in &mut query {
         match ls {
             PlayerLookState::LookingLeft => s.flip_x = true,
             PlayerLookState::LookingRight => s.flip_x = false,

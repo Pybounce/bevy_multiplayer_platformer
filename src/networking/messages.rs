@@ -1,5 +1,7 @@
 use serde::{Deserialize, Serialize};
 
+use crate::player::look_state::PlayerLookState;
+
 
 
 
@@ -10,7 +12,8 @@ pub struct NewLocationMessage {
     pub translation_x: f32,
     pub translation_y: f32,
     pub velocity_x: f32, 
-    pub velocity_y: f32
+    pub velocity_y: f32,
+    pub look_state: PlayerLookState
 }
 
 

@@ -35,7 +35,7 @@ pub fn spawn_camera(mut commands: Commands) {
         });
 
     commands.spawn(Text2dBundle {
-        text: Text::from_section("value", TextStyle::default()),
+        text: Text::from_section("DEADLOCKED 2: RELOADED", TextStyle::default()),
         ..default()
     });
 }
