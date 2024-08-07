@@ -57,6 +57,10 @@
 
 - Move the logic to get the atlas rect into the factories
   - ie the obstacle factories like saw or spike
+- Add in actual player states, or SOMETHING that works with networking
+  - Using components as state works well for local players but not networked
+  - Take look direction, if you press left it should be left, but we don't get input from networked players.
+    - So to keep it as a state we need to add a looking state and update it for local and networked players
 
 ## Web Build
 

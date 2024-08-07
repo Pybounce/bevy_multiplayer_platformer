@@ -1,7 +1,7 @@
 use bevy::prelude::*;
-use bevy_rapier2d::prelude::*;
+use bevy_rapier2d::{na::ComplexField, prelude::*};
 
-use crate::{common::{death::Killable, physics::gravity::Gravity}, ground::Groundable, player::{death::Respawnable, horizontal_movement_controller::{AirbourneHorizontalMovementController, GroundedHorizontalMovementController}, jump_controller::JumpController, physics_controller::PhysicsController, wall_jump_controller::{WallJumpController, WallStickable}}, stage::{stage_builder::stage_creator::TILE_SIZE, stage_objects::StageObject}, wall::Wallable};
+use crate::{common::{death::Killable, physics::gravity::Gravity}, ground::Groundable, player::{death::Respawnable, horizontal_movement_controller::{AirbourneHorizontalMovementController, GroundedHorizontalMovementController}, jump_controller::JumpController, look_state::PlayerLookState, physics_controller::PhysicsController, wall_jump_controller::{WallJumpController, WallStickable}}, stage::{stage_builder::stage_creator::TILE_SIZE, stage_objects::StageObject}, wall::Wallable};
 
 const FORCE_MUL: f32 = TILE_SIZE / 16.0;
 
@@ -160,16 +160,14 @@ pub fn load_player_sprite(
 }
 
 pub fn update_player_look_direction(
-    mut query: Query<(&Velocity, &mut Sprite), With<LocalPlayer>>,
+    mut query: Query<(&PlayerLookState, &mut Sprite), With<LocalPlayer>>,
 ) {
     
-    if let Ok((v, mut s)) = query.get_single_mut() {
-        if v.linvel.x >= 0.0 {
-            s.flip_x = false;
+    if let Ok((ls, mut s)) = query.get_single_mut() {
+        match ls {
+            PlayerLookState::LookingLeft => s.flip_x = true,
+            PlayerLookState::LookingRight => s.flip_x = false,
         }
-        else {
-            s.flip_x = true;
-        }  
     }
 }
 
