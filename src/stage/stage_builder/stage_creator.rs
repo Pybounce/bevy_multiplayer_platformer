@@ -1,4 +1,4 @@
-use crate::{common::checkpoint::CheckpointBundle, player::spawner::LocalPlayerSpawner, stage::stage_objects::{goal::GoalFactory, half_saw::SawFactory, spike::SpikeFactory, tiles::{GroundTileBundle, TileBundle}, StageObject}};
+use crate::{common::checkpoint::CheckpointBundle, player::spawner::LocalPlayerSpawner, stage::stage_objects::{goal::GoalFactory, half_saw::SawFactory, spike::SpikeFactory, spring::SpringFactory, tiles::{GroundTileBundle, TileBundle}, StageObject}};
 
 use super::stage_asset::Stage;
 use bevy::prelude::*;
@@ -53,6 +53,7 @@ impl<'a> StageCreator<'a> {
         && build_player_spawner(self, commands)
         && build_checkpoints(self, commands)
         && build_half_saws(self, commands)
+        && build_springs(self, commands)
     }
 
 
@@ -162,6 +163,21 @@ fn build_half_saws(stage_creator: &StageCreator, commands: &mut Commands) -> boo
     return true;
 }
 
+fn build_springs(stage_creator: &StageCreator, commands: &mut Commands) -> bool {
+    let atlas_rects = vec![
+        get_object_tilemap_rect_from_index(ObjectAtlasIndices::Spring0),
+        get_object_tilemap_rect_from_index(ObjectAtlasIndices::Spring1),
+        get_object_tilemap_rect_from_index(ObjectAtlasIndices::Spring2),
+        get_object_tilemap_rect_from_index(ObjectAtlasIndices::Spring3),
+        get_object_tilemap_rect_from_index(ObjectAtlasIndices::Spring4),
+    ];
+
+    for spring in &stage_creator.stage.springs {
+        SpringFactory::spawn(commands, stage_creator, spring.grid_pos, atlas_rects.clone(), spring.rotation);
+    }
+
+    return true;
+}
 
 fn build_checkpoints(stage_creator: &StageCreator, commands: &mut Commands) -> bool {
 
