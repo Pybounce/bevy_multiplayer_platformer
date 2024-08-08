@@ -38,6 +38,8 @@
 - Player spawns a little above the ground and doesn't fall all the way down
   - This links to the player being able to jump before hitting the ground
     - Likely just need to lower the raycast padding
+- Touching a spring doesn't reset players jump
+  - This means jumping right before touching a spring, will turn off gravity and then launch the player
 
 ## Bugs
 
