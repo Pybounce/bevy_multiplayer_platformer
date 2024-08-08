@@ -9,9 +9,6 @@ pub struct SpriteAnimator {
     timer: Timer
 }
 
-#[derive(Component)]
-pub struct Animating;
-
 impl SpriteAnimator {
     pub fn new(frame_delay: u128, atlas_rects: Vec<Rect>) -> SpriteAnimator {
         SpriteAnimator {
@@ -32,11 +29,10 @@ impl SpriteAnimator {
 }
 
 pub fn animate_sprites(
-    mut query: Query<(&mut SpriteAnimator, &mut Sprite), With<Animating>>,
+    mut query: Query<(&mut SpriteAnimator, &mut Sprite)>,
     time: Res<Time>
 ) {
     for (mut anim_sprite, mut sprite) in &mut query {
-
         anim_sprite.timer.tick(time.delta());
         if anim_sprite.timer.just_finished() {
             anim_sprite.increment_atlas_index();
