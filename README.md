@@ -122,6 +122,9 @@
   - A trigger subscriber that usually just stays on a timer
   - Can act as a door if it subscribes to a non timer trigger?
   - Will crush the player if they hit the bottom or top of it as well as touching ground/ceiling
+- Springs
+- Teleporters
+- Enemies that will act as springs when they die
 
 ## Player Mechanics
 
