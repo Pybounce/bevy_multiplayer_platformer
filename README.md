@@ -156,3 +156,12 @@
 ## Random Ideas
 
 - Ability to mute (/automute) other players
+
+## Button thingy
+
+- Button has KeyTriggerOnTouch or IntervalBlockTriggerOnTouch
+- These triggerOnTouch components contain an entity (well a Vec<Entity>)
+- There are other components like IntervalBlock and KeyBlock
+- It then listens for collisions and has a query for KeyBlock/IntervalBlock
+- It then searches for the entity with that
+- IntervalBlock/KeyBlock then has a .trigger() function
