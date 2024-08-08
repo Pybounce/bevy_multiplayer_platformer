@@ -1,11 +1,14 @@
 
+use std::f32::consts::PI;
+
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::{ActiveEvents, Collider, CollisionGroups, Group, RigidBody};
 
-use crate::{common::{animated_sprite::{AnimateOnTouch, SpriteAnimator}, physics::bouncy::Bouncy}, ground::Ground, obstacles::InstantKiller, stage::stage_builder::stage_creator::{StageCreator, TILE_SIZE_HALF}};
+use crate::{common::{animated_sprite::{AnimateOnTouch, SpriteAnimator}, physics::bouncy::Bouncy}, ground::Ground, local_player::FORCE_MUL, obstacles::InstantKiller, stage::stage_builder::stage_creator::{StageCreator, TILE_SIZE_HALF}};
 
 use super::{tiles::TileBundle, StageObject};
 
+const SPRING_BOUNCE_FORCE: f32 = 2000.0 * FORCE_MUL;
 
 #[derive(Component)]
 pub struct Spring;
@@ -14,7 +17,7 @@ pub struct SpringFactory;
 
 impl SpringFactory {
     pub fn spawn(commands: &mut Commands, stage_creator: &StageCreator, grid_pos: Vec2, atlas_rects: Vec<Rect>, rotation: f32) {
-        
+
         commands.spawn((
             TileBundle::new(stage_creator, grid_pos, atlas_rects[0], rotation, stage_creator.object_tilemap),
             SpriteAnimator::new_non_repeating(50, atlas_rects),
@@ -27,7 +30,7 @@ impl SpringFactory {
                 RigidBody::Fixed,
                 Spring,
                 Bouncy {
-                    force: Vec2::new(0.0, 2000.0),
+                    force: Vec2::from_angle(rotation + (PI / 2.0)) * SPRING_BOUNCE_FORCE,
                 },
                 StageObject { stage_id: stage_creator.stage.id },
                 AnimateOnTouch {
@@ -44,6 +47,7 @@ impl SpringFactory {
                 StageObject { stage_id: stage_creator.stage.id },
             ));
         });
+
     }
 }
 
