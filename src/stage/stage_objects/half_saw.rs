@@ -2,7 +2,7 @@
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::{ActiveEvents, Collider, CollisionGroups, Group, RigidBody};
 
-use crate::{common::animated_sprite::SpriteAnimator, obstacles::InstantKiller, stage::stage_builder::stage_creator::{StageCreator, TILE_SIZE_HALF}};
+use crate::{common::animated_sprite::{Animating, SpriteAnimator}, obstacles::InstantKiller, stage::stage_builder::stage_creator::{StageCreator, TILE_SIZE_HALF}};
 
 use super::{tiles::TileBundle, StageObject};
 
@@ -17,7 +17,8 @@ impl SawFactory {
         
         commands.spawn((
             TileBundle::new(stage_creator, grid_pos, atlas_rects[0], rotation, stage_creator.object_tilemap),
-            SpriteAnimator::new(50, atlas_rects)
+            SpriteAnimator::new(50, atlas_rects),
+            Animating
         )).with_children(|parent| {
             parent.spawn((
                 Collider::ball(TILE_SIZE_HALF * 0.9),

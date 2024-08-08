@@ -8,10 +8,10 @@ use bevy::{
 use crate::stage::stage_builder::stage_asset::{Checkpoint, GroundTile, HalfSaw, Spike, Spring, Stage};
 
 pub fn save_stage() {
-    //save_stage_0();
-    //save_stage_1();
-    //save_stage_2();
-    //save_stage_3();
+    save_stage_0();
+    save_stage_1();
+    save_stage_2();
+    save_stage_3();
 }
 
 pub fn save_stage_0() {
