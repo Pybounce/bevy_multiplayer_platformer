@@ -1,11 +1,12 @@
 
 use bevy::{prelude::*, transform::commands};
+use serde::{Deserialize, Serialize};
 
 use crate::ground::Grounded;
 
 use super::horizontal_movement_controller::{AirbourneHorizontalMovementController, GroundedHorizontalMovementController};
 
-#[derive(Component)]
+#[derive(Component, Serialize, Deserialize, Clone, Copy)]
 pub enum PlayerLookState {
     LookingLeft,
     LookingRight

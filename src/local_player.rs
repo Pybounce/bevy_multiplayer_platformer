@@ -1,11 +1,11 @@
 use bevy::prelude::*;
 use bevy_rapier2d::{na::ComplexField, prelude::*};
 
-use crate::{common::{death::Killable, physics::gravity::Gravity}, ground::Groundable, player::{death::Respawnable, horizontal_movement_controller::{AirbourneHorizontalMovementController, GroundedHorizontalMovementController}, jump_controller::JumpController, look_state::PlayerLookState, physics_controller::PhysicsController, wall_jump_controller::{WallJumpController, WallStickable}}, stage::{stage_builder::stage_creator::TILE_SIZE, stage_objects::StageObject}, wall::Wallable};
+use crate::{common::{death::Killable, physics::gravity::Gravity}, ground::Groundable, networking::networked_players::NetworkedPlayer, player::{death::Respawnable, horizontal_movement_controller::{AirbourneHorizontalMovementController, GroundedHorizontalMovementController}, jump_controller::JumpController, look_state::PlayerLookState, physics_controller::PhysicsController, wall_jump_controller::{WallJumpController, WallStickable}}, stage::{stage_builder::stage_creator::TILE_SIZE, stage_objects::StageObject}, wall::Wallable};
 
 const FORCE_MUL: f32 = TILE_SIZE / 16.0;
 
-const PLAYER_SIZE: Vec2 = Vec2::new(TILE_SIZE, TILE_SIZE);
+pub const PLAYER_SIZE: Vec2 = Vec2::new(TILE_SIZE, TILE_SIZE);
 
 const PLAYER_ACCELERATION: f32 = 1000.0 * FORCE_MUL;
 const PLAYER_DECELERATION: f32 = 1000.0 * FORCE_MUL;
@@ -75,10 +75,6 @@ impl Default for LocalPlayerBundle {
                     scale: PLAYER_SIZE.extend(1.0),
                     ..default()
                 },
-                sprite: Sprite {
-                    //color: PLAYER_COLOR,
-                    ..default()
-                },
                 ..default()
             },
             rigid_body: RigidBody::Dynamic,
@@ -146,24 +142,24 @@ impl Default for LocalPlayerBundle {
 
 pub fn load_player_sprite(
     asset_server: Res<AssetServer>,
-    mut query: Query<(Entity, &mut Sprite), With<LocalPlayer>>,
+    mut query: Query<(Entity, &mut Sprite), Or<(With<LocalPlayer>, With<NetworkedPlayer>)>>,
     mut commands: Commands
 ) {
     let tilemap: Handle<Image> = asset_server.load("object_tilemap.png");
     let player_rect = Rect::new(TILE_SIZE * 2.0, TILE_SIZE, TILE_SIZE * 3.0, TILE_SIZE * 2.0);
 
-    if let Ok((e, mut s)) = query.get_single_mut() {
-        commands.entity(e).try_insert(tilemap);
+    for (e, mut s) in &mut query {
+        commands.entity(e).try_insert(tilemap.clone());
         s.rect = Some(player_rect);
         s.custom_size = Some(Vec2::new(1.0, 1.0));
     }
 }
 
 pub fn update_player_look_direction(
-    mut query: Query<(&PlayerLookState, &mut Sprite), With<LocalPlayer>>,
+    mut query: Query<(&PlayerLookState, &mut Sprite)>,
 ) {
     
-    if let Ok((ls, mut s)) = query.get_single_mut() {
+    for (ls, mut s) in &mut query {
         match ls {
             PlayerLookState::LookingLeft => s.flip_x = true,
             PlayerLookState::LookingRight => s.flip_x = false,

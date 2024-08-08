@@ -17,7 +17,7 @@ pub fn spawn_camera(mut commands: Commands) {
                 ..default()
             },
             camera: Camera {
-                clear_color: ClearColorConfig::Custom(Color::linear_rgb(1.0, 0.5, 0.5)),
+                //clear_color: ClearColorConfig::Custom(Color::linear_rgb(0.5, 0.5, 0.5)),
                 ..default()
             },
             transform: Transform {
@@ -34,10 +34,6 @@ pub fn spawn_camera(mut commands: Commands) {
             factor: CAMERA_ZOOM as u32
         });
 
-    commands.spawn(Text2dBundle {
-        text: Text::from_section("value", TextStyle::default()),
-        ..default()
-    });
 }
 
 pub fn move_camera(

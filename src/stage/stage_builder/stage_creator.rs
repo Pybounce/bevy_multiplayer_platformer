@@ -81,7 +81,7 @@ fn build_background(stage_creator: &StageCreator, commands: &mut Commands) -> bo
             },
             sprite: Sprite {
                 custom_size: Some(Vec2::new(1.0, 1.0)),
-                color: Color::linear_rgb(0.76, 0.95, 1.0),
+                color: Color::linear_rgb(0.5, 0.5, 0.5),
                 ..default()
             },
             ..default()

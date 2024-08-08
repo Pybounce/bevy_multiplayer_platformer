@@ -1,16 +1,13 @@
 
 use bevy::prelude::*;
 use bevy_matchbox::matchbox_socket::PeerId;
+use bevy_rapier2d::prelude::{GravityScale, RigidBody, Velocity};
 
-use crate::{common::states::{DespawnOnStateExit, NetworkingState}, networking::networking_stuff::{PeerConnectionEvent, PeerDisconnectionEvent}};
-
-const PLAYER_SIZE: Vec2 = Vec2::new(30.0, 30.0);
-const PLAYER_COLOR: Color = Color::linear_rgb(0.0, 2.0, 2.0);
-
+use crate::{common::states::{DespawnOnStateExit, NetworkingState}, local_player::PLAYER_SIZE, networking::networking_stuff::{PeerConnectionEvent, PeerDisconnectionEvent}};
 
 #[derive(Component)]
 pub struct NetworkedPlayer {
-    peer_id: PeerId
+    pub peer_id: PeerId
 }
 
 pub fn spawn_new_players(
@@ -25,13 +22,12 @@ pub fn spawn_new_players(
                     scale: PLAYER_SIZE.extend(1.0),
                     ..default()
                 },
-                sprite: Sprite {
-                    color: PLAYER_COLOR,
-                    ..default()
-                },
                 ..default()
             })
-            .insert(DespawnOnStateExit::Networking(NetworkingState::Connected));
+            .insert(DespawnOnStateExit::Networking(NetworkingState::Connected))
+            .insert(Velocity::default())
+            .insert(RigidBody::KinematicVelocityBased)
+            .insert(GravityScale(0.0));
     }
 }
 
@@ -45,5 +41,14 @@ pub fn remove_disconnected_players(
         for dp in disconnected_players {
             commands.entity(dp.1).despawn();
         }
+    }
+}
+
+pub fn remove_all_networked_players(
+    networked_player_query: Query<Entity, With<NetworkedPlayer>>,
+    mut commands: Commands,
+) {
+    for e in &networked_player_query {
+        commands.entity(e).despawn();
     }
 }

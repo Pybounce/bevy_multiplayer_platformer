@@ -4,6 +4,7 @@ use bevy::{prelude::*, time::common_conditions::on_timer};
 
 pub mod networking_stuff;
 use bevy_matchbox::{matchbox_socket::SingleChannel, MatchboxSocket};
+use networked_players::remove_all_networked_players;
 use networking_stuff::{ check_peer_connections, connect_socket, disconnect_socket, receive_messages, send_message, PeerConnectionEvent, PeerDisconnectionEvent };
 
 use crate::{common::states::NetworkingState, stage::stage_builder::CurrentStageData};
@@ -20,6 +21,7 @@ impl Plugin for GameNetworkingPlugin {
         .add_event::<PeerDisconnectionEvent>()
         .add_systems(Update, check_connection.run_if(in_state(NetworkingState::Connected).or_else(in_state(NetworkingState::Disconnected))))      
         .add_systems(OnEnter(NetworkingState::Disconnecting), disconnect_socket)
+        .add_systems(OnEnter(NetworkingState::Disconnected), remove_all_networked_players)
         .add_systems(Update, connect_socket.run_if(in_state(NetworkingState::Connecting)))
         .add_systems(Update, (receive_messages, check_peer_connections)
             .run_if(in_state(NetworkingState::Connected)))
