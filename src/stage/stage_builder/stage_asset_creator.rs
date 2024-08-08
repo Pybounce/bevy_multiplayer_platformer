@@ -5,7 +5,7 @@ use bevy::{
     prelude::*,
 };
 
-use crate::stage::stage_builder::stage_asset::{Checkpoint, GroundTile, HalfSaw, Spike, Stage};
+use crate::stage::stage_builder::stage_asset::{Checkpoint, GroundTile, HalfSaw, Spike, Spring, Stage};
 
 pub fn save_stage() {
     //save_stage_0();
@@ -121,7 +121,7 @@ pub fn save_stage_3() {
        ⬛⬜⬜⬜⬜⬜⬛⬛⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬛⬛⬛⬛⬛⬛⬜⬜⬜⬜⬛
        ⬛⬜⬜⬜⬜⬜⬛⬛⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬛⬛⬛⬛⬜⬜⬜⬜⬜⬜⬛
        ⬛⬜⬜⬜⬜⬜⬛⬛🟥🟥⬜⬜⬛⬛⬛⬛⬜⬜⬜🟥⬛⬛⬜⬜⬜⬜⬜🟥🟥🟥⬛
-       ⬛🟥🟥🟥🟥🟥⬛⬛⬛⬛🟥🟥🟥🟥🟥🟥🟥🟥🟥⬛⬛⬛🟥🟥🟥🟥🟥⬛⬛⬛⬛
+       ⬛🟥🆙🆙🆙🟥⬛⬛⬛⬛🟥🟥🟥🟥🟥🟥🟥🟥🟥⬛⬛⬛🟥🟥🟥🟥🟥⬛⬛⬛⬛
        ⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛");
 
     stage_from_grid(layout, grid_width, grid_height, 3);
@@ -136,6 +136,7 @@ fn stage_from_grid(mut layout: String, mut width: usize, mut height: usize, id: 
     let mut ground_tiles: Vec<GroundTile> = vec![];
     let mut spikes: Vec<Spike> = vec![];
     let mut half_saws: Vec<HalfSaw> = vec![];
+    let mut springs: Vec<Spring> = vec![];
     let mut checkpoints: Vec<Checkpoint> = vec![];
     let mut goal_grid_pos: Vec2 = Vec2::default();
     let mut spawn_grid_pos: Vec2 = Vec2::default();
@@ -173,6 +174,12 @@ fn stage_from_grid(mut layout: String, mut width: usize, mut height: usize, id: 
                 tilemap_index: get_ground_atlas_index(&layout, i, width)
             });
         }
+        else if tile == '🆙' {
+            springs.push(Spring {
+                grid_pos: Vec2::new(x as f32, y as f32), 
+                rotation: get_rotation(&layout, i, width)
+            });
+        }
         else {
             error!("WHY NO WHYYYY: {}", tile);
         }
@@ -188,7 +195,8 @@ fn stage_from_grid(mut layout: String, mut width: usize, mut height: usize, id: 
         grid_height: height,
         goal_grid_pos,
         checkpoints: checkpoints,
-        half_saws: half_saws
+        half_saws: half_saws,
+        springs: springs
     };
 
     let mut bytes: Vec<u8> = vec![];
