@@ -2,16 +2,16 @@ use bevy::prelude::*;
 
 
 #[derive(Component)]
-pub struct AnimatedSprite {
+pub struct SpriteAnimator {
     ///Milliseconds between each frame
     atlas_rects: Vec<Rect>,
     current_atlas_index: usize,
     timer: Timer
 }
 
-impl AnimatedSprite {
-    pub fn new(frame_delay: u128, atlas_rects: Vec<Rect>) -> AnimatedSprite {
-        AnimatedSprite {
+impl SpriteAnimator {
+    pub fn new(frame_delay: u128, atlas_rects: Vec<Rect>) -> SpriteAnimator {
+        SpriteAnimator {
             atlas_rects: atlas_rects.clone(),
             current_atlas_index: 0,
             timer: Timer::from_seconds(frame_delay as f32 / 1000.0, TimerMode::Repeating)
@@ -29,7 +29,7 @@ impl AnimatedSprite {
 }
 
 pub fn animate_sprites(
-    mut query: Query<(&mut AnimatedSprite, &mut Sprite)>,
+    mut query: Query<(&mut SpriteAnimator, &mut Sprite)>,
     time: Res<Time>
 ) {
     for (mut anim_sprite, mut sprite) in &mut query {
