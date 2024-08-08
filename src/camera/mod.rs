@@ -34,10 +34,6 @@ pub fn spawn_camera(mut commands: Commands) {
             factor: CAMERA_ZOOM as u32
         });
 
-    commands.spawn(Text2dBundle {
-        text: Text::from_section("DEADLOCKED 2: RELOADED", TextStyle::default()),
-        ..default()
-    });
 }
 
 pub fn move_camera(
