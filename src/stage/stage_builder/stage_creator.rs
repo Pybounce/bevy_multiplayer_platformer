@@ -1,4 +1,4 @@
-use crate::{common::checkpoint::CheckpointBundle, player::spawner::LocalPlayerSpawner, stage::stage_objects::{goal::GoalFactory, half_saw::SawFactory, lock_block::LockBlockFactory, spike::SpikeFactory, spring::SpringFactory, tiles::{GroundTileBundle, TileBundle}, StageObject}};
+use crate::{common::checkpoint::CheckpointBundle, player::spawner::LocalPlayerSpawner, stage::stage_objects::{goal::GoalFactory, half_saw::SawFactory, key::KeyFactory, lock_block::LockBlockFactory, spike::SpikeFactory, spring::SpringFactory, tiles::{GroundTileBundle, TileBundle}, StageObject}};
 
 use super::stage_asset::Stage;
 use bevy::prelude::*;
@@ -55,6 +55,7 @@ impl<'a> StageCreator<'a> {
         && build_half_saws(self, commands)
         && build_springs(self, commands)
         && build_lock_blocks(self, commands)
+        && build_keys(self, commands)
     }
 
 
@@ -184,6 +185,15 @@ fn build_lock_blocks(stage_creator: &StageCreator, commands: &mut Commands) -> b
     let atlas_rect = get_object_tilemap_rect_from_index(ObjectAtlasIndices::LockBlock);
     for lock_block in &stage_creator.stage.lock_blocks {
         LockBlockFactory::spawn(commands, stage_creator, lock_block.grid_pos, atlas_rect, 0.0);
+    }
+
+    return true;
+}
+
+fn build_keys(stage_creator: &StageCreator, commands: &mut Commands) -> bool {
+    let atlas_rect = get_object_tilemap_rect_from_index(ObjectAtlasIndices::Key);
+    for key in &stage_creator.stage.keys {
+        KeyFactory::spawn(commands, stage_creator, key.grid_pos, atlas_rect, 0.0);
     }
 
     return true;

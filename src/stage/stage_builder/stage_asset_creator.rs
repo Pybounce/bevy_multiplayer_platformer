@@ -5,7 +5,7 @@ use bevy::{
     prelude::*,
 };
 
-use crate::stage::stage_builder::stage_asset::{Checkpoint, GroundTile, HalfSaw, LockBlock, Spike, Spring, Stage};
+use crate::stage::stage_builder::stage_asset::{Checkpoint, GroundTile, HalfSaw, Key, LockBlock, Spike, Spring, Stage};
 
 pub fn save_stage() {
     save_stage_0();
@@ -33,7 +33,7 @@ pub fn save_stage_0() {
     ⬛🆙⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬛
     ⬛⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬛
     ⬛⬛⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬛
-    ⬛⬛⬛⬜🆙⬜⬜⬜⬜⬜⬜🟥🟥🟥⬜⬜⬜⬜⬛
+    ⬛⬛⬛⬜🆙⬜⬜⬜🔑⬜⬜🟥🟥🟥⬜⬜⬜⬜⬛
     ⬛⬛⬛🆙⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛🔒🔒🔒🔒⬛
     ⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬜⬜⬜⬜⬜⬛
     ⬛⬛⬛⬜⬜⬜⬛⬛⬛⬛⬛⬜⬜⬜⬜⬜⬜⬜⬛
@@ -138,6 +138,7 @@ fn stage_from_grid(mut layout: String, mut width: usize, mut height: usize, id: 
     let mut half_saws: Vec<HalfSaw> = vec![];
     let mut springs: Vec<Spring> = vec![];
     let mut lock_blocks: Vec<LockBlock> = vec![];
+    let mut keys: Vec<Key> = vec![];
     let mut checkpoints: Vec<Checkpoint> = vec![];
     let mut goal_grid_pos: Vec2 = Vec2::default();
     let mut spawn_grid_pos: Vec2 = Vec2::default();
@@ -186,6 +187,11 @@ fn stage_from_grid(mut layout: String, mut width: usize, mut height: usize, id: 
                 grid_pos: Vec2::new(x as f32, y as f32),
             });
         }
+        else if tile == '🔑' {
+            keys.push(Key {
+                grid_pos: Vec2::new(x as f32, y as f32),
+            });
+        }
         else {
             error!("WHY NO WHYYYY: {}", tile);
         }
@@ -203,7 +209,8 @@ fn stage_from_grid(mut layout: String, mut width: usize, mut height: usize, id: 
         checkpoints,
         half_saws,
         springs,
-        lock_blocks
+        lock_blocks,
+        keys
     };
 
     let mut bytes: Vec<u8> = vec![];

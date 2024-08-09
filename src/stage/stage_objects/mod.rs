@@ -6,6 +6,7 @@ pub mod spike;
 pub mod half_saw;
 pub mod spring;
 pub mod lock_block;
+pub mod key;
 
 #[derive(Component)]
 pub struct StageObject {
