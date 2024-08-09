@@ -4,7 +4,7 @@ use std::f32::consts::PI;
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::{ActiveEvents, Collider, CollisionGroups, Group, RigidBody};
 
-use crate::{common::{animated_sprite::{AnimateOnTouch, SpriteAnimator}, physics::bouncy::Bouncy}, ground::Ground, local_player::FORCE_MUL, obstacles::InstantKiller, stage::stage_builder::stage_creator::{StageCreator, TILE_SIZE_HALF}};
+use crate::{common::{animated_sprite::{AnimateOnTouch, SpriteAnimator}, physics::bouncy::Bouncy}, ground::Ground, local_player::FORCE_MUL, stage::stage_builder::stage_creator::{StageCreator, TILE_SIZE_HALF}};
 
 use super::{tiles::TileBundle, StageObject};
 

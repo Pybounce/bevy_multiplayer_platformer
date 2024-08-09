@@ -184,7 +184,7 @@ fn build_springs(stage_creator: &StageCreator, commands: &mut Commands) -> bool 
 fn build_lock_blocks(stage_creator: &StageCreator, commands: &mut Commands) -> bool {
     let atlas_rect = get_object_tilemap_rect_from_index(ObjectAtlasIndices::LockBlock);
     for lock_block in &stage_creator.stage.lock_blocks {
-        LockBlockFactory::spawn(commands, stage_creator, lock_block.grid_pos, atlas_rect, 0.0);
+        LockBlockFactory::spawn(commands, stage_creator, atlas_rect, lock_block);
     }
 
     return true;
@@ -193,7 +193,7 @@ fn build_lock_blocks(stage_creator: &StageCreator, commands: &mut Commands) -> b
 fn build_keys(stage_creator: &StageCreator, commands: &mut Commands) -> bool {
     let atlas_rect = get_object_tilemap_rect_from_index(ObjectAtlasIndices::Key);
     for key in &stage_creator.stage.keys {
-        KeyFactory::spawn(commands, stage_creator, key.grid_pos, atlas_rect, 0.0);
+        KeyFactory::spawn(commands, stage_creator, atlas_rect, key);
     }
 
     return true;

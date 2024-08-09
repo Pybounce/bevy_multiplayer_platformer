@@ -56,11 +56,13 @@ pub struct Spring {
 #[derive(Debug, Deserialize, Serialize)]
 pub struct LockBlock {
     pub grid_pos: Vec2,
+    pub trigger_id: usize
 }
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Key {
     pub grid_pos: Vec2,
+    pub trigger_id: usize
 }
 
 #[derive(Default)]

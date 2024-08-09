@@ -4,4 +4,4 @@ pub mod shake;
 pub mod checkpoint;
 pub mod animated_sprite;
 pub mod physics;
-
+pub mod triggers;

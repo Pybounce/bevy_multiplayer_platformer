@@ -185,11 +185,13 @@ fn stage_from_grid(mut layout: String, mut width: usize, mut height: usize, id: 
         else if tile == '🔒' {
             lock_blocks.push(LockBlock {
                 grid_pos: Vec2::new(x as f32, y as f32),
+                trigger_id: 0
             });
         }
         else if tile == '🔑' {
             keys.push(Key {
                 grid_pos: Vec2::new(x as f32, y as f32),
+                trigger_id: 0
             });
         }
         else {
