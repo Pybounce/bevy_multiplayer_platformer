@@ -15,6 +15,7 @@ pub struct Stage {
     pub spikes: Vec<Spike>,
     pub half_saws: Vec<HalfSaw>,
     pub springs: Vec<Spring>,
+    pub lock_blocks: Vec<LockBlock>,
     pub checkpoints: Vec<Checkpoint>,
     pub grid_width: usize,
     pub grid_height: usize,
@@ -49,6 +50,11 @@ pub struct Checkpoint {
 pub struct Spring {
     pub grid_pos: Vec2,
     pub rotation: f32
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct LockBlock {
+    pub grid_pos: Vec2,
 }
 
 #[derive(Default)]

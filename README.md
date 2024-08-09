@@ -185,3 +185,9 @@
 ## LevelReset
 
 - Will likely need a component LevelResetter or similar that can reset the level when the player dies.
+
+So we store an id with every stage object
+They key objects contain a list of objectIds for their triggers
+
+When creating the level, we go through the triggerables first and get a mapping <Id => EntityId>
+Then we go through the rest and if they have triggers, we can set the correct entityId

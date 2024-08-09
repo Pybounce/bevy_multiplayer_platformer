@@ -1,4 +1,4 @@
-use crate::{common::checkpoint::CheckpointBundle, player::spawner::LocalPlayerSpawner, stage::stage_objects::{goal::GoalFactory, half_saw::SawFactory, spike::SpikeFactory, spring::SpringFactory, tiles::{GroundTileBundle, TileBundle}, StageObject}};
+use crate::{common::checkpoint::CheckpointBundle, player::spawner::LocalPlayerSpawner, stage::stage_objects::{goal::GoalFactory, half_saw::SawFactory, lock_block::LockBlockFactory, spike::SpikeFactory, spring::SpringFactory, tiles::{GroundTileBundle, TileBundle}, StageObject}};
 
 use super::stage_asset::Stage;
 use bevy::prelude::*;
@@ -12,7 +12,6 @@ const OBJECT_TILE_TILEMAP_SIZE: f32 = 16.0;
 
 pub struct StageCreator<'a> {
     pub stage: &'a Stage, 
-    pub colour_palettes: &'a Handle<Image>,
     pub tilemap: &'a Handle<Image>,
     pub object_tilemap: &'a Handle<Image>
 }
@@ -28,17 +27,18 @@ pub enum ObjectAtlasIndices {
     Spring2 = 7,
     Spring3 = 8,
     Spring4 = 9,
-    Player = 18
+    Player = 18,
+    Key = 10,
+    LockBlock = 11
 }
 
 
 
 impl<'a> StageCreator<'a> {
 
-    pub fn new(stage: &'a Stage, colour_palettes: &'a Handle<Image>, tilemap: &'a Handle<Image>, object_tilemap: &'a Handle<Image>) -> Self {
+    pub fn new(stage: &'a Stage, tilemap: &'a Handle<Image>, object_tilemap: &'a Handle<Image>) -> Self {
         StageCreator {
             stage,
-            colour_palettes,
             tilemap,
             object_tilemap
         }
@@ -54,6 +54,7 @@ impl<'a> StageCreator<'a> {
         && build_checkpoints(self, commands)
         && build_half_saws(self, commands)
         && build_springs(self, commands)
+        && build_lock_blocks(self, commands)
     }
 
 
@@ -174,6 +175,15 @@ fn build_springs(stage_creator: &StageCreator, commands: &mut Commands) -> bool 
 
     for spring in &stage_creator.stage.springs {
         SpringFactory::spawn(commands, stage_creator, spring.grid_pos, atlas_rects.clone(), spring.rotation);
+    }
+
+    return true;
+}
+
+fn build_lock_blocks(stage_creator: &StageCreator, commands: &mut Commands) -> bool {
+    let atlas_rect = get_object_tilemap_rect_from_index(ObjectAtlasIndices::LockBlock);
+    for lock_block in &stage_creator.stage.lock_blocks {
+        LockBlockFactory::spawn(commands, stage_creator, lock_block.grid_pos, atlas_rect, 0.0);
     }
 
     return true;
