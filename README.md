@@ -167,3 +167,21 @@
 - It then listens for collisions and has a query for KeyBlock/IntervalBlock
 - It then searches for the entity with that
 - IntervalBlock/KeyBlock then has a .trigger() function
+
+## Button thingy 2.0
+
+- Have a component Triggerable
+- Then each Trigger (ie button/key) will contain a Vec<Entity> to a Triggerable
+- NOTE that 'Trigger' is not a component, we would instead just have a Key and a Button component that contain the triggerable entities, and then handle that in separate methods
+- This is because Keys/Buttons work in totally different ways and fuck that basically
+
+## Triggerable
+
+- This will need a trigger() func and also an untrigger() func
+- Then there will be separate systems that look for things like '<(LockBlock, Triggerable)>
+  - Triggerable will store the info to say it's been triggered
+  - This system will check that, and do whatever is needed for LockBlocks
+
+## LevelReset
+
+- Will likely need a component LevelResetter or similar that can reset the level when the player dies.
