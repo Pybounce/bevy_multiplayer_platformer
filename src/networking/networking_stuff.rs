@@ -5,7 +5,7 @@ use bevy_rapier2d::prelude::Velocity;
 
 use crate::{common::states::NetworkingState, local_player::LocalPlayer, player::look_state::PlayerLookState, stage::stage_builder::CurrentStageData};
 
-use super::{messages::NewLocationMessage, networked_players::{self, NetworkedPlayer}, CurrrentNetworkData};
+use super::{messages::NewLocationMessage, networked_players::NetworkedPlayer, CurrrentNetworkData};
 
 pub fn connect_socket(
     mut commands: Commands,

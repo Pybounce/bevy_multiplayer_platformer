@@ -1,7 +1,7 @@
-use bevy::{prelude::*, transform::commands};
+use bevy::prelude::*;
 use bevy_rapier2d::prelude::{CollisionGroups, Group};
 
-use crate::{common::{death::DeathMarker, triggers::{TriggerEvent, Triggerable}}, local_player, stage::stage_builder::{stage_asset::{self}, stage_creator::StageCreator}};
+use crate::{common::{death::DeathMarker, triggers::{TriggerEvent, Triggerable}}, stage::stage_builder::{stage_asset::{self}, stage_creator::StageCreator}};
 
 use super::tiles::PhysicalTileBundle;
 

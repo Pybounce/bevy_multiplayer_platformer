@@ -131,7 +131,7 @@ fn clean_layout(layout: &String) -> String {
     layout.replace("\n", "").replace(" ", "")
 }
 
-fn stage_from_grid(mut layout: String, mut width: usize, mut height: usize, id: usize) {
+fn stage_from_grid(mut layout: String, width: usize, height: usize, id: usize) {
     layout = clean_layout(&layout);
     let mut ground_tiles: Vec<GroundTile> = vec![];
     let mut spikes: Vec<Spike> = vec![];
