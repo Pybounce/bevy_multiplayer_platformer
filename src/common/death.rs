@@ -28,7 +28,7 @@ pub fn check_touched_by_death(
     for colliding_entities in &query {
         for colliding_entity in colliding_entities.iter() {
             if let Ok(entity) = death_marked_on_touch_query.get(colliding_entity) {
-                commands.entity(entity).insert(DeathMarker);
+                commands.entity(entity).try_insert(DeathMarker);
             }
         }
     }

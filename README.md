@@ -40,8 +40,6 @@
     - Likely just need to lower the raycast padding
 - Touching a spring doesn't reset players jump
   - This means jumping right before touching a spring, will turn off gravity and then launch the player
-- Collecting Key crashed game (very rare)
-  - Could not insert a bundle (of type `bevy_multiplayer_platformer::common::death::DeathMarker`) for entity Entity { index: 204, generation: 1 } because it doesn't exist in this World. See: https://bevyengine.org/learn/errors/#b0003
 
 ## Bugs
 
