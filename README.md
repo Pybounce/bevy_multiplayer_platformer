@@ -161,28 +161,12 @@
 
 - Ability to mute (/automute) other players
 
-## Button thingy
+## Competitive Multiplayer Idea
 
-- Button has KeyTriggerOnTouch or IntervalBlockTriggerOnTouch
-- These triggerOnTouch components contain an entity (well a Vec<Entity>)
-- There are other components like IntervalBlock and KeyBlock
-- It then listens for collisions and has a query for KeyBlock/IntervalBlock
-- It then searches for the entity with that
-- IntervalBlock/KeyBlock then has a .trigger() function
-
-## Button thingy 2.0
-
-- Have a component Triggerable
-- Then each Trigger (ie button/key) will contain a Vec<Entity> to a Triggerable
-- NOTE that 'Trigger' is not a component, we would instead just have a Key and a Button component that contain the triggerable entities, and then handle that in separate methods
-- This is because Keys/Buttons work in totally different ways and fuck that basically
-
-## Triggerable
-
-- This will need a trigger() func and also an untrigger() func
-- Then there will be separate systems that look for things like '<(LockBlock, Triggerable)>
-  - Triggerable will store the info to say it's been triggered
-  - This system will check that, and do whatever is needed for LockBlocks
+- Put players in a lobby
+- A stage is picked and players play for x minutes, trying to set their best time
+- Best time after x minutes gets a point etc
+- Players play i amount of maps until a winner is declared
 
 ## LevelReset
 
