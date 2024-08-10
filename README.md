@@ -17,6 +17,8 @@
 
 - Make the player explode into many tiny squares with collision (good ol' ECS)
 - Move all that player config into a component for the player?
+- Dying doesn't reset the level
+  - Triggers like lock blocks or keys are not reset when the player dies
 
 ## Animations in Networking
 
