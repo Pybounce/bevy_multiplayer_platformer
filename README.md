@@ -129,6 +129,9 @@
 - Springs
 - Teleporters
 - Enemies that will act as springs when they die
+- Heavy blocks
+  - Basically just blocks that have gravity
+  - Can put lock blocks beneath them so the player collects a key and must race to the end before the heavy block falls, blocking the exit
 
 ## Player Mechanics
 

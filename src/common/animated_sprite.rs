@@ -9,7 +9,8 @@ pub struct SpriteAnimator {
     current_atlas_index: usize,
     timer: Timer,
     repeat_forever: bool,
-    currently_animate: bool
+    currently_animate: bool,
+    reverse: bool
 }
 
 #[derive(Component)]
@@ -27,6 +28,7 @@ impl SpriteAnimator {
             timer: Timer::from_seconds(frame_delay as f32 / 1000.0, TimerMode::Repeating),
             repeat_forever: true,
             currently_animate: true,
+            reverse: false
         }
     }
     pub fn new_non_repeating(frame_delay: u128, atlas_rects: Vec<Rect>) -> SpriteAnimator {
@@ -36,17 +38,48 @@ impl SpriteAnimator {
             timer: Timer::from_seconds(frame_delay as f32 / 1000.0, TimerMode::Repeating),
             repeat_forever: false,
             currently_animate: false,
+            reverse: false
         }
     }
     pub fn increment_atlas_index(&mut self) {
-        self.current_atlas_index += 1;
-        if self.current_atlas_index >= self.atlas_rects.len() {
-            self.currently_animate = self.repeat_forever;
-            self.current_atlas_index = 0;
+        if !self.reverse {
+            self.current_atlas_index += 1;
+            if self.current_atlas_index >= self.atlas_rects.len() {
+                self.currently_animate = self.repeat_forever;
+                if self.repeat_forever {
+                    self.current_atlas_index = 0;
+                }
+                else {
+                    self.current_atlas_index = self.atlas_rects.len() - 1;
+                }
+                
+            }
         }
+        else {
+            if let Some(i) = self.current_atlas_index.checked_sub(1) {
+                self.current_atlas_index = i;
+            }
+            else {
+                if self.repeat_forever {
+                    self.current_atlas_index = self.atlas_rects.len() - 1
+                }
+                self.currently_animate = self.repeat_forever;
+            }
+        }
+
     }
     pub fn get_current_atlas_rect(&self) -> Rect {
         self.atlas_rects[self.current_atlas_index]
+    }
+    pub fn play(&mut self) {
+        self.currently_animate = true;
+        self.reverse = false;
+        self.current_atlas_index = 0;
+    }
+    pub fn play_reverse(&mut self) {
+        self.currently_animate = true;
+        self.reverse = true;
+        self.current_atlas_index = self.atlas_rects.len() - 1;
     }
 }
 
@@ -74,7 +107,7 @@ pub fn check_animate_on_touch(
         for colliding_entity in colliding_entities.iter() {
             if let Ok(aot) = animate_on_touch_query.get_mut(colliding_entity) {
                 if let Ok(mut sa) = sprite_animators.get_mut(aot.animator_entity) {
-                    sa.currently_animate = true;
+                    sa.play();
                 } 
             }
         }

@@ -34,7 +34,6 @@ pub struct GroundTileBundle {
 
 impl TileBundle {
     pub fn new(stage_creator: &StageCreator, grid_pos: Vec2, atlas_rect: Rect, tile_rotation: f32, image_handle: &Handle<Image>) -> Self {
-
         TileBundle {
             sprite_bundle: SpriteBundle {
                 transform: Transform {

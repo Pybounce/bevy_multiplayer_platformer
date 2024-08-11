@@ -1,4 +1,4 @@
-use crate::{common::checkpoint::CheckpointBundle, player::spawner::LocalPlayerSpawner, stage::stage_objects::{goal::GoalFactory, half_saw::SawFactory, key::KeyFactory, lock_block::LockBlockFactory, spike::SpikeFactory, spring::SpringFactory, tiles::{GroundTileBundle, TileBundle}, StageObject}};
+use crate::{common::checkpoint::CheckpointBundle, player::spawner::LocalPlayerSpawner, stage::stage_objects::{goal::GoalFactory, half_saw::SawFactory, interval_block::IntervalBlockFactory, key::KeyFactory, lock_block::LockBlockFactory, spike::SpikeFactory, spring::SpringFactory, tiles::{GroundTileBundle, TileBundle}, StageObject}};
 
 use super::stage_asset::Stage;
 use bevy::prelude::*;
@@ -29,7 +29,10 @@ pub enum ObjectAtlasIndices {
     Spring4 = 9,
     Player = 18,
     Key = 10,
-    LockBlock = 11
+    LockBlock = 11,
+    IntervalBlock0 = 12,
+    IntervalBlock1 = 13,
+    IntervalBlock2 = 14,
 }
 
 
@@ -56,6 +59,7 @@ impl<'a> StageCreator<'a> {
         && build_springs(self, commands)
         && build_lock_blocks(self, commands)
         && build_keys(self, commands)
+        && build_interval_blocks(self, commands)
     }
 
 
@@ -196,6 +200,18 @@ fn build_keys(stage_creator: &StageCreator, commands: &mut Commands) -> bool {
         KeyFactory::spawn(commands, stage_creator, atlas_rect, key);
     }
 
+    return true;
+}
+
+fn build_interval_blocks(stage_creator: &StageCreator, commands: &mut Commands) -> bool {
+    let atlas_rects = vec![
+        get_object_tilemap_rect_from_index(ObjectAtlasIndices::IntervalBlock0),
+        get_object_tilemap_rect_from_index(ObjectAtlasIndices::IntervalBlock1),
+        get_object_tilemap_rect_from_index(ObjectAtlasIndices::IntervalBlock2)
+    ];
+    for interval_block in &stage_creator.stage.interval_blocks {
+        IntervalBlockFactory::spawn(commands, stage_creator, atlas_rects.clone(), interval_block);
+    }
     return true;
 }
 

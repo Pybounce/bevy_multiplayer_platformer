@@ -18,7 +18,7 @@ mod stage_select;
 use obstacles::check_insta_kill_collisions;
 use player::{common::check_player_out_of_bounds, death::trigger_dead_local_player_respawn, horizontal_movement_controller::{move_airbourne_horizontal_controller, move_ground_horizontal_controller}, jump_controller::{apply_wall_friction, begin_player_jump, check_jump_fall_states, is_coyote_grounded, maintain_player_jump, update_last_grounded}, look_state::{update_player_airborn_look_state, update_player_grounded_look_state}, physics_controller::apply_physics_controller_limits, spawner::spawn_local_players, wall_jump_controller::{add_wall_stuck, begin_player_wall_jump, remove_wall_stuck, update_wall_stuck, update_wall_stuck_time}};
 use ground::check_grounded;
-use stage::{stage_builder::StageBuilderPlugin, stage_objects::lock_block::read_lock_block_triggers};
+use stage::{stage_builder::StageBuilderPlugin, stage_objects::{interval_block::tick_interval_blocks, lock_block::read_lock_block_triggers}};
 use stage_select::StageSelectPlugin;
 use wall::check_touching_wall;
 
@@ -71,7 +71,7 @@ fn main() {
         .add_systems(Update, (check_touching_wall, update_wall_stuck_time, apply_wall_friction, begin_player_wall_jump, shake, check_insta_kill_collisions, trigger_dead_local_player_respawn, spawn_local_players, check_grounded, check_player_out_of_bounds, move_airbourne_horizontal_controller, move_ground_horizontal_controller, update_last_grounded, maintain_player_jump, begin_player_jump, is_coyote_grounded, check_jump_fall_states, despawn_death_marked))
         .add_systems(Update, (apply_physics_controller_limits, add_wall_stuck, update_wall_stuck, remove_wall_stuck))
         .add_systems(Update, (update_player_look_direction, load_player_sprite, simulate_gravity, check_checkpoint_reached, animate_sprites, move_pixel_perfect_translations))
-        .add_systems(Update, (check_touched_by_death, read_lock_block_triggers, trigger_on_touch, check_bouncy_collisions, check_animate_on_touch, update_player_airborn_look_state, update_player_grounded_look_state, update_player_look_direction))
+        .add_systems(Update, (tick_interval_blocks, check_touched_by_death, read_lock_block_triggers, trigger_on_touch, check_bouncy_collisions, check_animate_on_touch, update_player_airborn_look_state, update_player_grounded_look_state, update_player_look_direction))
         .add_event::<TriggerEvent>()
         .run();
 }

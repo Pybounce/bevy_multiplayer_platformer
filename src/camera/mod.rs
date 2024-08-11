@@ -4,7 +4,7 @@ use bevy_rapier2d::prelude::*;
 
 use crate::local_player::LocalPlayer;
 
-const CAMERA_ZOOM: u16 = 2;
+const CAMERA_ZOOM: u16 = 3;
 
 pub fn spawn_camera(mut commands: Commands) {
 
