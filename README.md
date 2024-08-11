@@ -89,47 +89,32 @@
 
 ## Stage Mechanics
 
-- Triggers
-  - Many types of stage mechanic will be a trigger, such as:
-    - Keys
-    - Buttons
-    - Switches
-  - There should probably be some unified way of triggering an event off to the subscribers
-  - Subscribers might be
-    - Key Blocks
-    - Stage Event (rising water etc)
-    - Interval blocks
-    - Door opening (basically key blocks but it closes after x seconds?)
-- Key Blocks
+- [x] Key Blocks
   - Keys are placed around the stage
   - Collect the key to unlock the assigned locked blocks
   - Different keys will be assigned to different blocks in one stage
-- Moving platforms
+- [ ] Moving platforms
   - Horizontal or vertical
   - Moving platforms should also be able to contain spikes etc
     - The moving 'block' could just be a spike
     - Last project handled this by moving them all separately but in the same way
-- Crumbling blocks
+- [ ] Crumbling blocks
   - On touch (by anything?), they dissapear
-- Ghost blocks
+- [ ] Ghost blocks
   - They look solid until the player is close
   - Once one in the group is revealed, all of the group is revealed
-- Bouncing blocks
-  - Touching them gives the object a boost of velocity in the normal direction
-- Rotating stage??
-  - Just hold the player in place, rotate the camera, flip gravity
-- Interval blocks
+- [x] Interval blocks
   - They 'switch' on and off every x seconds
   - When on, they are just blocks, when off, they have dissapear
   - Can be triggered by timer or maybe even player events (button/switch?)
-- Crushing blocks
+- [ ] Crushing blocks
   - A trigger subscriber that usually just stays on a timer
   - Can act as a door if it subscribes to a non timer trigger?
   - Will crush the player if they hit the bottom or top of it as well as touching ground/ceiling
-- Springs
-- Teleporters
-- Enemies that will act as springs when they die
-- Heavy blocks
+- [x] Springs
+- [ ] Teleporters
+- [ ] Enemies that will act as springs when they die
+- [ ] Heavy blocks
   - Basically just blocks that have gravity
   - Can put lock blocks beneath them so the player collects a key and must race to the end before the heavy block falls, blocking the exit
 
