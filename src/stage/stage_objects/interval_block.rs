@@ -1,7 +1,7 @@
-use bevy::{math::Rect, prelude::{default, Commands, Component, Entity, Query, Res}, sprite::Sprite, time::{Time, Timer, TimerMode}, transform::commands};
+use bevy::{math::Rect, prelude::{default, Commands, Component, Entity, Query, Res, With}, sprite::Sprite, time::{Time, Timer, TimerMode}, transform::commands};
 use bevy_rapier2d::prelude::{ActiveCollisionTypes, ActiveEvents, Collider, CollisionGroups, Group, Sleeping};
 
-use crate::{common::animated_sprite::SpriteAnimator, ground::Ground, stage::stage_builder::{stage_asset, stage_creator::{StageCreator, TILE_SIZE_HALF}}};
+use crate::{common::animated_sprite::SpriteAnimator, ground::Ground, obstacles::InstantKiller, stage::stage_builder::{stage_asset, stage_creator::{StageCreator, TILE_SIZE_HALF}}};
 
 use super::tiles::PhysicalTileBundle;
 
@@ -40,11 +40,18 @@ pub fn tick_interval_blocks(
             if interval_block.currently_active {
                 sprite_anim.play_reverse();
                 commands.entity(e).try_insert(Collider::cuboid(TILE_SIZE_HALF, TILE_SIZE_HALF));
+                commands.entity(e).try_insert(InstantKiller);
             }
             if !interval_block.currently_active {
                 sprite_anim.play();
                 commands.entity(e).remove::<Collider>();
             }
         }
+    }
+}
+
+pub fn stop_interval_block_crush(query: Query<Entity, (With<InstantKiller>, With<IntervalBlock>)>, mut commands: Commands) {
+    for e in &query {
+        commands.entity(e).remove::<InstantKiller>();
     }
 }
