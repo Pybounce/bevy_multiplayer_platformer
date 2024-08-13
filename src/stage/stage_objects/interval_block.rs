@@ -1,5 +1,5 @@
-use bevy::{math::Rect, prelude::{default, Commands, Component, Entity, Query, Res, With}, sprite::Sprite, time::{Time, Timer, TimerMode}, transform::commands};
-use bevy_rapier2d::prelude::{ActiveCollisionTypes, ActiveEvents, Collider, CollisionGroups, Group, Sleeping};
+use bevy::{math::Rect, prelude::{Commands, Component, Entity, Query, Res, With}, time::{Time, Timer, TimerMode}};
+use bevy_rapier2d::prelude::{Collider, CollisionGroups, Group};
 
 use crate::{common::animated_sprite::SpriteAnimator, ground::Ground, obstacles::InstantKiller, stage::stage_builder::{stage_asset, stage_creator::{StageCreator, TILE_SIZE_HALF}}};
 

@@ -1,7 +1,7 @@
-use bevy::{math::Rect, prelude::{default, Commands, Component, Entity, Query, Res, With, Without}, sprite::Sprite, time::{Time, Timer, TimerMode}, transform::commands};
-use bevy_rapier2d::prelude::{ActiveCollisionTypes, ActiveEvents, Collider, CollidingEntities, CollisionGroups, Group, Sleeping};
+use bevy::{math::Rect, prelude::{Commands, Component, Entity, Query, Res, Without}, time::{Time, Timer, TimerMode}};
+use bevy_rapier2d::prelude::{CollidingEntities, CollisionGroups, Group};
 
-use crate::{common::{animated_sprite::SpriteAnimator, death::DeathMarker}, ground::Ground, obstacles::InstantKiller, stage::stage_builder::{stage_asset, stage_creator::{StageCreator, TILE_SIZE_HALF}}};
+use crate::{common::{animated_sprite::SpriteAnimator, death::DeathMarker}, ground::Ground, stage::stage_builder::{stage_asset, stage_creator::StageCreator}};
 
 use super::tiles::PhysicalTileBundle;
 
