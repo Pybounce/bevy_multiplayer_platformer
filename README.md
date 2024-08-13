@@ -42,6 +42,10 @@
     - Likely just need to lower the raycast padding
 - Touching a spring doesn't reset players jump
   - This means jumping right before touching a spring, will turn off gravity and then launch the player
+- Player can stand on phantom blocks without activating them
+  - Only breaks this way when standing on the corner
+  - This is because the player collider is the circle and is a bit smaller than player
+  - It's this way to be forgiving on spikes though perhaps I should change the spike collider instead
 
 ## Bugs
 
@@ -165,3 +169,22 @@ They key objects contain a list of objectIds for their triggers
 
 When creating the level, we go through the triggerables first and get a mapping <Id => EntityId>
 Then we go through the rest and if they have triggers, we can set the correct entityId
+
+## other shit idk
+
+Saw vs Half Saw Issue
+
+- Issue with saws is that a lot of the time you may want a half saw to go along the ground, and then go up into the ceiling and along it, but it's only half a saw.
+- Can make it so half saws can ONLY connect to the ground and not go up in the air, and full saws must be used for that, but it's restrictive
+
+Saw Placement
+
+- Have the user select saw
+- Then they click on the first tile they want it
+- If the path should end there, click that tile again
+- Otherwise click a different tile that is vertical or horizontal to set it's path to there next
+- Continue until happy with path and click the same tile again to end path
+- Right click to undo last path update
+- ISSUE: If I want to add breaks to the path, where the saw stops for a second or so, how?
+
+Idea for block that produces spikes when the player steps on it, simiar to crumbling block

@@ -5,9 +5,12 @@ use crate::{common::animated_sprite::SpriteAnimator, ground::Ground, obstacles::
 
 use super::tiles::PhysicalTileBundle;
 
+//TODO: Like the PhantomBlock, I can add a timer that runs once for the duraction of frame delay * animation len
+// Then I can disable/enable colliders then, but it's not a big deal
+
 #[derive(Component)]
 pub struct IntervalBlock {
-    timer: Timer,
+    timer: Timer,  
     currently_active: bool
 }
 

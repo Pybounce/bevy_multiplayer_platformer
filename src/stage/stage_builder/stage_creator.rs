@@ -1,4 +1,4 @@
-use crate::{common::checkpoint::CheckpointBundle, player::spawner::LocalPlayerSpawner, stage::stage_objects::{goal::GoalFactory, half_saw::SawFactory, interval_block::IntervalBlockFactory, key::KeyFactory, lock_block::LockBlockFactory, spike::SpikeFactory, spring::SpringFactory, tiles::{GroundTileBundle, TileBundle}, StageObject}};
+use crate::{common::checkpoint::CheckpointBundle, player::spawner::LocalPlayerSpawner, stage::stage_objects::{goal::GoalFactory, half_saw::SawFactory, interval_block::IntervalBlockFactory, key::KeyFactory, lock_block::LockBlockFactory, phantom_block::PhantomBlockFactory, spike::SpikeFactory, spring::SpringFactory, tiles::{GroundTileBundle, TileBundle}, StageObject}};
 
 use super::stage_asset::Stage;
 use bevy::prelude::*;
@@ -33,6 +33,11 @@ pub enum ObjectAtlasIndices {
     IntervalBlock0 = 12,
     IntervalBlock1 = 13,
     IntervalBlock2 = 14,
+    PhantomBlock0 = 21,
+    PhantomBlock1 = 22,
+    PhantomBlock2 = 23,
+    PhantomBlock3 = 24,
+    PhantomBlock4 = 25,
 }
 
 
@@ -60,6 +65,7 @@ impl<'a> StageCreator<'a> {
         && build_lock_blocks(self, commands)
         && build_keys(self, commands)
         && build_interval_blocks(self, commands)
+        && build_phantom_blocks(self, commands)
     }
 
 
@@ -211,6 +217,20 @@ fn build_interval_blocks(stage_creator: &StageCreator, commands: &mut Commands) 
     ];
     for interval_block in &stage_creator.stage.interval_blocks {
         IntervalBlockFactory::spawn(commands, stage_creator, atlas_rects.clone(), interval_block);
+    }
+    return true;
+}
+
+fn build_phantom_blocks(stage_creator: &StageCreator, commands: &mut Commands) -> bool {
+    let atlas_rects = vec![
+        get_object_tilemap_rect_from_index(ObjectAtlasIndices::PhantomBlock0),
+        get_object_tilemap_rect_from_index(ObjectAtlasIndices::PhantomBlock1),
+        get_object_tilemap_rect_from_index(ObjectAtlasIndices::PhantomBlock2),
+        get_object_tilemap_rect_from_index(ObjectAtlasIndices::PhantomBlock3),
+        get_object_tilemap_rect_from_index(ObjectAtlasIndices::PhantomBlock4)
+    ];
+    for phantom_block in &stage_creator.stage.phantom_blocks {
+        PhantomBlockFactory::spawn(commands, stage_creator, atlas_rects.clone(), phantom_block);
     }
     return true;
 }
