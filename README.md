@@ -42,9 +42,6 @@
     - Likely just need to lower the raycast padding
 - Touching a spring doesn't reset players jump
   - This means jumping right before touching a spring, will turn off gravity and then launch the player
-- InstantKiller only checks colliding entities
-  - This is being used on the interval block
-  - It's intented to kill anything so, maybe I will need to add colliding entities to anything that can die?
 
 ## Bugs
 
