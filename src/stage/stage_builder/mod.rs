@@ -5,7 +5,7 @@ use stage_asset_creator::save_stage;
 use systems::{try_build_stage, unload_old_stage};
 
 pub mod events;
-mod stage_asset;
+pub mod stage_asset;
 mod systems;
 pub mod stage_creator;
 mod stage_asset_creator;

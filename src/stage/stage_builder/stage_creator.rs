@@ -1,4 +1,4 @@
-use crate::{common::checkpoint::CheckpointBundle, player::spawner::LocalPlayerSpawner, stage::stage_objects::{goal::GoalFactory, half_saw::SawFactory, spike::SpikeFactory, tiles::{GroundTileBundle, TileBundle}, StageObject}};
+use crate::{common::checkpoint::CheckpointBundle, player::spawner::LocalPlayerSpawner, stage::stage_objects::{goal::GoalFactory, half_saw::SawFactory, interval_block::IntervalBlockFactory, key::KeyFactory, lock_block::LockBlockFactory, phantom_block::PhantomBlockFactory, spike::SpikeFactory, spring::SpringFactory, tiles::{GroundTileBundle, TileBundle}, StageObject}};
 
 use super::stage_asset::Stage;
 use bevy::prelude::*;
@@ -12,25 +12,41 @@ const OBJECT_TILE_TILEMAP_SIZE: f32 = 16.0;
 
 pub struct StageCreator<'a> {
     pub stage: &'a Stage, 
-    pub colour_palettes: &'a Handle<Image>,
     pub tilemap: &'a Handle<Image>,
     pub object_tilemap: &'a Handle<Image>
 }
 
-pub enum ColourPaletteAtlasIndex {
-    Background,
-    Ground,
-    Obstacle,
-    Goal,
-    _Misc
+pub enum ObjectAtlasIndices {
+    HalfSaw0 = 0,
+    HalfSaw1 = 1,
+    HalfSaw2 = 2,
+    HalfSaw3 = 3,
+    Spike = 4,
+    Spring0 = 5,
+    Spring1 = 6,
+    Spring2 = 7,
+    Spring3 = 8,
+    Spring4 = 9,
+    Player = 18,
+    Key = 10,
+    LockBlock = 11,
+    IntervalBlock0 = 12,
+    IntervalBlock1 = 13,
+    IntervalBlock2 = 14,
+    PhantomBlock0 = 21,
+    PhantomBlock1 = 22,
+    PhantomBlock2 = 23,
+    PhantomBlock3 = 24,
+    PhantomBlock4 = 25,
 }
+
+
 
 impl<'a> StageCreator<'a> {
 
-    pub fn new(stage: &'a Stage, colour_palettes: &'a Handle<Image>, tilemap: &'a Handle<Image>, object_tilemap: &'a Handle<Image>) -> Self {
+    pub fn new(stage: &'a Stage, tilemap: &'a Handle<Image>, object_tilemap: &'a Handle<Image>) -> Self {
         StageCreator {
             stage,
-            colour_palettes,
             tilemap,
             object_tilemap
         }
@@ -45,7 +61,11 @@ impl<'a> StageCreator<'a> {
         && build_player_spawner(self, commands)
         && build_checkpoints(self, commands)
         && build_half_saws(self, commands)
-
+        && build_springs(self, commands)
+        && build_lock_blocks(self, commands)
+        && build_keys(self, commands)
+        && build_interval_blocks(self, commands)
+        && build_phantom_blocks(self, commands)
     }
 
 
@@ -115,7 +135,7 @@ fn build_far_background(stage_creator: &StageCreator, commands: &mut Commands) -
 
 fn build_goal(stage_creator: &StageCreator, commands: &mut Commands) -> bool {
 
-    let sprite_rect = colour_palette_rect_from_index(ColourPaletteAtlasIndex::Goal);
+    let sprite_rect = get_object_tilemap_rect_from_index(ObjectAtlasIndices::Player);
     
     GoalFactory::spawn(
         commands,
@@ -128,7 +148,7 @@ fn build_goal(stage_creator: &StageCreator, commands: &mut Commands) -> bool {
 
 fn build_spikes(stage_creator: &StageCreator, commands: &mut Commands) -> bool {
 
-    let sprite_rect = get_object_tilemap_rect_from_index(4);
+    let sprite_rect = get_object_tilemap_rect_from_index(ObjectAtlasIndices::Spike);
 
     for spike in &stage_creator.stage.spikes {
 
@@ -141,22 +161,82 @@ fn build_spikes(stage_creator: &StageCreator, commands: &mut Commands) -> bool {
 fn build_half_saws(stage_creator: &StageCreator, commands: &mut Commands) -> bool {
 
     let atlas_rects = vec![
-        get_object_tilemap_rect_from_index(0),
-        get_object_tilemap_rect_from_index(1),
-        get_object_tilemap_rect_from_index(2),
-        get_object_tilemap_rect_from_index(3),
+        get_object_tilemap_rect_from_index(ObjectAtlasIndices::HalfSaw0),
+        get_object_tilemap_rect_from_index(ObjectAtlasIndices::HalfSaw1),
+        get_object_tilemap_rect_from_index(ObjectAtlasIndices::HalfSaw2),
+        get_object_tilemap_rect_from_index(ObjectAtlasIndices::HalfSaw3),
     ];
 
     for half_saw in &stage_creator.stage.half_saws {
-        SawFactory::spawn_half(commands, stage_creator, half_saw.grid_pos, atlas_rects.clone(), half_saw.rotation);
+        SawFactory::spawn_half(commands, stage_creator, atlas_rects.clone(), half_saw);
     }
 
     return true;
 }
 
+fn build_springs(stage_creator: &StageCreator, commands: &mut Commands) -> bool {
+    let atlas_rects = vec![
+        get_object_tilemap_rect_from_index(ObjectAtlasIndices::Spring0),
+        get_object_tilemap_rect_from_index(ObjectAtlasIndices::Spring1),
+        get_object_tilemap_rect_from_index(ObjectAtlasIndices::Spring2),
+        get_object_tilemap_rect_from_index(ObjectAtlasIndices::Spring3),
+        get_object_tilemap_rect_from_index(ObjectAtlasIndices::Spring4),
+    ];
+
+    for spring in &stage_creator.stage.springs {
+        SpringFactory::spawn(commands, stage_creator, spring.grid_pos, atlas_rects.clone(), spring.rotation);
+    }
+
+    return true;
+}
+
+fn build_lock_blocks(stage_creator: &StageCreator, commands: &mut Commands) -> bool {
+    let atlas_rect = get_object_tilemap_rect_from_index(ObjectAtlasIndices::LockBlock);
+    for lock_block in &stage_creator.stage.lock_blocks {
+        LockBlockFactory::spawn(commands, stage_creator, atlas_rect, lock_block);
+    }
+
+    return true;
+}
+
+fn build_keys(stage_creator: &StageCreator, commands: &mut Commands) -> bool {
+    let atlas_rect = get_object_tilemap_rect_from_index(ObjectAtlasIndices::Key);
+    for key in &stage_creator.stage.keys {
+        KeyFactory::spawn(commands, stage_creator, atlas_rect, key);
+    }
+
+    return true;
+}
+
+fn build_interval_blocks(stage_creator: &StageCreator, commands: &mut Commands) -> bool {
+    let atlas_rects = vec![
+        get_object_tilemap_rect_from_index(ObjectAtlasIndices::IntervalBlock0),
+        get_object_tilemap_rect_from_index(ObjectAtlasIndices::IntervalBlock1),
+        get_object_tilemap_rect_from_index(ObjectAtlasIndices::IntervalBlock2)
+    ];
+    for interval_block in &stage_creator.stage.interval_blocks {
+        IntervalBlockFactory::spawn(commands, stage_creator, atlas_rects.clone(), interval_block);
+    }
+    return true;
+}
+
+fn build_phantom_blocks(stage_creator: &StageCreator, commands: &mut Commands) -> bool {
+    let atlas_rects = vec![
+        get_object_tilemap_rect_from_index(ObjectAtlasIndices::PhantomBlock0),
+        get_object_tilemap_rect_from_index(ObjectAtlasIndices::PhantomBlock1),
+        get_object_tilemap_rect_from_index(ObjectAtlasIndices::PhantomBlock2),
+        get_object_tilemap_rect_from_index(ObjectAtlasIndices::PhantomBlock3),
+        get_object_tilemap_rect_from_index(ObjectAtlasIndices::PhantomBlock4)
+    ];
+    for phantom_block in &stage_creator.stage.phantom_blocks {
+        PhantomBlockFactory::spawn(commands, stage_creator, atlas_rects.clone(), phantom_block);
+    }
+    return true;
+}
+
 fn build_checkpoints(stage_creator: &StageCreator, commands: &mut Commands) -> bool {
 
-    let sprite_rect = colour_palette_rect_from_index(ColourPaletteAtlasIndex::_Misc);
+    let sprite_rect = get_object_tilemap_rect_from_index(ObjectAtlasIndices::Player);
 
     for checkpoint in &stage_creator.stage.checkpoints {
         commands.spawn(CheckpointBundle::new(
@@ -182,30 +262,11 @@ fn build_ground_tile(commands: &mut Commands, stage_creator: &StageCreator, grid
 
 }
 
-fn get_object_tilemap_rect_from_index(index: usize) -> Rect {
-
+fn get_object_tilemap_rect_from_index(atlas_index: ObjectAtlasIndices) -> Rect {
+    let index = atlas_index as usize;
     let upper_left = Vec2::new((index as f32 % OBJECT_TILEMAP_SIZE as f32) as f32 * OBJECT_TILE_TILEMAP_SIZE, (index / OBJECT_TILEMAP_SIZE) as f32 * OBJECT_TILE_TILEMAP_SIZE);
     let lower_right = Vec2::new(upper_left.x + OBJECT_TILE_TILEMAP_SIZE, upper_left.y + OBJECT_TILE_TILEMAP_SIZE);
     Rect::new(upper_left.x, upper_left.y, lower_right.x, lower_right.y)
-}
-
-fn colour_palette_rect_from_index(index: ColourPaletteAtlasIndex) -> Rect {
-
-    let i_index = index as i32;
-    let padding = 1.0;
-    let upper_left = IVec2::new(i_index % 5, i_index / 5).as_vec2();
-    let lower_right = Vec2::new(upper_left.x, upper_left.y);
-
-    return Rect::new(
-        index_to_padded_index(upper_left.x, padding), 
-        index_to_padded_index(upper_left.y, padding), 
-        index_to_padded_index(lower_right.x, padding) + 0.0, 
-        index_to_padded_index(lower_right.y, padding) + 0.0, 
-    );
-}
-
-fn index_to_padded_index(index: f32, padding: f32) -> f32 {
-    padding + (index * ((2.0 * padding) + 1.0))
 }
 
 

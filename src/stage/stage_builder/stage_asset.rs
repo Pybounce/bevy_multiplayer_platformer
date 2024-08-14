@@ -14,6 +14,11 @@ pub struct Stage {
     pub ground_tiles: Vec<GroundTile>,
     pub spikes: Vec<Spike>,
     pub half_saws: Vec<HalfSaw>,
+    pub springs: Vec<Spring>,
+    pub lock_blocks: Vec<LockBlock>,
+    pub keys: Vec<Key>,
+    pub interval_blocks: Vec<IntervalBlock>,
+    pub phantom_blocks: Vec<PhantomBlock>,
     pub checkpoints: Vec<Checkpoint>,
     pub grid_width: usize,
     pub grid_height: usize,
@@ -36,12 +41,46 @@ pub struct Spike {
 #[derive(Debug, Deserialize, Serialize)]
 pub struct HalfSaw {
     pub grid_pos: Vec2,
-    pub rotation: f32
+    pub rotation: f32,
+    pub movement_path_opt: Option<MovementPath>
 }
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Checkpoint {
     pub grid_pos: Vec2
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct Spring {
+    pub grid_pos: Vec2,
+    pub rotation: f32
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct LockBlock {
+    pub grid_pos: Vec2,
+    pub trigger_id: usize
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct Key {
+    pub grid_pos: Vec2,
+    pub trigger_id: usize
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct IntervalBlock {
+    pub grid_pos: Vec2
+}
+#[derive(Debug, Deserialize, Serialize)]
+pub struct PhantomBlock {
+    pub grid_pos: Vec2
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct MovementPath {
+    pub grid_offsets: Vec<Vec2>,
+    pub speed: f32
 }
 
 #[derive(Default)]

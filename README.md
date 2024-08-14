@@ -4,8 +4,9 @@
 
 - [ ] Many full levels with checkpoints and difficulty
 - [ ] Spectate mode
-- [ ] Main menu UI
-- [ ] New stage mechanics
+- [ ] Stage select UI
+- [x] New stage mechanics
+- [ ] Stage Editor
 - [ ] Networked player names
 - [ ] Player death juice
 - [ ] Player death counter?
@@ -17,6 +18,8 @@
 
 - Make the player explode into many tiny squares with collision (good ol' ECS)
 - Move all that player config into a component for the player?
+- Dying doesn't reset the level
+  - Triggers like lock blocks or keys are not reset when the player dies
 
 ## Animations in Networking
 
@@ -30,14 +33,18 @@
 
 - Moustache/player appearance (floating hats, such as a crown, and googly eyes)
 - Fancy stage loading (fancy animation for a stage being loaded/unloaded)
-- Stage mechanic where blocks swich on and off in intervals, so player must jump on them with correct timing
-- Saws currently look like little donuts
 
 ## Critical Bugs
 
 - Player spawns a little above the ground and doesn't fall all the way down
   - This links to the player being able to jump before hitting the ground
     - Likely just need to lower the raycast padding
+- Touching a spring doesn't reset players jump
+  - This means jumping right before touching a spring, will turn off gravity and then launch the player
+- Player can stand on phantom blocks without activating them
+  - Only breaks this way when standing on the corner
+  - This is because the player collider is the circle and is a bit smaller than player
+  - It's this way to be forgiving on spikes though perhaps I should change the spike collider instead
 
 ## Bugs
 
@@ -85,46 +92,31 @@
 
 ## Stage Mechanics
 
-- Triggers
-  - Many types of stage mechanic will be a trigger, such as:
-    - Keys
-    - Buttons
-    - Switches
-  - There should probably be some unified way of triggering an event off to the subscribers
-  - Subscribers might be
-    - Key Blocks
-    - Stage Event (rising water etc)
-    - Interval blocks
-    - Door opening (basically key blocks but it closes after x seconds?)
-- Key Blocks
+- [x] Key Blocks
   - Keys are placed around the stage
   - Collect the key to unlock the assigned locked blocks
   - Different keys will be assigned to different blocks in one stage
-- Moving platforms
+- [ ] Moving platforms
   - Horizontal or vertical
   - Moving platforms should also be able to contain spikes etc
     - The moving 'block' could just be a spike
     - Last project handled this by moving them all separately but in the same way
-- Crumbling blocks
+- [x] Phantom blocks
   - On touch (by anything?), they dissapear
-- Ghost blocks
+- [ ] Ghost blocks
   - They look solid until the player is close
   - Once one in the group is revealed, all of the group is revealed
-- Bouncing blocks
-  - Touching them gives the object a boost of velocity in the normal direction
-- Rotating stage??
-  - Just hold the player in place, rotate the camera, flip gravity
-- Interval blocks
+- [x] Interval blocks
   - They 'switch' on and off every x seconds
   - When on, they are just blocks, when off, they have dissapear
   - Can be triggered by timer or maybe even player events (button/switch?)
-- Crushing blocks
+- [ ] Crushing blocks
   - A trigger subscriber that usually just stays on a timer
   - Can act as a door if it subscribes to a non timer trigger?
   - Will crush the player if they hit the bottom or top of it as well as touching ground/ceiling
-- Springs
-- Teleporters
-- Enemies that will act as springs when they die
+- [x] Springs
+- [ ] Teleporters
+- [ ] Enemies that will act as springs when they die
 
 ## Player Mechanics
 
@@ -156,3 +148,42 @@
 ## Random Ideas
 
 - Ability to mute (/automute) other players
+
+## Competitive Multiplayer Idea
+
+- Put players in a lobby
+- A stage is picked and players play for x minutes, trying to set their best time
+- Best time after x minutes gets a point etc
+- Players play i amount of maps until a winner is declared
+
+## LevelReset
+
+- Will likely need a component LevelResetter or similar that can reset the level when the player dies.
+
+So we store an id with every stage object
+They key objects contain a list of objectIds for their triggers
+
+When creating the level, we go through the triggerables first and get a mapping <Id => EntityId>
+Then we go through the rest and if they have triggers, we can set the correct entityId
+
+## other shit idk
+
+Saw vs Half Saw Issue
+
+- Issue with saws is that a lot of the time you may want a half saw to go along the ground, and then go up into the ceiling and along it, but it's only half a saw.
+- Can make it so half saws can ONLY connect to the ground and not go up in the air, and full saws must be used for that, but it's restrictive
+
+Saw Placement
+
+- Have the user select saw
+- Then they click on the first tile they want it
+- If the path should end there, click that tile again
+- Otherwise click a different tile that is vertical or horizontal to set it's path to there next
+- Continue until happy with path and click the same tile again to end path
+- Right click to undo last path update
+- ISSUE: If I want to add breaks to the path, where the saw stops for a second or so, how?
+- UPDATE: To end a path you must double click on the start position
+
+  - So the path must start and end in the same place, but the user can loop through the start without ending, like a figure of 8.
+
+Idea for block that produces spikes when the player steps on it, simiar to crumbling block
