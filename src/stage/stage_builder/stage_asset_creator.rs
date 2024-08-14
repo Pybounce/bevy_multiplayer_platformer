@@ -165,14 +165,7 @@ fn stage_from_grid(mut layout: String, width: usize, height: usize, id: usize) {
             half_saws.push(HalfSaw {
                 grid_pos: Vec2::new(x as f32, y as f32), 
                 rotation: get_rotation(&layout, i, width),
-                movement_path_opt: Some(MovementPath {
-                    speed: 100.0,
-                    grid_offsets: vec![
-                        Vec2::new(0.0, 0.0),
-                        Vec2::new(100.0, 0.0),
-                        Vec2::new(0.0, 0.0)
-                    ]
-                })
+                movement_path_opt: None
             });
         }
         else if tile == '🟩' {
