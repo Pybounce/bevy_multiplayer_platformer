@@ -187,3 +187,24 @@ Saw Placement
   - So the path must start and end in the same place, but the user can loop through the start without ending, like a figure of 8.
 
 Idea for block that produces spikes when the player steps on it, simiar to crumbling block
+
+## Stage Editor Ideas
+
+- Hotbar with all different items at the bottom
+  - The item images can just be the tiles
+  - Q/E will cycle between different items
+  - A resource enum contains the currently selected item
+- UIHotbar will just be a new component
+  - It will take in the keycodes to move left/right
+  - It will take in a list of Image handles and some enum? maybe just ids?
+  - Then the dev can get the currently selected ID and map to an enum or whatever
+  - QUERY: Does the hotbar control listening for Q/E input or do I have a master input listener
+    - Just because when I'm placing a path for a saw, I don't want the user switching
+    - Or if they do switch, cancel all the pending path for the saw etc
+- Make a StageBuilder struct that can .AddSpike(pos) etc
+  - Then at the very end can do .Build() to return the stage_asset::Stage to be saved
+  - This way I can change how I maintain the current stage while building it (ie a 2d array for speedy grid position lookups)
+- UI Toolbar
+  - For many blocks they will need UI, such as saws for saw speed, or projectiles for rate and speed
+  - Can add a toolbar to the right that appears when you've got a specific block selected
+  - Then you tweak it and all blocks placed after that, will have those values
