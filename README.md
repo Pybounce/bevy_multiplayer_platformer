@@ -4,8 +4,9 @@
 
 - [ ] Many full levels with checkpoints and difficulty
 - [ ] Spectate mode
-- [ ] Main menu UI
-- [ ] New stage mechanics
+- [ ] Stage select UI
+- [x] New stage mechanics
+- [ ] Stage Editor
 - [ ] Networked player names
 - [ ] Player death juice
 - [ ] Player death counter?
@@ -32,8 +33,6 @@
 
 - Moustache/player appearance (floating hats, such as a crown, and googly eyes)
 - Fancy stage loading (fancy animation for a stage being loaded/unloaded)
-- Stage mechanic where blocks swich on and off in intervals, so player must jump on them with correct timing
-- Saws currently look like little donuts
 
 ## Critical Bugs
 
@@ -102,7 +101,7 @@
   - Moving platforms should also be able to contain spikes etc
     - The moving 'block' could just be a spike
     - Last project handled this by moving them all separately but in the same way
-- [ ] Crumbling blocks
+- [x] Phantom blocks
   - On touch (by anything?), they dissapear
 - [ ] Ghost blocks
   - They look solid until the player is close
@@ -118,9 +117,6 @@
 - [x] Springs
 - [ ] Teleporters
 - [ ] Enemies that will act as springs when they die
-- [ ] Heavy blocks
-  - Basically just blocks that have gravity
-  - Can put lock blocks beneath them so the player collects a key and must race to the end before the heavy block falls, blocking the exit
 
 ## Player Mechanics
 
