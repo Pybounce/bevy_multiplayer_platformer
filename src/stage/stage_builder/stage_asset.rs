@@ -41,7 +41,8 @@ pub struct Spike {
 #[derive(Debug, Deserialize, Serialize)]
 pub struct HalfSaw {
     pub grid_pos: Vec2,
-    pub rotation: f32
+    pub rotation: f32,
+    pub movement_path_opt: Option<MovementPath>
 }
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -74,6 +75,12 @@ pub struct IntervalBlock {
 #[derive(Debug, Deserialize, Serialize)]
 pub struct PhantomBlock {
     pub grid_pos: Vec2
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct MovementPath {
+    pub grid_offsets: Vec<Vec2>,
+    pub speed: f32
 }
 
 #[derive(Default)]

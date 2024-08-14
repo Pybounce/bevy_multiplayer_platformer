@@ -186,5 +186,8 @@ Saw Placement
 - Continue until happy with path and click the same tile again to end path
 - Right click to undo last path update
 - ISSUE: If I want to add breaks to the path, where the saw stops for a second or so, how?
+- UPDATE: To end a path you must double click on the start position
+
+  - So the path must start and end in the same place, but the user can loop through the start without ending, like a figure of 8.
 
 Idea for block that produces spikes when the player steps on it, simiar to crumbling block

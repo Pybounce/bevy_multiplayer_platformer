@@ -160,7 +160,6 @@ fn build_spikes(stage_creator: &StageCreator, commands: &mut Commands) -> bool {
 
 fn build_half_saws(stage_creator: &StageCreator, commands: &mut Commands) -> bool {
 
-
     let atlas_rects = vec![
         get_object_tilemap_rect_from_index(ObjectAtlasIndices::HalfSaw0),
         get_object_tilemap_rect_from_index(ObjectAtlasIndices::HalfSaw1),
@@ -169,7 +168,7 @@ fn build_half_saws(stage_creator: &StageCreator, commands: &mut Commands) -> boo
     ];
 
     for half_saw in &stage_creator.stage.half_saws {
-        SawFactory::spawn_half(commands, stage_creator, half_saw.grid_pos, atlas_rects.clone(), half_saw.rotation);
+        SawFactory::spawn_half(commands, stage_creator, atlas_rects.clone(), half_saw);
     }
 
     return true;
