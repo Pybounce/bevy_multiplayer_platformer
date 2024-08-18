@@ -33,6 +33,7 @@
 
 - Moustache/player appearance (floating hats, such as a crown, and googly eyes)
 - Fancy stage loading (fancy animation for a stage being loaded/unloaded)
+- A certain game with very low concurrent players has cool traps, but they are all triggered based on where the player is. This would make it hard to show in networking since players have their own stage, not a shared one
 
 ## Critical Bugs
 
@@ -69,6 +70,7 @@
   - Take look direction, if you press left it should be left, but we don't get input from networked players.
     - So to keep it as a state we need to add a looking state and update it for local and networked players
   - This will become a larger issue when more effects are added for onJump or onDeath etc
+- Add CollidingEntities to the spring and key etc instead
 
 ## Web Build
 
@@ -205,6 +207,31 @@ Idea for block that produces spikes when the player steps on it, simiar to crumb
   - Then at the very end can do .Build() to return the stage_asset::Stage to be saved
   - This way I can change how I maintain the current stage while building it (ie a 2d array for speedy grid position lookups)
 - UI Toolbar
+
   - For many blocks they will need UI, such as saws for saw speed, or projectiles for rate and speed
   - Can add a toolbar to the right that appears when you've got a specific block selected
   - Then you tweak it and all blocks placed after that, will have those values
+
+  ## Stage Editor Data Idea
+
+  - Have a StageEdit struct
+    - Contains data in such a way where it's easy to check if new placements can be made, but is not efficient (ie a big array for the map)
+  - Have the actual Stage struct
+    - Stores data in the way it will be saved
+    - Much more efficient
+    - Stages will be built from this format
+  - Workflow for editing stage
+    - Click to build object
+    - Checks made on StageEdit struct to see if it's a legal edit
+    - If it is, update StageEdit struct to contain new object
+    - Convert StageEdit struct to Stage struct
+    - Rebuild stage using Stage struct
+
+  ## Stage Editor Hotbar Idea
+
+  - Have an enum for Objects (where the name is the object, value is the ID)
+  - Have an enum for object icon atlas ids
+  - Have a mapper for ObjectID => ObjectIconAtlasID
+  - Hotbar contains array of 9 ObjectIds
+  - Maintain the current hotbar index
+  - Can get the current objectID from hotbar index, and the atlasID from that objectID
