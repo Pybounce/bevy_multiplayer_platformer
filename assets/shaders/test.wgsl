@@ -13,7 +13,7 @@ fn fragment(mesh: VertexOutput) -> @location(0) vec4<f32> {
     //var d = sdf_circle(mesh.uv - vec2f(0.5), 0.5);
 
 
-    var d = sdf_from_shape_id(mesh, shape_id, 0.1);
+    var d = sdf_from_shape_id(mesh, shape_id);
     
     d += stroke_width;
 
@@ -28,13 +28,20 @@ fn fragment(mesh: VertexOutput) -> @location(0) vec4<f32> {
     
     var blended_colour = mix(stroke_colour, colour, a);
     blended_colour.a = max(a, stroke_alpha);
-
+    if d > stroke_width {
+        //return vec4f(1.0);
+    }
     return blended_colour;
 }
 
-fn sdf_from_shape_id(mesh: VertexOutput, shape_id: i32, round_const: f32) -> f32 {
+fn sdf_from_shape_id(mesh: VertexOutput, shape_id: i32) -> f32 {
     if shape_id == 0 {
+        let round_const = 0.1;
         return sdf_triangle_isosceles(mesh.uv - vec2f(0.5, round_const), vec2f(0.5 - round_const, 1.0 - (round_const * 2.0))) - round_const;
+    }
+    else if shape_id == 1 {
+        let round_const = 0.05;
+        return min(sdf_hexagram(mesh.uv - vec2f(0.5), 0.27 - round_const), sdf_circle(mesh.uv - vec2f(0.5), 0.34 - round_const)) - round_const;
     }
     else {
         return 0.0;

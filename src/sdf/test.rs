@@ -33,6 +33,14 @@ impl CustomMaterial {
             stroke_width: 0.05
         }
     }
+    pub fn for_saw() -> Self {
+        CustomMaterial {
+            shape_id: SDFShapeID::Saw as i32,
+            colour: LinearRgba::new(0.7, 0.0, 0.0, 1.0),
+            stroke_colour: LinearRgba::new(0.0, 0.0, 0.0, 1.0),
+            stroke_width: 0.05
+        }
+    }
 }
 
 
@@ -47,7 +55,7 @@ pub fn zoom(
                 MouseScrollUnit::Line => mouse_wheel_event.y * 20.,
                 MouseScrollUnit::Pixel => mouse_wheel_event.y,
             };
-            projection.scale -= dy / 200.0;
+            projection.scale -= dy / 500.0;
         }
     }
 }

@@ -15,6 +15,7 @@ pub struct StageCreator<'a> {
     pub tilemap: &'a Handle<Image>,
     pub object_tilemap: &'a Handle<Image>,
     pub spike_mat_handle: Handle<CustomMaterial>,
+    pub saw_mat_handle: Handle<CustomMaterial>,
     pub tile_mesh_handle: Mesh2dHandle
 }
 
@@ -52,6 +53,7 @@ impl<'a> StageCreator<'a> {
             tilemap,
             object_tilemap,
             spike_mat_handle: stage_builder_data.spike_mat_handle.clone(),
+            saw_mat_handle: stage_builder_data.saw_mat_handle.clone(),
             tile_mesh_handle: stage_builder_data.tile_mesh_handle.clone()
         }
     }
@@ -152,11 +154,9 @@ fn build_goal(stage_creator: &StageCreator, commands: &mut Commands) -> bool {
 
 fn build_spikes(stage_creator: &StageCreator, commands: &mut Commands) -> bool {
 
-    let sprite_rect = get_object_tilemap_rect_from_index(ObjectAtlasIndices::Spike);
-
     for spike in &stage_creator.stage.spikes {
 
-        SpikeFactory::spawn(commands, stage_creator, spike.grid_pos, sprite_rect, spike.rotation);
+        SpikeFactory::spawn(commands, stage_creator, spike.grid_pos, spike.rotation);
     }
 
     return true;
@@ -164,15 +164,8 @@ fn build_spikes(stage_creator: &StageCreator, commands: &mut Commands) -> bool {
 
 fn build_half_saws(stage_creator: &StageCreator, commands: &mut Commands) -> bool {
 
-    let atlas_rects = vec![
-        get_object_tilemap_rect_from_index(ObjectAtlasIndices::HalfSaw0),
-        get_object_tilemap_rect_from_index(ObjectAtlasIndices::HalfSaw1),
-        get_object_tilemap_rect_from_index(ObjectAtlasIndices::HalfSaw2),
-        get_object_tilemap_rect_from_index(ObjectAtlasIndices::HalfSaw3),
-    ];
-
     for half_saw in &stage_creator.stage.half_saws {
-        SawFactory::spawn_half(commands, stage_creator, atlas_rects.clone(), half_saw);
+        SawFactory::spawn_half(commands, stage_creator, half_saw);
     }
 
     return true;

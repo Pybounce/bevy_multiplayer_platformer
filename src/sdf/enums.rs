@@ -1,3 +1,4 @@
 pub enum SDFShapeID {
-    Spike = 0
+    Spike = 0,
+    Saw = 1
 }
