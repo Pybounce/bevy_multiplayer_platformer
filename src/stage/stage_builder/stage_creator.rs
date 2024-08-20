@@ -1,7 +1,7 @@
-use crate::{common::checkpoint::CheckpointBundle, player::spawner::LocalPlayerSpawner, stage::stage_objects::{goal::GoalFactory, half_saw::SawFactory, interval_block::IntervalBlockFactory, key::KeyFactory, lock_block::LockBlockFactory, phantom_block::PhantomBlockFactory, spike::SpikeFactory, spring::SpringFactory, tiles::{GroundTileBundle, TileBundle}, StageObject}};
+use crate::{common::checkpoint::CheckpointBundle, player::spawner::LocalPlayerSpawner, sdf::test::CustomMaterial, stage::stage_objects::{goal::GoalFactory, half_saw::SawFactory, interval_block::IntervalBlockFactory, key::KeyFactory, lock_block::LockBlockFactory, phantom_block::PhantomBlockFactory, spike::SpikeFactory, spring::SpringFactory, tiles::{GroundTileBundle, TileBundle}, StageObject}};
 
-use super::stage_asset::Stage;
-use bevy::prelude::*;
+use super::{stage_asset::Stage, StageBuilderData};
+use bevy::{prelude::*, sprite::Mesh2dHandle};
 
 pub const TILE_SIZE: f32 = 16.0;
 pub const TILE_SIZE_HALF: f32 = TILE_SIZE / 2.0;
@@ -13,7 +13,9 @@ const OBJECT_TILE_TILEMAP_SIZE: f32 = 16.0;
 pub struct StageCreator<'a> {
     pub stage: &'a Stage, 
     pub tilemap: &'a Handle<Image>,
-    pub object_tilemap: &'a Handle<Image>
+    pub object_tilemap: &'a Handle<Image>,
+    pub spike_mat_handle: Handle<CustomMaterial>,
+    pub tile_mesh_handle: Mesh2dHandle
 }
 
 pub enum ObjectAtlasIndices {
@@ -44,11 +46,13 @@ pub enum ObjectAtlasIndices {
 
 impl<'a> StageCreator<'a> {
 
-    pub fn new(stage: &'a Stage, tilemap: &'a Handle<Image>, object_tilemap: &'a Handle<Image>) -> Self {
+    pub fn new(stage: &'a Stage, tilemap: &'a Handle<Image>, object_tilemap: &'a Handle<Image>, stage_builder_data: &Res<StageBuilderData>) -> Self {
         StageCreator {
             stage,
             tilemap,
-            object_tilemap
+            object_tilemap,
+            spike_mat_handle: stage_builder_data.spike_mat_handle.clone(),
+            tile_mesh_handle: stage_builder_data.tile_mesh_handle.clone()
         }
     }
 

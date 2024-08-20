@@ -1,11 +1,17 @@
 
 use bevy::{input::mouse::{MouseScrollUnit, MouseWheel}, prelude::*, render::render_resource::{AsBindGroup, ShaderRef}, sprite::{Material2d, MaterialMesh2dBundle}};
 
+use super::enums::SDFShapeID;
+
 // This is the struct that will be passed to your shader
 #[derive(Asset, TypePath, AsBindGroup, Debug, Clone)]
 pub struct CustomMaterial {
     #[uniform(0)]
-    color: LinearRgba,
+    pub shape_id: i32,
+    #[uniform(1)]
+    pub colour: LinearRgba,
+    #[uniform(2)]
+    pub stroke_colour: LinearRgba
 }
 
 /// The Material2d trait is very configurable, but comes with sensible defaults for all methods.
@@ -16,20 +22,14 @@ impl Material2d for CustomMaterial {
     }
 }
 
-
-pub fn add_custom_shader_sprite(
-    mut commands: Commands,
-    mut meshes: ResMut<Assets<Mesh>>,
-    mut materials: ResMut<Assets<CustomMaterial>>
-) {
-    commands.spawn(MaterialMesh2dBundle {
-        mesh: meshes.add(Rectangle::new(512.0, 512.0)).into(),
-        transform: Transform::default(),
-        material: materials.add(CustomMaterial {
-            color: LinearRgba::BLUE,
-        }),
-        ..default()
-    });
+impl CustomMaterial {
+    pub fn for_spike() -> Self {
+        CustomMaterial {
+            shape_id: SDFShapeID::Spike as i32,
+            colour: LinearRgba::new(0.7, 0.0, 0.0, 1.0),
+            stroke_colour: LinearRgba::new(0.7, 0.0, 0.0, 1.0)
+        }
+    }
 }
 
 
@@ -44,7 +44,7 @@ pub fn zoom(
                 MouseScrollUnit::Line => mouse_wheel_event.y * 20.,
                 MouseScrollUnit::Pixel => mouse_wheel_event.y,
             };
-            projection.scale -= dy / 300.0;
+            projection.scale -= dy / 200.0;
         }
     }
 }

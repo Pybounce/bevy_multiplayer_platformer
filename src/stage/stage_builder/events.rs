@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::common::states::{AppState, GameState};
+use crate::{common::states::{AppState, GameState}, sdf::{enums::SDFShapeID, test::CustomMaterial}};
 
 use super::{StageBuilderData, StageBuilderState};
 
@@ -60,10 +60,14 @@ pub fn read_stage_load_events(
     mut event_reader: EventReader<LoadStageEvent>,
     mut stage_builder_data: ResMut<StageBuilderData>,
     asset_server: Res<AssetServer>,
+    mut meshes: ResMut<Assets<Mesh>>,
+    mut materials: ResMut<Assets<CustomMaterial>>
 ) {
     for preload_event in event_reader.read() {
         stage_builder_data.stage_id = preload_event.stage_id;
         stage_builder_data.stage_handle = asset_server.load(format!("stage_{}.stage", preload_event.stage_id));
+        stage_builder_data.spike_mat_handle = materials.add(CustomMaterial::for_spike());
+        stage_builder_data.tile_mesh_handle = meshes.add(Rectangle::new(16.0, 16.0)).into();
     }
 }
 

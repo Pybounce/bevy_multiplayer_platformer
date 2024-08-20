@@ -45,7 +45,7 @@ pub fn try_build_stage(
 
     match stage_asset {
         Some(stage) => {
-            let stage_creator = StageCreator::new(&stage, &tilemap_handle, &object_tilemap_handle);
+            let stage_creator = StageCreator::new(&stage, &tilemap_handle, &object_tilemap_handle, &stage_builder_data);
             if stage_creator.build(&mut commands) {
                 commands.insert_resource(CurrentStageData {
                     stage_id: stage.id,

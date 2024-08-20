@@ -1,8 +1,10 @@
-use bevy::prelude::*;
+use bevy::{prelude::*, sprite::Mesh2dHandle};
 use events::{read_stage_build_complete_events, read_stage_build_events, read_stage_build_failed_events, read_stage_load_events, BuildStageEvent, LoadStageEvent, StageBuildCompleteEvent, StageBuildFailedEvent};
 use stage_asset::{Stage, StageLoader};
 use stage_asset_creator::save_stage;
 use systems::{try_build_stage, unload_old_stage};
+
+use crate::sdf::test::CustomMaterial;
 
 pub mod events;
 pub mod stage_asset;
@@ -44,7 +46,9 @@ pub enum StageBuilderState {
 #[derive(Resource, Default)]
 pub struct StageBuilderData {
     stage_id: usize,
-    stage_handle: Handle<Stage>
+    stage_handle: Handle<Stage>,
+    spike_mat_handle: Handle<CustomMaterial>,
+    tile_mesh_handle: Mesh2dHandle
 }
 
 #[derive(Resource, Default)]
