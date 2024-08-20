@@ -11,7 +11,9 @@ pub struct CustomMaterial {
     #[uniform(1)]
     pub colour: LinearRgba,
     #[uniform(2)]
-    pub stroke_colour: LinearRgba
+    pub stroke_colour: LinearRgba,
+    #[uniform(3)]
+    pub stroke_width: f32
 }
 
 /// The Material2d trait is very configurable, but comes with sensible defaults for all methods.
@@ -27,7 +29,8 @@ impl CustomMaterial {
         CustomMaterial {
             shape_id: SDFShapeID::Spike as i32,
             colour: LinearRgba::new(0.7, 0.0, 0.0, 1.0),
-            stroke_colour: LinearRgba::new(0.7, 0.0, 0.0, 1.0)
+            stroke_colour: LinearRgba::new(0.0, 0.0, 0.0, 1.0),
+            stroke_width: 0.05
         }
     }
 }

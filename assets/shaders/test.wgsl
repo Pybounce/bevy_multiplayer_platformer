@@ -3,6 +3,7 @@
 @group(2) @binding(0) var<uniform> shape_id: i32;
 @group(2) @binding(1) var<uniform> colour: vec4f;
 @group(2) @binding(2) var<uniform> stroke_colour: vec4f;
+@group(2) @binding(3) var<uniform> stroke_width: f32;
 
 @fragment
 fn fragment(mesh: VertexOutput) -> @location(0) vec4<f32> {
@@ -12,9 +13,8 @@ fn fragment(mesh: VertexOutput) -> @location(0) vec4<f32> {
     //var d = sdf_circle(mesh.uv - vec2f(0.5), 0.5);
 
 
-    var d = sdf_from_shape_id(mesh, shape_id);
+    var d = sdf_from_shape_id(mesh, shape_id, 0.1);
     
-    let stroke_width = 0.05;
     d += stroke_width;
 
     let ddist = vec2(dpdx(d), dpdy(d));
@@ -32,9 +32,9 @@ fn fragment(mesh: VertexOutput) -> @location(0) vec4<f32> {
     return blended_colour;
 }
 
-fn sdf_from_shape_id(mesh: VertexOutput, shape_id: i32) -> f32 {
+fn sdf_from_shape_id(mesh: VertexOutput, shape_id: i32, round_const: f32) -> f32 {
     if shape_id == 0 {
-        return sdf_triangle_isosceles(mesh.uv - vec2f(0.5, 0.0), vec2f(0.5, 1.0));
+        return sdf_triangle_isosceles(mesh.uv - vec2f(0.5, round_const), vec2f(0.5 - round_const, 1.0 - (round_const * 2.0))) - round_const;
     }
     else {
         return 0.0;
