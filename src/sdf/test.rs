@@ -41,6 +41,14 @@ impl CustomMaterial {
             stroke_width: 0.05
         }
     }
+    pub fn for_ground() -> Self {
+        CustomMaterial {
+            shape_id: SDFShapeID::Ground as i32,
+            colour: LinearRgba::new(0.0, 0.0, 0.0, 1.0),
+            stroke_colour: LinearRgba::new(1.0, 1.0, 1.0, 1.0),
+            stroke_width: 0.05
+        }
+    }
 }
 
 

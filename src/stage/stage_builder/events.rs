@@ -68,6 +68,7 @@ pub fn read_stage_load_events(
         stage_builder_data.stage_handle = asset_server.load(format!("stage_{}.stage", preload_event.stage_id));
         stage_builder_data.spike_mat_handle = materials.add(CustomMaterial::for_spike());
         stage_builder_data.saw_mat_handle = materials.add(CustomMaterial::for_saw());
+        stage_builder_data.ground_mat_handle = materials.add(CustomMaterial::for_ground());
         stage_builder_data.tile_mesh_handle = meshes.add(Rectangle::new(16.0, 16.0)).into();
     }
 }

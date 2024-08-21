@@ -1,14 +1,14 @@
 
-use bevy::prelude::*;
+use bevy::{prelude::*, sprite::MaterialMesh2dBundle};
 use bevy_rapier2d::prelude::*;
 
-use crate::{ground::Ground, stage::{stage_builder::stage_creator::{StageCreator, TILE_SIZE, TILE_SIZE_HALF}, stage_objects::StageObject}, wall::Wall};
+use crate::{ground::Ground, sdf::test::CustomMaterial, stage::{stage_builder::stage_creator::{StageCreator, TILE_SIZE, TILE_SIZE_HALF}, stage_objects::StageObject}, wall::Wall};
 
 
 
 #[derive(Bundle)]
 pub struct TileBundle {
-    pub sprite_bundle: SpriteBundle,
+    pub mat_mesh_2d_bundle: MaterialMesh2dBundle<CustomMaterial>,
     stage_marker: StageObject
 }
 
@@ -35,18 +35,14 @@ pub struct GroundTileBundle {
 impl TileBundle {
     pub fn new(stage_creator: &StageCreator, grid_pos: Vec2, atlas_rect: Rect, tile_rotation: f32, image_handle: &Handle<Image>) -> Self {
         TileBundle {
-            sprite_bundle: SpriteBundle {
+            mat_mesh_2d_bundle: MaterialMesh2dBundle {
+                mesh: stage_creator.tile_mesh_handle.clone(),
                 transform: Transform {
+                    translation: Vec3::new(grid_pos.x * TILE_SIZE, grid_pos.y * TILE_SIZE, 0.0), 
                     rotation: Quat::from_rotation_z(tile_rotation),
-                    translation: Vec3::new(grid_pos.x * TILE_SIZE, grid_pos.y * TILE_SIZE, 0.0),
                     ..default()
                 },
-                texture: image_handle.clone(),
-                sprite: Sprite {
-                    custom_size: Some(Vec2::new(TILE_SIZE, TILE_SIZE)),
-                    rect: Some(atlas_rect),
-                    ..default()
-                },
+                material: stage_creator.ground_mat_handle.clone(),
                 ..default()
             },
             stage_marker: StageObject { stage_id: stage_creator.stage.id },

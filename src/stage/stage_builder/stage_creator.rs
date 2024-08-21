@@ -16,6 +16,7 @@ pub struct StageCreator<'a> {
     pub object_tilemap: &'a Handle<Image>,
     pub spike_mat_handle: Handle<CustomMaterial>,
     pub saw_mat_handle: Handle<CustomMaterial>,
+    pub ground_mat_handle: Handle<CustomMaterial>,
     pub tile_mesh_handle: Mesh2dHandle
 }
 
@@ -54,6 +55,7 @@ impl<'a> StageCreator<'a> {
             object_tilemap,
             spike_mat_handle: stage_builder_data.spike_mat_handle.clone(),
             saw_mat_handle: stage_builder_data.saw_mat_handle.clone(),
+            ground_mat_handle: stage_builder_data.ground_mat_handle.clone(),
             tile_mesh_handle: stage_builder_data.tile_mesh_handle.clone()
         }
     }
@@ -61,9 +63,9 @@ impl<'a> StageCreator<'a> {
     pub fn build(&self, commands: &mut Commands) -> bool {
         build_ground(self, commands)
         && build_goal(self, commands)
-        && build_background(self, commands)
+        //&& build_background(self, commands)
         && build_spikes(self, commands)
-        && build_far_background(self, commands)
+        //&& build_far_background(self, commands)
         && build_player_spawner(self, commands)
         && build_checkpoints(self, commands)
         && build_half_saws(self, commands)
@@ -129,8 +131,8 @@ fn build_far_background(stage_creator: &StageCreator, commands: &mut Commands) -
         Vec2::new((stage_creator.stage.grid_width as f32 - 1.0) / 2.0, 
         (stage_creator.stage.grid_height as f32 - 1.0) / 2.0), 
         sprite_rect, 0.0, stage_creator.tilemap);
-    background.sprite_bundle.transform.translation.z = -20.0;
-    background.sprite_bundle.transform.scale = Vec3::new(
+    background.mat_mesh_2d_bundle.transform.translation.z = -20.0;
+    background.mat_mesh_2d_bundle.transform.scale = Vec3::new(
         stage_creator.stage.grid_width as f32 * TILE_SIZE * 10.0,
         stage_creator.stage.grid_height as f32 * TILE_SIZE * 10.0,
         1.0);

@@ -43,6 +43,9 @@ fn sdf_from_shape_id(mesh: VertexOutput, shape_id: i32) -> f32 {
         let round_const = 0.05;
         return min(sdf_hexagram(mesh.uv - vec2f(0.5), 0.27 - round_const), sdf_circle(mesh.uv - vec2f(0.5), 0.34 - round_const)) - round_const;
     }
+    else if shape_id == 2 {
+        return sdf_box(mesh.uv - vec2f(0.5), vec2f(0.5));
+    }
     else {
         return 0.0;
     }
@@ -75,6 +78,11 @@ fn sdf_triangle_isosceles(p: vec2f, q: vec2f) -> f32
     return -sqrt(d.x)*sign(d.y);
 }
 
+fn sdf_box(p: vec2f, b: vec2f) -> f32
+{
+    var d = abs(p)-b;
+    return length(max(d,vec2f(0.0))) + min(max(d.x,d.y),0.0);
+}
 
 
 
