@@ -47,7 +47,7 @@ pub enum StageBuilderState {
 pub struct StageBuilderData {
     stage_id: usize,
     stage_handle: Handle<Stage>,
-    spike_mat_handle: Handle<CustomMaterial>,
+    pub spike_mat_handle: Handle<CustomMaterial>,
     saw_mat_handle: Handle<CustomMaterial>,
     ground_mat_handle: Handle<CustomMaterial>,
     tile_mesh_handle: Mesh2dHandle

@@ -1,5 +1,7 @@
 
-use bevy::{input::mouse::{MouseScrollUnit, MouseWheel}, prelude::*, render::render_resource::{AsBindGroup, ShaderRef}, sprite::{Material2d, MaterialMesh2dBundle}};
+use bevy::{input::mouse::{MouseScrollUnit, MouseWheel}, prelude::*, render::{render_resource::{AsBindGroup, Buffer, BufferInitDescriptor, BufferUsages, ShaderRef}, renderer::{RenderDevice, RenderQueue}}, sprite::{Material2d, MaterialMesh2dBundle}};
+
+use crate::stage::stage_builder::StageBuilderData;
 
 use super::enums::SDFShapeID;
 
@@ -13,7 +15,9 @@ pub struct CustomMaterial {
     #[uniform(2)]
     pub stroke_colour: LinearRgba,
     #[uniform(3)]
-    pub stroke_width: f32
+    pub stroke_width: f32,
+    #[storage(4, read_only, buffer)]
+    buffer: Buffer,
 }
 
 /// The Material2d trait is very configurable, but comes with sensible defaults for all methods.
@@ -25,28 +29,31 @@ impl Material2d for CustomMaterial {
 }
 
 impl CustomMaterial {
-    pub fn for_spike() -> Self {
+    pub fn for_spike(buffer: &Buffer) -> Self {
         CustomMaterial {
             shape_id: SDFShapeID::Spike as i32,
             colour: LinearRgba::new(0.7, 0.0, 0.0, 1.0),
             stroke_colour: LinearRgba::new(0.0, 0.0, 0.0, 1.0),
-            stroke_width: 0.05
+            stroke_width: 0.05,
+            buffer: buffer.clone()
         }
     }
-    pub fn for_saw() -> Self {
+    pub fn for_saw(buffer: &Buffer) -> Self {
         CustomMaterial {
             shape_id: SDFShapeID::Saw as i32,
             colour: LinearRgba::new(0.7, 0.0, 0.0, 1.0),
             stroke_colour: LinearRgba::new(0.0, 0.0, 0.0, 1.0),
-            stroke_width: 0.05
+            stroke_width: 0.05,
+            buffer: buffer.clone()
         }
     }
-    pub fn for_ground() -> Self {
+    pub fn for_ground(buffer: &Buffer) -> Self {
         CustomMaterial {
             shape_id: SDFShapeID::Ground as i32,
             colour: LinearRgba::new(0.0, 0.0, 0.0, 1.0),
             stroke_colour: LinearRgba::new(1.0, 1.0, 1.0, 1.0),
-            stroke_width: 0.05
+            stroke_width: 0.05,
+            buffer: buffer.clone()
         }
     }
 }
@@ -54,7 +61,10 @@ impl CustomMaterial {
 
 pub fn zoom(
     mut mouse_wheel_events: EventReader<MouseWheel>,
-    mut camera_query: Query<&mut OrthographicProjection, With<Camera>>
+    mut camera_query: Query<&mut OrthographicProjection, With<Camera>>,
+    mut mats: ResMut<Assets<CustomMaterial>>,
+    mut stage_builder_data_opt: Option<ResMut<StageBuilderData>>,
+    queue: Res<RenderQueue>
 ) {
     for mouse_wheel_event in mouse_wheel_events.read() {
         for mut projection in &mut camera_query {
@@ -65,5 +75,13 @@ pub fn zoom(
             };
             projection.scale -= dy / 500.0;
         }
+    }
+    if let None = stage_builder_data_opt { return; }
+
+    let stage_builder_data = stage_builder_data_opt.unwrap();
+    
+    if let Some(m) = mats.get_mut(&stage_builder_data.spike_mat_handle) {
+        let values: Vec<f32> = vec![1.0, 0.0, 0.0, 1.0];
+        queue.write_buffer(&m.buffer, 0, bytemuck::cast_slice(&values));
     }
 }
