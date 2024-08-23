@@ -26,36 +26,6 @@ pub fn setup_buffer_bs(
         test_buffer: buffer
     });
 
-    
-    //let bind_group_layout = render_device.create_bind_group_layout(
-    //    Some("data_bind_group_layout"),
-    //    &[BindGroupLayoutEntry {
-    //        binding: 0,
-    //        visibility: ShaderStages::VERTEX | ShaderStages::FRAGMENT,
-    //        ty: BindingType::Buffer {
-    //            ty: BufferBindingType::Storage { read_only: true },
-    //            has_dynamic_offset: false,
-    //            min_binding_size: None
-    //        },
-    //        count: None
-    //    }],
-    //);
-
-//    //let bind_group = render_device.create_bind_group(
-    //    Some("data_bind_group"), 
-    //    &bind_group_layout, 
-    //    &[BindGroupEntry {
-    //        binding: 0,
-    //        resource: BindingResource::Buffer(
-    //            BufferBinding {
-    //                buffer: &buffer,
-    //                offset: 0,
-    //                size: None
-    //            }
-    //        ),
-    //    }]
-    //);
-    //commands.insert_resource::<BufferBullshit>(BufferBullshit { test_buffer: buffer, test_bind_group: bind_group });
 }
 
 

@@ -42,7 +42,7 @@ impl TileBundle {
                     rotation: Quat::from_rotation_z(tile_rotation),
                     ..default()
                 },
-                material: stage_creator.ground_mat_handle.clone(),
+                //material: stage_creator.ground_mat_handle.clone(),
                 ..default()
             },
             stage_marker: StageObject { stage_id: stage_creator.stage.id },

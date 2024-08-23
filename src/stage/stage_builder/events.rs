@@ -1,8 +1,8 @@
 use bevy::prelude::*;
 
-use crate::{common::states::{AppState, GameState}, sdf::{buffer_garbage::BufferBullshit, enums::SDFShapeID, test::CustomMaterial}};
+use crate::{common::states::{AppState, GameState}, sdf::{buffer_garbage::BufferBullshit, enums::SDFShapeID, ground_material::GroundMaterial, test::CustomMaterial}};
 
-use super::{StageBuilderData, StageBuilderState};
+use super::{stage_creator::TILE_SIZE, StageBuilderData, StageBuilderState};
 
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Event)]
@@ -61,16 +61,11 @@ pub fn read_stage_load_events(
     mut stage_builder_data: ResMut<StageBuilderData>,
     asset_server: Res<AssetServer>,
     mut meshes: ResMut<Assets<Mesh>>,
-    mut materials: ResMut<Assets<CustomMaterial>>,
-    buffer_bs: Res<BufferBullshit>
 ) {
     for preload_event in event_reader.read() {
         stage_builder_data.stage_id = preload_event.stage_id;
         stage_builder_data.stage_handle = asset_server.load(format!("stage_{}.stage", preload_event.stage_id));
-        stage_builder_data.spike_mat_handle = materials.add(CustomMaterial::for_spike(&buffer_bs.test_buffer));
-        stage_builder_data.saw_mat_handle = materials.add(CustomMaterial::for_saw(&buffer_bs.test_buffer));
-        stage_builder_data.ground_mat_handle = materials.add(CustomMaterial::for_ground(&buffer_bs.test_buffer));
-        stage_builder_data.tile_mesh_handle = meshes.add(Rectangle::new(16.0, 16.0)).into();
+        stage_builder_data.tile_mesh_handle = meshes.add(Rectangle::new(TILE_SIZE, TILE_SIZE)).into();
     }
 }
 

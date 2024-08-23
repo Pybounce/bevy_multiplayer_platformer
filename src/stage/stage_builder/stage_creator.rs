@@ -1,7 +1,7 @@
-use crate::{common::checkpoint::CheckpointBundle, player::spawner::LocalPlayerSpawner, sdf::test::CustomMaterial, stage::stage_objects::{goal::GoalFactory, half_saw::SawFactory, interval_block::IntervalBlockFactory, key::KeyFactory, lock_block::LockBlockFactory, phantom_block::PhantomBlockFactory, spike::SpikeFactory, spring::SpringFactory, tiles::{GroundTileBundle, TileBundle}, StageObject}};
+use crate::{common::checkpoint::CheckpointBundle, player::spawner::LocalPlayerSpawner, sdf::{ground_material::GroundMaterial, test::CustomMaterial}, stage::stage_objects::{goal::GoalFactory, half_saw::SawFactory, interval_block::IntervalBlockFactory, key::KeyFactory, lock_block::LockBlockFactory, phantom_block::PhantomBlockFactory, spike::SpikeFactory, spring::SpringFactory, tiles::{GroundTileBundle, TileBundle}, StageObject}};
 
 use super::{stage_asset::Stage, StageBuilderData};
-use bevy::{prelude::*, sprite::Mesh2dHandle};
+use bevy::{prelude::*, render::{render_resource::Buffer, renderer::RenderQueue}, sprite::{MaterialMesh2dBundle, Mesh2dHandle}};
 
 pub const TILE_SIZE: f32 = 16.0;
 pub const TILE_SIZE_HALF: f32 = TILE_SIZE / 2.0;
@@ -16,8 +16,9 @@ pub struct StageCreator<'a> {
     pub object_tilemap: &'a Handle<Image>,
     pub spike_mat_handle: Handle<CustomMaterial>,
     pub saw_mat_handle: Handle<CustomMaterial>,
-    pub ground_mat_handle: Handle<CustomMaterial>,
-    pub tile_mesh_handle: Mesh2dHandle
+    pub ground_mat_handle: Handle<GroundMaterial>,
+    pub tile_mesh_handle: Mesh2dHandle,
+    pub ground_buffer: Buffer
 }
 
 pub enum ObjectAtlasIndices {
@@ -48,20 +49,21 @@ pub enum ObjectAtlasIndices {
 
 impl<'a> StageCreator<'a> {
 
-    pub fn new(stage: &'a Stage, tilemap: &'a Handle<Image>, object_tilemap: &'a Handle<Image>, stage_builder_data: &Res<StageBuilderData>) -> Self {
+    pub fn new(stage: &'a Stage, tilemap: &'a Handle<Image>, object_tilemap: &'a Handle<Image>, stage_builder_data: &Res<StageBuilderData>, ground_mat_handle: &Handle<GroundMaterial>, spike_mat_handle: &Handle<CustomMaterial>, saw_mat_handle: &Handle<CustomMaterial>, ground_buffer: &Buffer) -> Self {
         StageCreator {
             stage,
             tilemap,
             object_tilemap,
-            spike_mat_handle: stage_builder_data.spike_mat_handle.clone(),
-            saw_mat_handle: stage_builder_data.saw_mat_handle.clone(),
-            ground_mat_handle: stage_builder_data.ground_mat_handle.clone(),
-            tile_mesh_handle: stage_builder_data.tile_mesh_handle.clone()
+            spike_mat_handle: spike_mat_handle.clone(),
+            saw_mat_handle: saw_mat_handle.clone(),
+            ground_mat_handle: ground_mat_handle.clone(),
+            tile_mesh_handle: stage_builder_data.tile_mesh_handle.clone(),
+            ground_buffer: ground_buffer.clone()
         }
     }
 
-    pub fn build(&self, commands: &mut Commands) -> bool {
-        build_ground(self, commands)
+    pub fn build(&self, commands: &mut Commands, render_queue: &Res<RenderQueue>, ground_materials: &ResMut<Assets<GroundMaterial>>) -> bool {
+        build_ground(self, commands, render_queue, ground_materials)
         && build_goal(self, commands)
         //&& build_background(self, commands)
         && build_spikes(self, commands)
@@ -88,10 +90,30 @@ fn build_player_spawner(stage_creator: &StageCreator, commands: &mut Commands) -
 }
 
 
-fn build_ground(stage_creator: &StageCreator, commands: &mut Commands) -> bool {
+
+
+fn build_ground(stage_creator: &StageCreator, commands: &mut Commands, render_queue: &Res<RenderQueue>, ground_materials: &ResMut<Assets<GroundMaterial>>) -> bool {
+    let mut ground_buffer_values: Vec<Vec2> = vec![];
+    let size = stage_creator.stage.grid_width.max(stage_creator.stage.grid_height) as f32;
     for tile in &stage_creator.stage.ground_tiles {
+        ground_buffer_values.push(Vec2::new(tile.grid_pos.x as f32 / size, (stage_creator.stage.grid_height as f32 - tile.grid_pos.y as f32 - 1.0) / size));
         build_ground_tile(commands, stage_creator, tile.grid_pos.x, tile.grid_pos.y, tile.tilemap_index);
+        error!("{}", ground_buffer_values[ground_buffer_values.len() - 1]);
     }
+
+    render_queue.write_buffer(&stage_creator.ground_buffer, 0, bytemuck::cast_slice(&ground_buffer_values));
+
+    commands.spawn(MaterialMesh2dBundle {
+        mesh: stage_creator.tile_mesh_handle.clone(),
+        transform: Transform {
+            scale: Vec2::splat(size).extend(1.0),
+            translation: ((Vec2::new(size, -size) * TILE_SIZE_HALF + Vec2::new(0.0, stage_creator.stage.grid_height as f32 * TILE_SIZE)) + Vec2::splat(-TILE_SIZE_HALF)).extend(-10.0),
+            ..default()
+        },
+        material: stage_creator.ground_mat_handle.clone(),
+        ..default()
+    })
+    .insert(StageObject{stage_id: stage_creator.stage.id});
     return true;
 }
 

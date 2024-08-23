@@ -4,7 +4,7 @@ use stage_asset::{Stage, StageLoader};
 use stage_asset_creator::save_stage;
 use systems::{try_build_stage, unload_old_stage};
 
-use crate::sdf::test::CustomMaterial;
+use crate::sdf::{ground_material::GroundMaterial, test::CustomMaterial};
 
 pub mod events;
 pub mod stage_asset;
@@ -47,9 +47,6 @@ pub enum StageBuilderState {
 pub struct StageBuilderData {
     stage_id: usize,
     stage_handle: Handle<Stage>,
-    pub spike_mat_handle: Handle<CustomMaterial>,
-    saw_mat_handle: Handle<CustomMaterial>,
-    ground_mat_handle: Handle<CustomMaterial>,
     tile_mesh_handle: Mesh2dHandle
 }
 

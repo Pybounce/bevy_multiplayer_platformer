@@ -4,51 +4,35 @@
 @group(2) @binding(1) var<uniform> colour: vec4f;
 @group(2) @binding(2) var<uniform> stroke_colour: vec4f;
 @group(2) @binding(3) var<uniform> stroke_width: f32;
-@group(2) @binding(4) var <storage, read> buffer: Data;
-
-struct Data {
-    values: array<f32>
-}
-
 
 @fragment
 fn fragment(mesh: VertexOutput) -> @location(0) vec4<f32> {
-    let r = buffer.values[0];
-    let g = buffer.values[1];
-    let b = buffer.values[2];
-    let a = buffer.values[3];
-    return vec4f(r, g, b, a);
+    //var d = min(sdf_hexagram(mesh.uv - vec2f(0.5), 0.2), sdf_circle(mesh.uv - vec2f(0.5), 0.3)) - 0.01;
+    //d = sdf_circle(mesh.uv - vec2f(0.5), 0.5);
+    //d = sdf_hexagram(mesh.uv - vec2f(0.5), 0.2);
+    //var d = sdf_circle(mesh.uv - vec2f(0.5), 0.5);
 
+
+    var d = sdf_from_shape_id(mesh, shape_id);
+    
+    d += stroke_width;
+
+    let ddist = vec2(dpdx(d), dpdy(d));
+    let pixel_dist = d / length(ddist);
+    let a = saturate(0.5 - pixel_dist);
+
+    let stroke_dist = abs(d) - stroke_width;
+    let stroke_ddist = vec2(dpdx(stroke_dist), dpdy(stroke_dist));
+    let stroke_pixel_dist = stroke_dist / length(stroke_ddist);
+    let stroke_alpha = saturate(0.5 - stroke_pixel_dist);
+    
+    var blended_colour = mix(stroke_colour, colour, a);
+    blended_colour.a = max(a, stroke_alpha);
+    if d > stroke_width {
+        //return vec4f(1.0);
+    }
+    return blended_colour;
 }
-
-//@fragment
-//fn fragment(mesh: VertexOutput) -> @location(0) vec4<f32> {
-//    //var d = min(sdf_hexagram(mesh.uv - vec2f(0.5), 0.2), sdf_circle(mesh.uv - vec2f(0.5), 0.3)) - 0.01;
-//    //d = sdf_circle(mesh.uv - vec2f(0.5), 0.5);
-//    //d = sdf_hexagram(mesh.uv - vec2f(0.5), 0.2);
-//    //var d = sdf_circle(mesh.uv - vec2f(0.5), 0.5);
-//
-//
-//    var d = sdf_from_shape_id(mesh, shape_id);
-//    
-//    d += stroke_width;
-//
-//    let ddist = vec2(dpdx(d), dpdy(d));
-//    let pixel_dist = d / length(ddist);
-//    let a = saturate(0.5 - pixel_dist);
-//
-//    let stroke_dist = abs(d) - stroke_width;
-//    let stroke_ddist = vec2(dpdx(stroke_dist), dpdy(stroke_dist));
-//    let stroke_pixel_dist = stroke_dist / length(stroke_ddist);
-//    let stroke_alpha = saturate(0.5 - stroke_pixel_dist);
-//    
-//    var blended_colour = mix(stroke_colour, colour, a);
-//    blended_colour.a = max(a, stroke_alpha);
-//    if d > stroke_width {
-//        //return vec4f(1.0);
-//    }
-//    return blended_colour;
-//}
 
 fn sdf_from_shape_id(mesh: VertexOutput, shape_id: i32) -> f32 {
     if shape_id == 0 {
