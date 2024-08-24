@@ -31,6 +31,11 @@
 
 ## To Theory Craft
 
+- Ground Types:
+  - Similar to portal 2 gels
+  - Ice ground: slippery
+  - Bouncing ground: bouncy
+  - Fire ground: Damages player over time
 - Moustache/player appearance (floating hats, such as a crown, and googly eyes)
 - Fancy stage loading (fancy animation for a stage being loaded/unloaded)
 - A certain game with very low concurrent players has cool traps, but they are all triggered based on where the player is. This would make it hard to show in networking since players have their own stage, not a shared one
