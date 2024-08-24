@@ -197,6 +197,10 @@ Idea for block that produces spikes when the player steps on it, simiar to crumb
 
 ## Stage Editor Ideas
 
+- Area Drag Only
+  - To place an item, make the player select a start and end tile, forming a rect of tiles
+  - Clicking one tile will for a rect containing only that tile
+  - Especially useful for adding ground, and lines of spikes
 - Triggers Idea!
   - For things like the key and key blocks, make it so 'rotating' them, actually rotates through set colours
   - Then the trigger and triggerables are colour coded
