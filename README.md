@@ -197,6 +197,9 @@ Idea for block that produces spikes when the player steps on it, simiar to crumb
 
 ## Stage Editor Ideas
 
+- Selection Tool
+  - Ability to select an area, then drag it around
+  - If too complex then it's not NEEDED
 - Area Drag Only
   - To place an item, make the player select a start and end tile, forming a rect of tiles
   - Clicking one tile will for a rect containing only that tile
