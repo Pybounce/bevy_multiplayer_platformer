@@ -26,61 +26,7 @@ fn build_stage_editor(
         ..default()
     })
     .insert(DespawnOnStateExit::App(AppState::StageEditor));
-    commands.spawn(NodeBundle {
-        background_color: BackgroundColor(Color::srgb(0.0, 0.0, 1.0)),
-        style: Style {
-            width: Val::Percent(100.0),
-            height: Val::Percent(100.0),
-            ..default()
-        },
-        ..default()
-    })
-    .insert(Interaction::None);
 
-    commands.spawn(NodeBundle {
-        style: Style {
-            flex_direction: FlexDirection::Row,
-            align_self: AlignSelf::Stretch,
-            width: Val::Percent(50.),
-            height: Val::Percent(5.),
-            overflow: Overflow::clip_x(),
-            ..default()
-        },
-        background_color: Color::srgb(0.10, 0.10, 0.10).into(),
-        ..default()
-    })
-    .insert(Interaction::None)
-    .insert(FocusPolicy::Block)
-    .with_children(|parent| {
-        // Moving panel
-        parent
-            .spawn((
-                NodeBundle {
-                    style: Style {
-                        flex_direction: FlexDirection::Row,
-                        align_items: AlignItems::Center,
-                        top: Val::Px(0.0),
-                        ..default()
-                    },
-                    ..default()
-                },
-                //ScrollingList::default(),
-            ))
-            .with_children(|parent| {
-                // List items
-                for i in 0..30 {
-                    parent.spawn((
-                        TextBundle::from_section(
-                            format!("Item {i}"),
-                            TextStyle {
-                                ..default()
-                            },
-                        ),
-                        Label,
-                    ));
-                }
-            });
-    });
 
 }
 
