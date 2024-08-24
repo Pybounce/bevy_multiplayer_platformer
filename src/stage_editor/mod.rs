@@ -1,10 +1,9 @@
-use bevy::{prelude::*, ui::FocusPolicy};
-
+use bevy::{input::mouse::MouseWheel, prelude::*};
+use editor_controller::EditorController;
 use crate::common::states::{AppState, DespawnOnStateExit};
-use bevy::{
-    input::mouse::{MouseScrollUnit, MouseWheel},
-};
 
+mod enums;
+mod editor_controller;
 
 pub struct StageEditorPlugin;
 
@@ -12,43 +11,37 @@ impl Plugin for StageEditorPlugin {
     fn build(&self, app: &mut App) {
         app
         .add_systems(OnEnter(AppState::StageEditor), build_stage_editor)
-        .add_systems(Update, hovering);
+        .add_systems(OnExit(AppState::StageEditor), teardown_stage_editor)
+        .add_systems(Update, handle_current_item_change.run_if(in_state(AppState::StageEditor)));
     }
 }
 
 fn build_stage_editor(
     mut commands: Commands,
-    asset_server: Res<AssetServer>
 ) {
-
+    commands.insert_resource(EditorController::default());
     commands.spawn(Text2dBundle {
         text: Text::from_section("Stage Editor", TextStyle::default()),
         ..default()
     })
     .insert(DespawnOnStateExit::App(AppState::StageEditor));
 
-
 }
 
-fn hovering(
-    mut query: Query<(&mut BackgroundColor, &Interaction)>
+fn teardown_stage_editor(
+    mut commands: Commands
 ) {
-    for (mut bg, i) in &mut query {
-        match i {
-            Interaction::Hovered => {
-                bg.0 = Color::srgb(0.0, 1.0, 0.0);
-            },
-            Interaction::None => {
-                bg.0 = Color::srgb(1.0, 0.0, 0.0);
-            },
-            _ => ()
+    commands.remove_resource::<EditorController>();
+}
+
+fn handle_current_item_change(
+    mut editor_con: ResMut<EditorController>,
+    mut mouse_wheel_events: EventReader<MouseWheel>
+) {
+    for mouse_wheel_event in mouse_wheel_events.read() {
+        match mouse_wheel_event.y > 0.0 {
+            true => editor_con.cycle_next_item(),
+            false => editor_con.cycle_prev_item(),
         }
     }
 }
-
-//ok so you have a box with overflow on clip y
-// then you have the list container inside that
-// the list container itself contains a list of elements (list items)
-// but the bottom of the list container is overflowed so we don't see it
-// then we move the list container (ie every item in the list) up a bit, and that creates scrolling
-    // since it is now clipping the top y and bottom y etc
