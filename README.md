@@ -197,6 +197,11 @@ Idea for block that produces spikes when the player steps on it, simiar to crumb
 
 ## Stage Editor Ideas
 
+- Triggers Idea!
+  - For things like the key and key blocks, make it so 'rotating' them, actually rotates through set colours
+  - Then the trigger and triggerables are colour coded
+  - This would mean not even having to work out what is linked, since the COLOUR is just the TriggerID
+  - Also means that it will automatically work for buttons/keys/anything, since the colour is the triggerID
 - Hotbar with all different items at the bottom
   - The item images can just be the tiles
   - Q/E will cycle between different items
