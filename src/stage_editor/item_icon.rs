@@ -61,14 +61,14 @@ pub fn move_item_icon(
 
 pub fn handle_current_item_change(
     mut editor_con: ResMut<EditorController>,
-    mut mouse_wheel_events: EventReader<MouseWheel>,
+    input: Res<ButtonInput<KeyCode>>,
     mut current_item_q: Query<&mut Sprite, With<ItemIcon>>
 ) {
-    for mouse_wheel_event in mouse_wheel_events.read() {
-        match mouse_wheel_event.y > 0.0 {
-            true => editor_con.cycle_next_item(),
-            false => editor_con.cycle_prev_item(),
-        }
+    if input.just_pressed(KeyCode::KeyE) {
+        editor_con.cycle_next_item()
+    }
+    if input.just_pressed(KeyCode::KeyQ) {
+        editor_con.cycle_prev_item()
     }
     if let Ok(mut s) = current_item_q.get_single_mut() {
         s.rect = Some(editor_con.get_item_icon_atlas_rect());
