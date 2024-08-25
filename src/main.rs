@@ -6,7 +6,7 @@ use bevy::{
 
 mod local_player;
 use bevy_rapier2d::{plugin::{NoUserData, RapierPhysicsPlugin}, render::RapierDebugRenderPlugin};
-use camera::{move_camera, move_pixel_perfect_translations, spawn_camera};
+use camera::{handle_zoom_change, move_camera, move_pixel_perfect_translations, spawn_camera};
 use common::{animated_sprite::{animate_sprites, check_animate_on_touch}, checkpoint::check_checkpoint_reached, death::{check_touched_by_death, despawn_death_marked}, mouse::{update_mouse_data, MouseData}, offset_mover::move_offset_movers, physics::{bouncy::check_bouncy_collisions, gravity::simulate_gravity}, shake::shake, states::StatesPlugin, triggers::{trigger_on_touch, TriggerEvent}};
 use game::GamePlugin;
 
@@ -71,7 +71,7 @@ fn main() {
         .init_resource::<MouseData>()
         //.add_plugins(RapierDebugRenderPlugin::default())
         .add_systems(Startup, spawn_camera)
-        .add_systems(Update, (move_camera, spawn_new_players, remove_disconnected_players))
+        .add_systems(Update, (handle_zoom_change, move_camera, spawn_new_players, remove_disconnected_players))
         .add_systems(Update, (check_touching_wall, update_wall_stuck_time, apply_wall_friction, begin_player_wall_jump, shake, check_insta_kill_collisions, trigger_dead_local_player_respawn, spawn_local_players, check_grounded, check_player_out_of_bounds, move_airbourne_horizontal_controller, move_ground_horizontal_controller, update_last_grounded, maintain_player_jump, begin_player_jump, is_coyote_grounded, check_jump_fall_states, despawn_death_marked))
         .add_systems(Update, (apply_physics_controller_limits, add_wall_stuck, update_wall_stuck, remove_wall_stuck))
         .add_systems(Update, (update_player_look_direction, load_player_sprite, simulate_gravity, check_checkpoint_reached, animate_sprites, move_pixel_perfect_translations))
