@@ -55,7 +55,7 @@ fn handle_placement(
 
 fn handle_save(
     input: Res<ButtonInput<KeyCode>>,
-    editor_con: Res<EditorController>,
+    mut editor_con: ResMut<EditorController>,
 ) {
     if input.just_pressed(KeyCode::KeyS) {
         editor_con.try_save();

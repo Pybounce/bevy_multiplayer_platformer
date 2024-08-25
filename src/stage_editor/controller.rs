@@ -11,7 +11,9 @@ const EDITOR_TILEMAP_SIZE: f32 = 16.0;
 pub struct EditorController {
     current_item: EditorItem,
     tile_size: f32,
-    stage: Stage
+    stage: Stage,
+    /// Tracks whether or not the latest stage updates have been saved
+    saved: bool
 }
 
 
@@ -63,21 +65,22 @@ impl EditorController {
                     grid_pos: Vec2::new(grid_pos.x as f32, grid_pos.y as f32),
                     tilemap_index: 0
                 });
-                return true;
             },
             EditorItem::Spike => {
                 self.stage.spikes.push(Spike {
                     grid_pos: Vec2::new(grid_pos.x as f32, grid_pos.y as f32),
                     rotation: 0.0
                 });
-                return true;
             },
         }
+        self.saved = false;
+        return true;
+
     }
     pub fn can_place(&self, grid_pos: IVec2) -> bool {
         true
     }
-    pub fn try_save(&self) -> bool {
+    pub fn try_save(&mut self) -> bool {
         if !self.can_save() { return false; }
         
         let mut bytes: Vec<u8> = vec![];
@@ -87,7 +90,8 @@ impl EditorController {
         let mut file = std::fs::File::create(&path).expect("yeet1");       
      
         use std::io::Write;
-        file.write_all(&bytes).expect("yeet2"); 
+        file.write_all(&bytes).expect("yeet2");
+        self.saved = true;
         return true;
     }
 }
@@ -106,7 +110,8 @@ impl Default for EditorController {
         Self { 
             current_item: EditorItem::default(),
             tile_size: TILE_SIZE,
-            stage: Stage::new(100, IVec2::new(30, 30))
+            stage: Stage::new(100, IVec2::new(30, 30)),
+            saved: false
          }
     }
 }
