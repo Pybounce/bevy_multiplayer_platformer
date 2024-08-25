@@ -1,7 +1,7 @@
-use bevy::prelude::*;
+use bevy::{input::keyboard::KeyboardInput, prelude::*};
 use controller::EditorController;
 use item_icon::*;
-use crate::common::states::{AppState, DespawnOnStateExit};
+use crate::common::{mouse::MouseData, states::{AppState, DespawnOnStateExit}};
 
 mod enums;
 mod controller;
@@ -14,9 +14,12 @@ impl Plugin for StageEditorPlugin {
         app
         .add_systems(OnEnter(AppState::StageEditor), build_stage_editor)
         .add_systems(OnExit(AppState::StageEditor), teardown_stage_editor)
-        .add_systems(Update, handle_current_item_change.run_if(in_state(AppState::StageEditor)))
-        .add_systems(Update, (add_item_icon, display_item_icon, move_item_icon).run_if(in_state(AppState::StageEditor)));
-    }
+        .add_systems(Update, (
+            (handle_current_item_change, add_item_icon, display_item_icon, move_item_icon),
+            handle_placement,
+            handle_save
+        ).run_if(in_state(AppState::StageEditor)));
+}
 }
 
 fn build_stage_editor(
@@ -38,3 +41,23 @@ fn teardown_stage_editor(
     commands.remove_resource::<EditorController>();
 }
 
+
+fn handle_placement(
+    buttons: Res<ButtonInput<MouseButton>>,
+    mut editor_con: ResMut<EditorController>,
+    mouse_data: Res<MouseData>
+) {
+    if buttons.just_pressed(MouseButton::Left) {
+        let mouse_pos = editor_con.world_to_grid_pos(mouse_data.position.extend(0.0));
+        editor_con.try_place(mouse_pos);
+    }
+}
+
+fn handle_save(
+    input: Res<ButtonInput<KeyCode>>,
+    editor_con: Res<EditorController>,
+) {
+    if input.just_pressed(KeyCode::KeyS) {
+        editor_con.try_save();
+    }
+}

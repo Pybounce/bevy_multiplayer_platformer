@@ -6,3 +6,4 @@ pub mod animated_sprite;
 pub mod physics;
 pub mod triggers;
 pub mod offset_mover;
+pub mod mouse;

@@ -1,6 +1,6 @@
 use bevy::{input::mouse::MouseWheel, prelude::*, transform::commands, window::PrimaryWindow};
 
-use crate::{common::states::{AppState, DespawnOnStateExit}, stage::stage_builder::stage_creator::TILE_SIZE};
+use crate::{common::{mouse::MouseData, states::{AppState, DespawnOnStateExit}}, stage::stage_builder::stage_creator::TILE_SIZE};
 
 use super::controller::EditorController;
 
@@ -49,22 +49,13 @@ pub fn display_item_icon(
 
 
 pub fn move_item_icon(
-    q_window: Query<&Window, With<PrimaryWindow>>,
-    q_camera: Query<(&Camera, &GlobalTransform), With<Camera>>,
     mut item_icon_query: Query<&mut Transform, With<ItemIcon>>,
+    mouse_data: Res<MouseData>,
     editor_con: Res<EditorController>,
 
 ) {
-    let (camera, camera_transform) = q_camera.single();
-    let window = q_window.single();
-
-    if let Some(world_position) = window.cursor_position()
-        .and_then(|cursor| camera.viewport_to_world(camera_transform, cursor))
-        .map(|ray| ray.origin.truncate())
-    {
-        if let Ok(mut t) = item_icon_query.get_single_mut() {
-            t.translation = editor_con.world_to_grid_pos(world_position.extend(t.translation.z));
-        }
+    if let Ok(mut t) = item_icon_query.get_single_mut() {
+        t.translation = editor_con.world_to_grid_world_pos(mouse_data.position.extend(t.translation.z));
     }
 }
 

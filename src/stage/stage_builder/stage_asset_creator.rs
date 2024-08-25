@@ -158,7 +158,10 @@ fn stage_from_grid(mut layout: String, width: usize, height: usize, id: usize) {
         }
         else if tile == '🟥' { 
             //spike
-            spikes.push(Spike {grid_pos: Vec2::new(x as f32, y as f32), rotation: get_rotation(&layout, i, width)});
+            spikes.push(Spike {
+                grid_pos: Vec2::new(x as f32, y as f32), 
+                rotation: get_rotation(&layout, i, width)
+            });
         }
         else if tile == '🔴' { 
             //spike
