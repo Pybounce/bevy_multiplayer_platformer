@@ -78,7 +78,10 @@ impl EditorController {
 
     }
     pub fn can_place(&self, grid_pos: IVec2) -> bool {
-        true
+        grid_pos.x >= 0 && 
+        grid_pos.x < self.width() as i32 &&
+        grid_pos.y >= 0 && 
+        grid_pos.y < self.height() as i32
     }
     pub fn try_save(&mut self) -> bool {
         if !self.can_save() { return false; }
@@ -102,6 +105,12 @@ impl EditorController {
     }
     fn can_save(&self) -> bool {
         true
+    }
+    fn width(&self) -> usize {
+        self.stage.grid_width
+    }
+    fn height(&self) -> usize {
+        self.stage.grid_height
     }
 }
 
