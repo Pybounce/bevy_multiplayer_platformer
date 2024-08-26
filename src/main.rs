@@ -8,6 +8,7 @@ mod local_player;
 use bevy_rapier2d::{plugin::{NoUserData, RapierPhysicsPlugin}, render::RapierDebugRenderPlugin};
 use camera::{handle_zoom_change, move_camera, move_pixel_perfect_translations, spawn_camera};
 use common::{animated_sprite::{animate_sprites, check_animate_on_touch}, checkpoint::check_checkpoint_reached, death::{check_touched_by_death, despawn_death_marked}, mouse::{update_mouse_data, MouseData}, offset_mover::move_offset_movers, physics::{bouncy::check_bouncy_collisions, gravity::simulate_gravity}, shake::shake, states::StatesPlugin, triggers::{trigger_on_touch, TriggerEvent}};
+use debugging::DebugPlugin;
 use game::GamePlugin;
 
 mod networking;
@@ -33,6 +34,7 @@ mod camera;
 pub mod ground;
 pub mod wall;
 pub mod stage_editor;
+mod debugging;
 
 fn main() {
     let winit_settings = WinitSettings {
@@ -68,6 +70,7 @@ fn main() {
         .add_plugins(GamePlugin)
         .add_plugins(GameNetworkingPlugin)
         .add_plugins(RapierPhysicsPlugin::<NoUserData>::pixels_per_meter(100.0))
+        //.add_plugins(DebugPlugin)
         .init_resource::<MouseData>()
         //.add_plugins(RapierDebugRenderPlugin::default())
         .add_systems(Startup, spawn_camera)
