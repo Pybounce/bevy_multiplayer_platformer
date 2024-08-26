@@ -1,9 +1,9 @@
 
-use bevy::{prelude::*, scene::ron};
+use bevy::{prelude::*, scene::ron, utils::hashbrown::HashMap};
 
 use crate::stage::{stage_builder::{stage_asset::{GroundTile, Spike, Stage}, stage_creator::{get_object_tilemap_rect_from_index, TILE_SIZE}}, stage_objects::spike::SpikeFactory};
 
-use super::enums::{EditorItem, EditorItemIconAtlasIndices};
+use super::{editor_objects::{EditorStageObject, HasEntity}, enums::{EditorItem, EditorItemIconAtlasIndices}};
 
 const EDITOR_TILEMAP_SIZE: f32 = 16.0;
 
@@ -11,10 +11,11 @@ const EDITOR_TILEMAP_SIZE: f32 = 16.0;
 pub struct EditorController {
     current_item: EditorItem,
     tile_size: f32,
-    stage: Stage,
     /// Tracks whether or not the latest stage updates have been saved
     saved: bool,
-    pub object_atlas: Handle<Image>
+    pub object_atlas: Handle<Image>,
+    stage_grid: HashMap<IVec2, EditorStageObject>,
+    grid_size: IVec2
 }
 
 
@@ -23,9 +24,10 @@ impl EditorController {
         Self { 
             current_item: EditorItem::default(),
             tile_size: TILE_SIZE,
-            stage: Stage::new(4, IVec2::new(30, 30)),
             saved: false,
-            object_atlas: object_atlas.clone()
+            object_atlas: object_atlas.clone(),
+            grid_size: IVec2::splat(30),
+            stage_grid: HashMap::new()
          }
     }
 
@@ -72,19 +74,15 @@ impl EditorController {
         if !self.can_place(grid_pos) { return false; }
         match self.current_item {
             EditorItem::Ground => {
-                self.stage.ground_tiles.push(GroundTile {
-                    grid_pos: Vec2::new(grid_pos.x as f32, grid_pos.y as f32),
-                    tilemap_index: 0
-                });
+                //self.stage.ground_tiles.push(GroundTile {
+                //    grid_pos: Vec2::new(grid_pos.x as f32, grid_pos.y as f32),
+                //    tilemap_index: 0
+                //});
             },
             EditorItem::Spike => {
-                let spike = Spike {
-                    grid_pos: Vec2::new(grid_pos.x as f32, grid_pos.y as f32),
-                    rotation: 0.0
-                };
-
-                SpikeFactory::spawn_editor_icon(commands, &spike, &self.object_atlas, get_object_tilemap_rect_from_index(crate::stage::stage_builder::stage_creator::ObjectAtlasIndices::Spike));
-                self.stage.spikes.push(spike);
+                let rotation = 0.0;
+                let entity = SpikeFactory::spawn_editor_icon(commands, grid_pos, rotation, &self.object_atlas, get_object_tilemap_rect_from_index(crate::stage::stage_builder::stage_creator::ObjectAtlasIndices::Spike));
+                self.stage_grid.insert(grid_pos, EditorStageObject::Spike { entity: entity, rotation: 0.0 });
             },
         }
         self.saved = false;
@@ -93,23 +91,32 @@ impl EditorController {
     }
     pub fn can_place(&self, grid_pos: IVec2) -> bool {
         grid_pos.x >= 0 && 
-        grid_pos.x < self.width() as i32 &&
+        grid_pos.x < self.grid_size.x as i32 &&
         grid_pos.y >= 0 && 
-        grid_pos.y < self.height() as i32
+        grid_pos.y < self.grid_size.y as i32 &&
+        !self.stage_grid.contains_key(&grid_pos)
     }
+
+    pub fn remove(&mut self, grid_pos: IVec2, commands: &mut Commands) {
+        if let Some((_entry_key, entry_val)) = self.stage_grid.remove_entry(&grid_pos) {
+            commands.entity(entry_val.entity()).despawn_recursive();
+        }
+    }
+    
     pub fn try_save(&mut self) -> bool {
-        if !self.can_save() { return false; }
-        
-        let mut bytes: Vec<u8> = vec![];
-        ron::ser::to_writer(&mut bytes, &self.stage).unwrap();
-        let name = String::from("assets/stage_".to_owned() + &self.stage.id.to_string() + ".stage");
-        let path = std::path::Path::new(&name);     
-        let mut file = std::fs::File::create(&path).expect("yeet1");       
-     
-        use std::io::Write;
-        file.write_all(&bytes).expect("yeet2");
-        self.saved = true;
-        return true;
+        //if !self.can_save() { return false; }
+        //
+        //let mut bytes: Vec<u8> = vec![];
+        //ron::ser::to_writer(&mut bytes, &self.stage).unwrap();
+        //let name = String::from("assets/stage_".to_owned() + &self.stage.id.to_string() + ".stage");
+        //let path = std::path::Path::new(&name);     
+        //let mut file = std::fs::File::create(&path).expect("yeet1");       
+     //
+        //use std::io::Write;
+        //file.write_all(&bytes).expect("yeet2");
+        //self.saved = true;
+        //return true;
+        todo!();
     }
 }
 
@@ -119,11 +126,5 @@ impl EditorController {
     }
     fn can_save(&self) -> bool {
         true
-    }
-    fn width(&self) -> usize {
-        self.stage.grid_width
-    }
-    fn height(&self) -> usize {
-        self.stage.grid_height
     }
 }

@@ -6,6 +6,7 @@ use crate::{camera::PixelPerfectTranslation, common::{mouse::MouseData, states::
 mod enums;
 mod controller;
 mod item_icon;
+mod editor_objects;
 
 pub struct StageEditorPlugin;
 
@@ -16,7 +17,7 @@ impl Plugin for StageEditorPlugin {
         .add_systems(OnExit(AppState::StageEditor), teardown_stage_editor)
         .add_systems(Update, (
             (handle_current_item_change, add_item_icon, display_item_icon, move_item_icon),
-            handle_placement,
+            (handle_placement, handle_grid_object_removals),
             handle_save,
             move_camera
         ).run_if(in_state(AppState::StageEditor)));
@@ -29,7 +30,7 @@ fn build_stage_editor(
 ) {
     let object_atlas: Handle<Image> = asset_server.load("object_tilemap.png");
     commands.insert_resource(EditorController::new(&object_atlas));
-    
+
     commands.spawn(Text2dBundle {
         text: Text::from_section("Stage Editor", TextStyle::default()),
         ..default()
@@ -54,6 +55,18 @@ fn handle_placement(
     if buttons.just_pressed(MouseButton::Left) {
         let mouse_pos = editor_con.world_to_grid_pos(mouse_data.world_position.extend(0.0));
         editor_con.try_place(mouse_pos, &mut commands);
+    }
+}
+
+fn handle_grid_object_removals(
+    buttons: Res<ButtonInput<MouseButton>>,
+    mut editor_con: ResMut<EditorController>,
+    mouse_data: Res<MouseData>,
+    mut commands: Commands
+) {
+    if buttons.just_pressed(MouseButton::Right) {
+        let mouse_pos = editor_con.world_to_grid_pos(mouse_data.world_position.extend(0.0));
+        editor_con.remove(mouse_pos, &mut commands);
     }
 }
 

@@ -31,12 +31,12 @@ impl SpikeFactory {
         });
 
     }
-    pub fn spawn_editor_icon(commands: &mut Commands, spike_asset: &stage_asset::Spike, atlas: &Handle<Image>, atlas_rect: Rect) {
+    pub fn spawn_editor_icon(commands: &mut Commands, grid_pos: IVec2, rotation: f32, atlas: &Handle<Image>, atlas_rect: Rect) -> Entity {
         commands.spawn(
             SpriteBundle {
                 transform: Transform {
-                    rotation: Quat::from_rotation_z(spike_asset.rotation),
-                    translation: Vec3::new((spike_asset.grid_pos.x * TILE_SIZE) + TILE_SIZE_HALF, (spike_asset.grid_pos.y * TILE_SIZE) + TILE_SIZE_HALF, 0.0),
+                    rotation: Quat::from_rotation_z(rotation),
+                    translation: Vec3::new((grid_pos.x as f32 * TILE_SIZE) + TILE_SIZE_HALF, (grid_pos.y as f32 * TILE_SIZE) + TILE_SIZE_HALF, 0.0),
                     ..default()
                 },
                 texture: atlas.clone(),
@@ -47,6 +47,6 @@ impl SpikeFactory {
                 },
                 ..default()
             }
-        );
+        ).id()
     }
 }
