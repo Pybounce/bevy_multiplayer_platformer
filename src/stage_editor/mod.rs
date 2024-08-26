@@ -24,10 +24,12 @@ impl Plugin for StageEditorPlugin {
 }
 
 fn build_stage_editor(
-    mut commands: Commands
+    mut commands: Commands,
+    asset_server: Res<AssetServer>
 ) {
-
-    commands.insert_resource(EditorController::default());
+    let object_atlas: Handle<Image> = asset_server.load("object_tilemap.png");
+    commands.insert_resource(EditorController::new(&object_atlas));
+    
     commands.spawn(Text2dBundle {
         text: Text::from_section("Stage Editor", TextStyle::default()),
         ..default()
@@ -46,11 +48,12 @@ fn teardown_stage_editor(
 fn handle_placement(
     buttons: Res<ButtonInput<MouseButton>>,
     mut editor_con: ResMut<EditorController>,
-    mouse_data: Res<MouseData>
+    mouse_data: Res<MouseData>,
+    mut commands: Commands
 ) {
     if buttons.just_pressed(MouseButton::Left) {
         let mouse_pos = editor_con.world_to_grid_pos(mouse_data.world_position.extend(0.0));
-        editor_con.try_place(mouse_pos);
+        editor_con.try_place(mouse_pos, &mut commands);
     }
 }
 

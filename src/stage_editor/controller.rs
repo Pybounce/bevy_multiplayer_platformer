@@ -1,7 +1,7 @@
 
 use bevy::{prelude::*, scene::ron};
 
-use crate::stage::stage_builder::{stage_asset::{GroundTile, Spike, Stage}, stage_creator::TILE_SIZE};
+use crate::stage::{stage_builder::{stage_asset::{GroundTile, Spike, Stage}, stage_creator::{get_object_tilemap_rect_from_index, TILE_SIZE}}, stage_objects::spike::SpikeFactory};
 
 use super::enums::{EditorItem, EditorItemIconAtlasIndices};
 
@@ -13,11 +13,22 @@ pub struct EditorController {
     tile_size: f32,
     stage: Stage,
     /// Tracks whether or not the latest stage updates have been saved
-    saved: bool
+    saved: bool,
+    pub object_atlas: Handle<Image>
 }
 
 
 impl EditorController {
+    pub fn new(object_atlas: &Handle<Image>) -> Self {
+        Self { 
+            current_item: EditorItem::default(),
+            tile_size: TILE_SIZE,
+            stage: Stage::new(100, IVec2::new(30, 30)),
+            saved: false,
+            object_atlas: object_atlas.clone()
+         }
+    }
+
     pub fn cycle_next_item(&mut self) {
         if self.can_cycle_item() {
             self.current_item = self.current_item.cycle_next();
@@ -57,7 +68,7 @@ impl EditorController {
             (world_pos.y /self.tile_size).trunc()as i32) 
     }
 
-    pub fn try_place(&mut self, grid_pos: IVec2) -> bool {
+    pub fn try_place(&mut self, grid_pos: IVec2, commands: &mut Commands) -> bool {
         if !self.can_place(grid_pos) { return false; }
         match self.current_item {
             EditorItem::Ground => {
@@ -67,10 +78,13 @@ impl EditorController {
                 });
             },
             EditorItem::Spike => {
-                self.stage.spikes.push(Spike {
+                let spike = Spike {
                     grid_pos: Vec2::new(grid_pos.x as f32, grid_pos.y as f32),
                     rotation: 0.0
-                });
+                };
+
+                SpikeFactory::spawn_editor_icon(commands, &spike, &self.object_atlas, get_object_tilemap_rect_from_index(crate::stage::stage_builder::stage_creator::ObjectAtlasIndices::Spike));
+                self.stage.spikes.push(spike);
             },
         }
         self.saved = false;
@@ -111,16 +125,5 @@ impl EditorController {
     }
     fn height(&self) -> usize {
         self.stage.grid_height
-    }
-}
-
-impl Default for EditorController {
-    fn default() -> Self {
-        Self { 
-            current_item: EditorItem::default(),
-            tile_size: TILE_SIZE,
-            stage: Stage::new(100, IVec2::new(30, 30)),
-            saved: false
-         }
     }
 }

@@ -11,7 +11,6 @@ pub fn add_item_icon(
     mut commands: Commands,
     query: Query<Entity, With<ItemIcon>>,
     editor_con: Res<EditorController>,
-    asset_server: Res<AssetServer>
 ) {
     let mut first_item = true;
     for e in &query {
@@ -25,10 +24,9 @@ pub fn add_item_icon(
 
     if first_item == true {
         //no item exists
-        let object_tilemap_handle: Handle<Image> = asset_server.load("object_tilemap.png");
 
         commands.spawn(SpriteBundle {
-            texture: object_tilemap_handle.clone(),
+            texture: editor_con.object_atlas.clone(),
             sprite: Sprite {
                 custom_size: Some(Vec2::new(TILE_SIZE, TILE_SIZE)),
                 rect: Some(editor_con.get_item_icon_atlas_rect()),

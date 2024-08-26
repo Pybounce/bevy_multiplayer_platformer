@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::{ActiveEvents, Collider, CollisionGroups, Group, RigidBody};
 
-use crate::{obstacles::InstantKiller, stage::stage_builder::stage_creator::{StageCreator, TILE_SIZE_HALF}};
+use crate::{obstacles::InstantKiller, stage::stage_builder::{stage_asset, stage_creator::{StageCreator, TILE_SIZE, TILE_SIZE_HALF}}};
 
 use super::{tiles::TileBundle, StageObject};
 
@@ -30,5 +30,23 @@ impl SpikeFactory {
             ));
         });
 
+    }
+    pub fn spawn_editor_icon(commands: &mut Commands, spike_asset: &stage_asset::Spike, atlas: &Handle<Image>, atlas_rect: Rect) {
+        commands.spawn(
+            SpriteBundle {
+                transform: Transform {
+                    rotation: Quat::from_rotation_z(spike_asset.rotation),
+                    translation: Vec3::new(spike_asset.grid_pos.x * TILE_SIZE, spike_asset.grid_pos.y * TILE_SIZE, 0.0),
+                    ..default()
+                },
+                texture: atlas.clone(),
+                sprite: Sprite {
+                    custom_size: Some(Vec2::new(TILE_SIZE, TILE_SIZE)),
+                    rect: Some(atlas_rect),
+                    ..default()
+                },
+                ..default()
+            }
+        );
     }
 }

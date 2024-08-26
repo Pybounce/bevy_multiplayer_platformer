@@ -262,7 +262,7 @@ fn build_ground_tile(commands: &mut Commands, stage_creator: &StageCreator, grid
 
 }
 
-fn get_object_tilemap_rect_from_index(atlas_index: ObjectAtlasIndices) -> Rect {
+pub fn get_object_tilemap_rect_from_index(atlas_index: ObjectAtlasIndices) -> Rect {
     let index = atlas_index as usize;
     let upper_left = Vec2::new((index as f32 % OBJECT_TILEMAP_SIZE as f32) as f32 * OBJECT_TILE_TILEMAP_SIZE, (index / OBJECT_TILEMAP_SIZE) as f32 * OBJECT_TILE_TILEMAP_SIZE);
     let lower_right = Vec2::new(upper_left.x + OBJECT_TILE_TILEMAP_SIZE, upper_left.y + OBJECT_TILE_TILEMAP_SIZE);
