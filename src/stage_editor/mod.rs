@@ -1,7 +1,7 @@
-use bevy::{input::keyboard::KeyboardInput, prelude::*};
+use bevy::{input::keyboard::KeyboardInput, math::VectorSpace, prelude::*};
 use controller::EditorController;
 use item_icon::*;
-use crate::common::{mouse::MouseData, states::{AppState, DespawnOnStateExit}};
+use crate::{camera::PixelPerfectTranslation, common::{mouse::MouseData, states::{AppState, DespawnOnStateExit}}};
 
 mod enums;
 mod controller;
@@ -17,7 +17,8 @@ impl Plugin for StageEditorPlugin {
         .add_systems(Update, (
             (handle_current_item_change, add_item_icon, display_item_icon, move_item_icon),
             handle_placement,
-            handle_save
+            handle_save,
+            move_camera
         ).run_if(in_state(AppState::StageEditor)));
 }
 }
@@ -48,7 +49,7 @@ fn handle_placement(
     mouse_data: Res<MouseData>
 ) {
     if buttons.just_pressed(MouseButton::Left) {
-        let mouse_pos = editor_con.world_to_grid_pos(mouse_data.position.extend(0.0));
+        let mouse_pos = editor_con.world_to_grid_pos(mouse_data.world_position.extend(0.0));
         editor_con.try_place(mouse_pos);
     }
 }
@@ -59,5 +60,34 @@ fn handle_save(
 ) {
     if input.just_pressed(KeyCode::KeyS) {
         editor_con.try_save();
+    }
+}
+
+
+//TODO: Potentially move to moving the cam via clicking mouse3
+fn move_camera(
+    mut query: Query<&mut PixelPerfectTranslation, With<Camera>>,
+    mouse_data: Res<MouseData>,
+    time: Res<Time>
+) {
+    const CAMERA_MOVE_DEADZONE: f32 = 0.1;
+    const CAMERA_MOVE_SPEED: f32 = 64.0;
+
+    let mut direction = Vec3::ZERO;    
+    if mouse_data.window_position_normalised.x >= 1.0 - CAMERA_MOVE_DEADZONE {
+        direction += Vec3::X;
+    }
+    else if mouse_data.window_position_normalised.x <= CAMERA_MOVE_DEADZONE {
+        direction -= Vec3::X;
+    }
+    if mouse_data.window_position_normalised.y <= CAMERA_MOVE_DEADZONE {
+        direction += Vec3::Y;
+    }
+    else if mouse_data.window_position_normalised.y >= 1.0 - CAMERA_MOVE_DEADZONE {
+        direction -= Vec3::Y;
+    }
+
+    for mut ppt in &mut query {
+        ppt.translation += direction * CAMERA_MOVE_SPEED * time.delta_seconds();
     }
 }

@@ -55,7 +55,7 @@ pub fn move_item_icon(
 
 ) {
     if let Ok(mut t) = item_icon_query.get_single_mut() {
-        t.translation = editor_con.world_to_grid_world_pos(mouse_data.position.extend(t.translation.z));
+        t.translation = editor_con.world_to_grid_world_pos(mouse_data.world_position.extend(t.translation.z));
     }
 }
 
