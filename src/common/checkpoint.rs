@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
 
-use crate::{local_player::LocalPlayer, player::death::Respawnable, stage::stage_builder::{stage_creator::{StageCreator, TILE_SIZE}, CurrentStageData}};
+use crate::{local_player::LocalPlayer, player::death::Respawnable, stage::stage_builder::{stage_creator::{StageCreator, TILE_SIZE, TILE_SIZE_HALF}, CurrentStageData}};
 
 #[derive(Component)]
 pub struct Checkpoint;
@@ -26,7 +26,7 @@ impl CheckpointBundle {
             sprite_bundle: SpriteBundle {
                 transform: Transform {
                     scale: Vec3::new(TILE_SIZE, TILE_SIZE, 1.0),
-                    translation: Vec3::new(grid_pos.x * TILE_SIZE, grid_pos.y * TILE_SIZE, 0.0),
+                    translation: Vec3::new((grid_pos.x * TILE_SIZE) + TILE_SIZE_HALF, (grid_pos.y * TILE_SIZE) + TILE_SIZE_HALF, 0.0),
                     ..default()
                 },
                 texture: stage_creator.object_tilemap.clone(),

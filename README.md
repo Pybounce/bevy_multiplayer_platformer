@@ -54,6 +54,11 @@
 
 ## Bugs
 
+- Editor Grid Negatives
+  - When the mouse is on the tile left of the y axis, the grid position says it's at x = 0
+  - Since the way it's calculated is (x / tile_size).trunc()
+  - The x pos might be -14, then after that calc it should be -0.0, or 0.0 I guess?
+  - This functionally just means you can place a tile at the edge of the grid (in bounds), by clicking out of bounds
 - Cannot preload (with a stage load event) on build complete, will try building that stage immediately and fail
   - Need to test the build failed events at different points (1 stage in, 0 stages in etc)
   - Seems like it's not scrubbing the current stage
@@ -68,6 +73,9 @@
 
 ## Refactorings
 
+- Grid
+  - Helper functions for grid_to_world
+  - Possibly a whole Grid struct that takes in the data of the grid such as size etc
 - Move the logic to get the atlas rect into the factories
   - ie the obstacle factories like saw or spike
 - Add in actual player states, or SOMETHING that works with networking

@@ -23,7 +23,7 @@ impl EditorController {
         Self { 
             current_item: EditorItem::default(),
             tile_size: TILE_SIZE,
-            stage: Stage::new(100, IVec2::new(30, 30)),
+            stage: Stage::new(4, IVec2::new(30, 30)),
             saved: false,
             object_atlas: object_atlas.clone()
          }

@@ -36,7 +36,7 @@ impl SpikeFactory {
             SpriteBundle {
                 transform: Transform {
                     rotation: Quat::from_rotation_z(spike_asset.rotation),
-                    translation: Vec3::new(spike_asset.grid_pos.x * TILE_SIZE, spike_asset.grid_pos.y * TILE_SIZE, 0.0),
+                    translation: Vec3::new((spike_asset.grid_pos.x * TILE_SIZE) + TILE_SIZE_HALF, (spike_asset.grid_pos.y * TILE_SIZE) + TILE_SIZE_HALF, 0.0),
                     ..default()
                 },
                 texture: atlas.clone(),

@@ -74,7 +74,7 @@ impl<'a> StageCreator<'a> {
 fn build_player_spawner(stage_creator: &StageCreator, commands: &mut Commands) -> bool {
     commands.spawn(LocalPlayerSpawner {
         spawn_time: 0.0,
-        translation: (stage_creator.stage.spawn_grid_pos * TILE_SIZE).extend(0.0),
+        translation: ((stage_creator.stage.spawn_grid_pos * TILE_SIZE) + TILE_SIZE_HALF).extend(0.0),
     });
     return true;
 }
@@ -89,8 +89,8 @@ fn build_ground(stage_creator: &StageCreator, commands: &mut Commands) -> bool {
 
 fn build_background(stage_creator: &StageCreator, commands: &mut Commands) -> bool {
 
-    let grid_pos = Vec2::new((stage_creator.stage.grid_width as f32 - 1.0) / 2.0, 
-    (stage_creator.stage.grid_height as f32 - 1.0) / 2.0);
+    let grid_pos = Vec2::new(stage_creator.stage.grid_width as f32 / 2.0, 
+    stage_creator.stage.grid_height as f32 / 2.0);
     
     commands.spawn(
         SpriteBundle {
@@ -120,8 +120,8 @@ fn build_far_background(stage_creator: &StageCreator, commands: &mut Commands) -
 
     let mut background = TileBundle::new(
         stage_creator, 
-        Vec2::new((stage_creator.stage.grid_width as f32 - 1.0) / 2.0, 
-        (stage_creator.stage.grid_height as f32 - 1.0) / 2.0), 
+        Vec2::new(stage_creator.stage.grid_width as f32 / 2.0, 
+        stage_creator.stage.grid_height as f32 / 2.0), 
         sprite_rect, 0.0, stage_creator.tilemap);
     background.sprite_bundle.transform.translation.z = -20.0;
     background.sprite_bundle.transform.scale = Vec3::new(
