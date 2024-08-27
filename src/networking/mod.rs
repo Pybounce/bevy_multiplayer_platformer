@@ -16,7 +16,7 @@ pub struct GameNetworkingPlugin;
 impl Plugin for GameNetworkingPlugin {
     fn build(&self, app: &mut App) {
         app
-        .insert_resource(NetworkingPreferences { online: true, _retry_count: 3 })
+        .insert_resource(NetworkingPreferences { online: false, _retry_count: 3 })
         .add_event::<PeerConnectionEvent>()
         .add_event::<PeerDisconnectionEvent>()
         .add_systems(Update, check_connection.run_if(in_state(NetworkingState::Connected).or_else(in_state(NetworkingState::Disconnected))))      
