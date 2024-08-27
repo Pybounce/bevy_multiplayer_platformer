@@ -6,16 +6,17 @@ use crate::stage::{stage_builder::{stage_asset::{GroundTile, Spike, Stage}, stag
 use super::{editor_objects::{EditorStageObject, HasEntity}, enums::EditorItem};
 
 const EDITOR_TILEMAP_SIZE: f32 = 16.0;
+pub const GROUND_TILEMAP_SIZE: f32 = 7.0;
 
 #[derive(Resource)]
 pub struct EditorController {
-    current_item: EditorItem,
+    pub current_item: EditorItem,
     tile_size: f32,
     /// Tracks whether or not the latest stage updates have been saved
     saved: bool,
     pub object_atlas: Handle<Image>,
-    ground_atlas: Handle<Image>,
-    stage_grid: HashMap<IVec2, EditorStageObject>,
+    pub ground_atlas: Handle<Image>,
+    pub stage_grid: HashMap<IVec2, EditorStageObject>,
     grid_size: IVec2,
     pub rotation: f32
 }
