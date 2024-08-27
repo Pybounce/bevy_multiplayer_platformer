@@ -1,7 +1,7 @@
 
 use bevy::{prelude::*, scene::ron, utils::hashbrown::HashMap};
 
-use crate::stage::{stage_builder::{stage_asset::{GroundTile, Spike, Stage}, stage_creator::{get_object_tilemap_rect_from_index, TILE_SIZE}}, stage_objects::spike::SpikeFactory};
+use crate::stage::{stage_builder::{stage_asset::{GroundTile, Spike, Stage}, stage_creator::{get_object_tilemap_rect_from_index, TILE_SIZE, TILE_SIZE_HALF}}, stage_objects::spike::SpikeFactory};
 
 use super::{editor_objects::{EditorStageObject, HasEntity}, enums::{EditorItem, EditorItemIconAtlasIndices}};
 
@@ -14,18 +14,20 @@ pub struct EditorController {
     /// Tracks whether or not the latest stage updates have been saved
     saved: bool,
     pub object_atlas: Handle<Image>,
+    ground_atlas: Handle<Image>,
     stage_grid: HashMap<IVec2, EditorStageObject>,
     grid_size: IVec2
 }
 
 
 impl EditorController {
-    pub fn new(object_atlas: &Handle<Image>) -> Self {
+    pub fn new(object_atlas: &Handle<Image>, ground_atlas: &Handle<Image>) -> Self {
         Self { 
             current_item: EditorItem::default(),
             tile_size: TILE_SIZE,
             saved: false,
             object_atlas: object_atlas.clone(),
+            ground_atlas: ground_atlas.clone(),
             grid_size: IVec2::splat(30),
             stage_grid: HashMap::new()
          }
@@ -74,10 +76,22 @@ impl EditorController {
         if !self.can_place(grid_pos) { return false; }
         match self.current_item {
             EditorItem::Ground => {
-                //self.stage.ground_tiles.push(GroundTile {
-                //    grid_pos: Vec2::new(grid_pos.x as f32, grid_pos.y as f32),
-                //    tilemap_index: 0
-                //});
+                //TODO: Move to factory
+                let entity = commands.spawn(SpriteBundle {
+                    transform: Transform {
+                        translation: Vec3::new((grid_pos.x as f32 * TILE_SIZE) + TILE_SIZE_HALF, (grid_pos.y as f32 * TILE_SIZE) + TILE_SIZE_HALF, 0.0),
+                        ..default()
+                    },
+                    texture: self.ground_atlas.clone(),
+                    sprite: Sprite {
+                        custom_size: Some(Vec2::new(TILE_SIZE, TILE_SIZE)),
+                        rect: None,//Some(atlas_rect),
+                        ..default()
+                    },
+                    ..default()
+                }).id();
+
+                self.stage_grid.insert(grid_pos, EditorStageObject::Ground { entity } );
             },
             EditorItem::Spike => {
                 let rotation = 0.0;

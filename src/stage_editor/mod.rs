@@ -29,7 +29,8 @@ fn build_stage_editor(
     asset_server: Res<AssetServer>
 ) {
     let object_atlas: Handle<Image> = asset_server.load("object_tilemap.png");
-    commands.insert_resource(EditorController::new(&object_atlas));
+    let ground_atlas: Handle<Image> = asset_server.load("tilemap.png");
+    commands.insert_resource(EditorController::new(&object_atlas, &ground_atlas));
 
     commands.spawn(Text2dBundle {
         text: Text::from_section("Stage Editor", TextStyle::default()),
