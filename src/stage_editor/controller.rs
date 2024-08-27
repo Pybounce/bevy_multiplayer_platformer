@@ -104,19 +104,21 @@ impl EditorController {
     }
     
     pub fn try_save(&mut self) -> bool {
-        //if !self.can_save() { return false; }
-        //
-        //let mut bytes: Vec<u8> = vec![];
-        //ron::ser::to_writer(&mut bytes, &self.stage).unwrap();
-        //let name = String::from("assets/stage_".to_owned() + &self.stage.id.to_string() + ".stage");
-        //let path = std::path::Path::new(&name);     
-        //let mut file = std::fs::File::create(&path).expect("yeet1");       
-     //
-        //use std::io::Write;
-        //file.write_all(&bytes).expect("yeet2");
-        //self.saved = true;
-        //return true;
-        todo!();
+
+        if !self.can_save() { return false; }
+
+        let stage = self.build_stage();
+
+        let mut bytes: Vec<u8> = vec![];
+        ron::ser::to_writer(&mut bytes, &stage).unwrap();
+        let name = String::from("assets/stage_".to_owned() + &stage.id.to_string() + ".stage");
+        let path = std::path::Path::new(&name);     
+        let mut file = std::fs::File::create(&path).expect("yeet1");       
+        
+        use std::io::Write;
+        file.write_all(&bytes).expect("yeet2");
+        self.saved = true;
+        return true;
     }
 }
 
@@ -126,5 +128,25 @@ impl EditorController {
     }
     fn can_save(&self) -> bool {
         true
+    }
+    fn build_stage(&self) -> Stage {
+        let mut stage: Stage = Stage::new(4, self.grid_size);
+        for (grid_pos, stage_editor_obj) in &self.stage_grid {
+            match stage_editor_obj {
+                EditorStageObject::Spike { entity: _, rotation } => {
+                    stage.spikes.push(Spike {
+                        grid_pos: grid_pos.as_vec2(),
+                        rotation: *rotation,
+                    });
+                },
+                EditorStageObject::Ground { entity: _ } => {
+                    stage.ground_tiles.push(GroundTile {
+                        grid_pos: grid_pos.as_vec2(),
+                        tilemap_index: 0,   //TODO
+                    });
+                },
+            }
+        }
+        return stage;
     }
 }
