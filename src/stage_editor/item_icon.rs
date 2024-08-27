@@ -62,10 +62,10 @@ pub fn handle_current_item_change(
     input: Res<ButtonInput<KeyCode>>,
     mut current_item_q: Query<&mut Sprite, With<ItemIcon>>
 ) {
-    if input.just_pressed(KeyCode::KeyE) {
+    if input.just_pressed(KeyCode::KeyD) {
         editor_con.cycle_next_item()
     }
-    if input.just_pressed(KeyCode::KeyQ) {
+    if input.just_pressed(KeyCode::KeyA) {
         editor_con.cycle_prev_item()
     }
     if let Ok(mut s) = current_item_q.get_single_mut() {
