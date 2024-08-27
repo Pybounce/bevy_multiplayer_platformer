@@ -47,6 +47,7 @@ impl EditorController {
         let (index, tile_size) = match self.current_item {
             EditorItem::Ground => (15.0, 16.0),
             EditorItem::Spike => (4.0, 16.0),
+            EditorItem::Spawn => (18.0, 16.0),
         };
 
         let upper_left = Vec2::new(index % EDITOR_TILEMAP_SIZE, (index / EDITOR_TILEMAP_SIZE).trunc()) * tile_size;
@@ -85,7 +86,7 @@ impl EditorController {
                     texture: self.ground_atlas.clone(),
                     sprite: Sprite {
                         custom_size: Some(Vec2::new(TILE_SIZE, TILE_SIZE)),
-                        rect: None,//Some(atlas_rect),
+                        rect: Some(self.get_item_icon_atlas_rect()),
                         ..default()
                     },
                     ..default()
@@ -97,6 +98,24 @@ impl EditorController {
                 let rotation = 0.0;
                 let entity = SpikeFactory::spawn_editor_icon(commands, grid_pos, rotation, &self.object_atlas, get_object_tilemap_rect_from_index(crate::stage::stage_builder::stage_creator::ObjectAtlasIndices::Spike));
                 self.stage_grid.insert(grid_pos, EditorStageObject::Spike { entity: entity, rotation: 0.0 });
+            },
+            EditorItem::Spawn => {
+                //TODO: Move to factory
+                let entity = commands.spawn(SpriteBundle {
+                    transform: Transform {
+                        translation: Vec3::new((grid_pos.x as f32 * TILE_SIZE) + TILE_SIZE_HALF, (grid_pos.y as f32 * TILE_SIZE) + TILE_SIZE_HALF, 0.0),
+                        ..default()
+                    },
+                    texture: self.object_atlas.clone(),
+                    sprite: Sprite {
+                        custom_size: Some(Vec2::new(TILE_SIZE, TILE_SIZE)),
+                        rect: Some(self.get_item_icon_atlas_rect()),
+                        ..default()
+                    },
+                    ..default()
+                }).id();
+                //TODO: Remove old spawn self.stage_grid.remove_entry(&);
+                self.stage_grid.insert(grid_pos, EditorStageObject::Spawn { entity } );
             },
         }
         self.saved = false;
@@ -159,6 +178,7 @@ impl EditorController {
                         tilemap_index: 0,   //TODO
                     });
                 },
+                EditorStageObject::Spawn { entity: _ } => stage.spawn_grid_pos = grid_pos.as_vec2(),
             }
         }
         return stage;

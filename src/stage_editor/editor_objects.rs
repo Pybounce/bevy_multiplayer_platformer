@@ -3,7 +3,8 @@ use bevy::prelude::*;
 
 pub enum EditorStageObject {
     Spike { entity: Entity, rotation: f32 },
-    Ground { entity: Entity }
+    Ground { entity: Entity },
+    Spawn { entity: Entity },
 }
 
 
@@ -16,6 +17,7 @@ impl HasEntity for EditorStageObject {
         match self {
             EditorStageObject::Spike { entity, .. } => *entity,
             EditorStageObject::Ground { entity } => *entity,
+            EditorStageObject::Spawn { entity } => *entity,
         }
     }
 }
