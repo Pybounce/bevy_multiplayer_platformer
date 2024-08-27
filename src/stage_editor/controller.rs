@@ -24,6 +24,7 @@ pub struct EditorController {
 
 impl EditorController {
     pub fn new(object_atlas: &Handle<Image>, ground_atlas: &Handle<Image>) -> Self {
+        
         Self { 
             current_item: EditorItem::default(),
             tile_size: TILE_SIZE,
@@ -95,17 +96,20 @@ impl EditorController {
 
     }
     pub fn can_place(&self, grid_pos: IVec2) -> bool {
-        grid_pos.x >= 0 && 
-        grid_pos.x < self.grid_size.x as i32 &&
-        grid_pos.y >= 0 && 
-        grid_pos.y < self.grid_size.y as i32 &&
+        grid_pos.x > 0 && 
+        grid_pos.x < self.grid_size.x as i32 - 1 &&
+        grid_pos.y > 0 && 
+        grid_pos.y < self.grid_size.y as i32 - 1 &&
         !self.stage_grid.contains_key(&grid_pos)
     }
 
-    pub fn remove(&mut self, grid_pos: IVec2, commands: &mut Commands) {
+    pub fn try_remove(&mut self, grid_pos: IVec2, commands: &mut Commands) -> bool{
+        if !self.can_remove(grid_pos) { return false; }
+
         if let Some((_entry_key, entry_val)) = self.stage_grid.remove_entry(&grid_pos) {
             commands.entity(entry_val.entity()).despawn_recursive();
         }
+        return true;
     }
     
     pub fn try_save(&mut self) -> bool {
@@ -138,6 +142,13 @@ impl EditorController {
 }
 
 impl EditorController {
+    pub fn can_remove(&self, grid_pos: IVec2) -> bool {
+        grid_pos.x > 0 && 
+        grid_pos.x < self.grid_size.x as i32 - 1 &&
+        grid_pos.y > 0 && 
+        grid_pos.y < self.grid_size.y as i32 - 1 &&
+        self.stage_grid.contains_key(&grid_pos)
+    }
     fn can_cycle_item(&self) -> bool {
         true
     }

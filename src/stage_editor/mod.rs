@@ -73,7 +73,7 @@ fn handle_grid_object_removals(
 ) {
     if buttons.just_pressed(MouseButton::Right) {
         let mouse_pos = editor_con.world_to_grid_pos(mouse_data.world_position.extend(0.0));
-        editor_con.remove(mouse_pos, &mut commands);
+        editor_con.try_remove(mouse_pos, &mut commands);
     }
 }
 
