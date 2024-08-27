@@ -25,9 +25,3 @@ impl EditorItem {
     }
 }
 
-#[derive(Default, Copy, Clone, Debug)]
-pub enum EditorItemIconAtlasIndices {
-    #[default]
-    Ground = 0,
-    Spike = 1
-}

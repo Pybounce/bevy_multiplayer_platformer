@@ -23,7 +23,6 @@ impl HasEntity for EditorStageObject {
 }
 
 
-
 // For future me
 //  Make a hashmap [grid_pos : EditorStageObject] in the EditorController
 //  Remove Stage from EditorController

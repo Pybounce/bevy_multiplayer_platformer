@@ -17,7 +17,7 @@ impl Plugin for StageEditorPlugin {
         .add_systems(OnExit(AppState::StageEditor), teardown_stage_editor)
         .add_systems(Update, (
             (handle_current_item_change, add_item_icon, display_item_icon, move_item_icon),
-            (handle_placement, handle_grid_object_removals),
+            (handle_rotate, handle_placement, handle_grid_object_removals),
             handle_save,
             move_camera
         ).run_if(in_state(AppState::StageEditor)));
@@ -80,6 +80,19 @@ fn handle_save(
     }
 }
 
+fn handle_rotate(
+    input: Res<ButtonInput<KeyCode>>,
+    mut editor_con: ResMut<EditorController>,
+    mut current_item_q: Query<&mut Transform, With<ItemIcon>>
+) {
+    if input.just_pressed(KeyCode::KeyR) {
+        if editor_con.try_rotate() {
+            if let Ok(mut t) = current_item_q.get_single_mut() {
+                t.rotation = Quat::from_rotation_z(editor_con.rotation);
+            }
+        }
+    }
+}
 
 //TODO: Potentially move to moving the cam via clicking mouse3
 fn move_camera(

@@ -3,7 +3,7 @@ use bevy::{prelude::*, scene::ron, utils::hashbrown::HashMap};
 
 use crate::stage::{stage_builder::{stage_asset::{GroundTile, Spike, Stage}, stage_creator::{get_object_tilemap_rect_from_index, TILE_SIZE, TILE_SIZE_HALF}}, stage_objects::spike::SpikeFactory};
 
-use super::{editor_objects::{EditorStageObject, HasEntity}, enums::{EditorItem, EditorItemIconAtlasIndices}};
+use super::{editor_objects::{EditorStageObject, HasEntity}, enums::EditorItem};
 
 const EDITOR_TILEMAP_SIZE: f32 = 16.0;
 
@@ -16,7 +16,8 @@ pub struct EditorController {
     pub object_atlas: Handle<Image>,
     ground_atlas: Handle<Image>,
     stage_grid: HashMap<IVec2, EditorStageObject>,
-    grid_size: IVec2
+    grid_size: IVec2,
+    pub rotation: f32
 }
 
 
@@ -29,7 +30,8 @@ impl EditorController {
             object_atlas: object_atlas.clone(),
             ground_atlas: ground_atlas.clone(),
             grid_size: IVec2::splat(30),
-            stage_grid: HashMap::new()
+            stage_grid: HashMap::new(),
+            rotation: 0.0
          }
     }
 
@@ -95,9 +97,8 @@ impl EditorController {
                 self.stage_grid.insert(grid_pos, EditorStageObject::Ground { entity } );
             },
             EditorItem::Spike => {
-                let rotation = 0.0;
-                let entity = SpikeFactory::spawn_editor_icon(commands, grid_pos, rotation, &self.object_atlas, get_object_tilemap_rect_from_index(crate::stage::stage_builder::stage_creator::ObjectAtlasIndices::Spike));
-                self.stage_grid.insert(grid_pos, EditorStageObject::Spike { entity: entity, rotation: 0.0 });
+                let entity = SpikeFactory::spawn_editor_icon(commands, grid_pos, self.rotation, &self.object_atlas, get_object_tilemap_rect_from_index(crate::stage::stage_builder::stage_creator::ObjectAtlasIndices::Spike));
+                self.stage_grid.insert(grid_pos, EditorStageObject::Spike { entity: entity, rotation: self.rotation });
             },
             EditorItem::Spawn => {
                 //TODO: Move to factory
@@ -153,6 +154,16 @@ impl EditorController {
         self.saved = true;
         return true;
     }
+    pub fn try_rotate(&mut self) -> bool {
+
+        if !self.can_rotate() { return false; }
+        self.rotation -= std::f32::consts::FRAC_PI_2;
+        if self.rotation <= 0.0 {
+            self.rotation = std::f32::consts::PI * 2.0;
+        }
+
+        return true;
+    }
 }
 
 impl EditorController {
@@ -160,6 +171,9 @@ impl EditorController {
         true
     }
     fn can_save(&self) -> bool {
+        true
+    }
+    fn can_rotate(&self) -> bool {
         true
     }
     fn build_stage(&self) -> Stage {
