@@ -51,11 +51,17 @@ fn handle_placement(
     buttons: Res<ButtonInput<MouseButton>>,
     mut editor_con: ResMut<EditorController>,
     mouse_data: Res<MouseData>,
-    mut commands: Commands
+    mut commands: Commands,
+    mut current_item_q: Query<Entity, With<ItemIcon>>
 ) {
     if buttons.just_pressed(MouseButton::Left) {
-        let mouse_pos = editor_con.world_to_grid_pos(mouse_data.world_position.extend(0.0));
-        editor_con.try_place(mouse_pos, &mut commands);
+        if let Ok(e) = current_item_q.get_single_mut() {
+            let mouse_pos = editor_con.world_to_grid_pos(mouse_data.world_position.extend(0.0));
+            if editor_con.try_place(mouse_pos, e.clone(), &mut commands) {
+                commands.entity(e).remove::<ItemIcon>();
+            }
+        }
+
     }
 }
 
@@ -82,15 +88,10 @@ fn handle_save(
 
 fn handle_rotate(
     input: Res<ButtonInput<KeyCode>>,
-    mut editor_con: ResMut<EditorController>,
-    mut current_item_q: Query<&mut Transform, With<ItemIcon>>
+    mut editor_con: ResMut<EditorController>
 ) {
     if input.just_pressed(KeyCode::KeyR) {
-        if editor_con.try_rotate() {
-            if let Ok(mut t) = current_item_q.get_single_mut() {
-                t.rotation = Quat::from_rotation_z(editor_con.rotation);
-            }
-        }
+        editor_con.try_rotate();
     }
 }
 
