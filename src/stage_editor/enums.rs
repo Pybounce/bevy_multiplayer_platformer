@@ -5,7 +5,8 @@ pub enum EditorItem {
     #[default]
     Ground = 0,
     Spike = 1,
-    Spawn = 2
+    Spawn = 2,
+    Spring = 3,
 }
 
 impl EditorItem {
@@ -13,12 +14,14 @@ impl EditorItem {
         match self {
             EditorItem::Ground => EditorItem::Spike,
             EditorItem::Spike => EditorItem::Spawn,
-            EditorItem::Spawn => EditorItem::Ground,
+            EditorItem::Spawn => EditorItem::Spring,
+            EditorItem::Spring => EditorItem::Ground,
         }
     }
     pub fn cycle_prev(&self) -> Self {
         match self {
-            EditorItem::Ground => EditorItem::Spawn,
+            EditorItem::Ground => EditorItem::Spring,
+            EditorItem::Spring => EditorItem::Spawn,
             EditorItem::Spawn => EditorItem::Spike,
             EditorItem::Spike => EditorItem::Ground,
         }

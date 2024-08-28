@@ -5,6 +5,7 @@ pub enum EditorStageObject {
     Spike { entity: Entity, rotation: f32 },
     Ground { entity: Entity },
     Spawn { entity: Entity },
+    Spring { entity: Entity, rotation: f32 },
 }
 
 
@@ -16,6 +17,7 @@ impl HasEntity for EditorStageObject {
     fn entity(&self) -> Entity {
         match self {
             EditorStageObject::Spike { entity, .. } => *entity,
+            EditorStageObject::Spring { entity, .. } => *entity,
             EditorStageObject::Ground { entity } => *entity,
             EditorStageObject::Spawn { entity } => *entity,
         }
