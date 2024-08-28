@@ -1,7 +1,7 @@
 
 use bevy::{prelude::*, scene::ron, utils::hashbrown::HashMap};
 
-use crate::stage::{stage_builder::{stage_asset::{GroundTile, Spike, Spring, Stage}, stage_creator::{get_object_tilemap_rect_from_index, TILE_SIZE, TILE_SIZE_HALF}}, stage_objects::spike::SpikeFactory};
+use crate::stage::{stage_builder::{stage_asset::{GroundTile, PhantomBlock, Spike, Spring, Stage}, stage_creator::{get_object_tilemap_rect_from_index, TILE_SIZE, TILE_SIZE_HALF}}, stage_objects::spike::SpikeFactory};
 
 use super::{editor_objects::{EditorStageObject, HasEntity}, enums::EditorItem};
 
@@ -53,6 +53,7 @@ impl EditorController {
             EditorItem::Spike => (4.0, 16.0),
             EditorItem::Spawn => (18.0, 16.0),
             EditorItem::Spring => (5.0, 16.0),
+            EditorItem::PhantomBlock => (21.0, 16.0),
         };
 
         let upper_left = Vec2::new(index % EDITOR_TILEMAP_SIZE, (index / EDITOR_TILEMAP_SIZE).trunc()) * tile_size;
@@ -93,6 +94,9 @@ impl EditorController {
             },
             EditorItem::Spring => {
                 self.stage_grid.insert(grid_pos, EditorStageObject::Spring { entity: entity, rotation: self.rotation });
+            },
+            EditorItem::PhantomBlock => {
+                self.stage_grid.insert(grid_pos, EditorStageObject::PhantomBlock { entity: entity });
             },
         }
         self.saved = false;
@@ -185,6 +189,11 @@ impl EditorController {
                         rotation: *rotation,
                     });
                 }
+                EditorStageObject::PhantomBlock { entity: _ } => {
+                    stage.phantom_blocks.push(PhantomBlock {
+                        grid_pos: grid_pos.as_vec2(),
+                    });
+                },
             }
         }
         return stage;

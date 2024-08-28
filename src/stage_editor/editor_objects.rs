@@ -6,6 +6,7 @@ pub enum EditorStageObject {
     Ground { entity: Entity },
     Spawn { entity: Entity },
     Spring { entity: Entity, rotation: f32 },
+    PhantomBlock { entity: Entity },
 }
 
 
@@ -20,6 +21,7 @@ impl HasEntity for EditorStageObject {
             EditorStageObject::Spring { entity, .. } => *entity,
             EditorStageObject::Ground { entity } => *entity,
             EditorStageObject::Spawn { entity } => *entity,
+            EditorStageObject::PhantomBlock { entity } => *entity,
         }
     }
 }
