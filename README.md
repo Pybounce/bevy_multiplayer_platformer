@@ -223,3 +223,17 @@ Idea for block that produces spikes when the player steps on it, simiar to crumb
 - [ ] Save system with name
 - [ ] Resizeable stage
 - [ ] Stupid dumb UI that nobody likes
+
+## Stage Editor Ground
+
+- Updates:
+  - Placing/removing would update the StageGrid field in the controller
+  - Then a draw(rect) call will be made, taking in the Rect of what tiles to update
+  - Ground atlas indices will need to be copied from StageGrid on draw
+- Working with item previews
+  - Just holding the ground item should be able to change the surrounding tiles (like a preview)
+- Idea 1:
+  - Hold some object for the next changes
+  - This object could be another StageGrid hashmap
+  - Then on draw, we draw the normal stage grid, but in the next step, replace the tiles with the changes stagegrid, but slightly transparent
+  - Then when we save, it uses the actual stage grid, but the render uses the actual + changes
