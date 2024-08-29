@@ -9,12 +9,14 @@ pub enum EditorItem {
     Spring = 3,
     PhantomBlock = 4,
     HalfSaw = 5,
+    Key = 6,
 }
 
 impl EditorItem {
     pub fn cycle_next(&self) -> Self {
         match self {
-            EditorItem::Ground => EditorItem::Spike,
+            EditorItem::Ground => EditorItem::Key,
+            EditorItem::Key => EditorItem::Spike,
             EditorItem::Spike => EditorItem::Spawn,
             EditorItem::Spawn => EditorItem::Spring,
             EditorItem::Spring => EditorItem::PhantomBlock,
@@ -29,7 +31,8 @@ impl EditorItem {
             EditorItem::PhantomBlock => EditorItem::Spring,
             EditorItem::Spring => EditorItem::Spawn,
             EditorItem::Spawn => EditorItem::Spike,
-            EditorItem::Spike => EditorItem::Ground,
+            EditorItem::Spike => EditorItem::Key,
+            EditorItem::Key => EditorItem::Ground,
         }
     }
 }

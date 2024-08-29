@@ -1,7 +1,7 @@
 
 use bevy::{prelude::*, scene::ron, utils::hashbrown::HashMap};
 
-use crate::stage::{stage_builder::{stage_asset::{GroundTile, HalfSaw, PhantomBlock, Spike, Spring, Stage}, stage_creator::{get_object_tilemap_rect_from_index, TILE_SIZE, TILE_SIZE_HALF}}, stage_objects::spike::SpikeFactory};
+use crate::stage::{stage_builder::{stage_asset::{GroundTile, HalfSaw, Key, PhantomBlock, Spike, Spring, Stage}, stage_creator::{get_object_tilemap_rect_from_index, TILE_SIZE, TILE_SIZE_HALF}}, stage_objects::spike::SpikeFactory};
 
 use super::{editor_objects::{EditorStageObject, HasEntity}, enums::EditorItem};
 
@@ -55,6 +55,7 @@ impl EditorController {
             EditorItem::Spring => (5.0, 16.0),
             EditorItem::PhantomBlock => (21.0, 16.0),
             EditorItem::HalfSaw => (0.0, 16.0),
+            EditorItem::Key => (255.0, 16.0),
         };
 
         let upper_left = Vec2::new(index % EDITOR_TILEMAP_SIZE, (index / EDITOR_TILEMAP_SIZE).trunc()) * tile_size;
@@ -102,11 +103,14 @@ impl EditorController {
             EditorItem::HalfSaw => {
                 self.stage_grid.insert(grid_pos, EditorStageObject::HalfSaw { entity: entity, rotation: self.rotation });
             },
+            EditorItem::Key => {
+                self.stage_grid.insert(grid_pos, EditorStageObject::Key { entity: entity });
+            },
         }
         self.saved = false;
         return true;
-
     }
+    
     pub fn can_place(&self, grid_pos: IVec2) -> bool {
         grid_pos.x > 0 && 
         grid_pos.x < self.grid_size.x as i32 - 1 &&
@@ -198,11 +202,17 @@ impl EditorController {
                         grid_pos: grid_pos.as_vec2(),
                     });
                 },
-                EditorStageObject::HalfSaw { entity, rotation } => {
+                EditorStageObject::HalfSaw { entity: _, rotation } => {
                     stage.half_saws.push(HalfSaw {
                         grid_pos: grid_pos.as_vec2(),
                         rotation: *rotation,
                         movement_path_opt: None
+                    });
+                },
+                EditorStageObject::Key { entity: _ } => {
+                    stage.keys.push(Key {
+                        grid_pos: grid_pos.as_vec2(),
+                        trigger_id: 0,
                     });
                 },
             }

@@ -8,6 +8,7 @@ pub enum EditorStageObject {
     Spring { entity: Entity, rotation: f32 },
     PhantomBlock { entity: Entity },
     HalfSaw { entity: Entity, rotation: f32 },
+    Key { entity: Entity },
 }
 
 
@@ -24,6 +25,7 @@ impl HasEntity for EditorStageObject {
             EditorStageObject::Spawn { entity } => *entity,
             EditorStageObject::PhantomBlock { entity } => *entity,
             EditorStageObject::HalfSaw { entity, .. } => *entity,
+            EditorStageObject::Key { entity } => *entity,
         }
     }
 }
