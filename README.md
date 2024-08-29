@@ -203,60 +203,23 @@ Saw Placement
 
 Idea for block that produces spikes when the player steps on it, simiar to crumbling block
 
-## Stage Editor Ideas
+## Stage Editor
 
-- Selection Tool
-  - Ability to select an area, then drag it around
-  - If too complex then it's not NEEDED
-- Area Drag Only
-  - To place an item, make the player select a start and end tile, forming a rect of tiles
-  - Clicking one tile will for a rect containing only that tile
-  - Especially useful for adding ground, and lines of spikes
-- Triggers Idea!
-  - For things like the key and key blocks, make it so 'rotating' them, actually rotates through set colours
-  - Then the trigger and triggerables are colour coded
-  - This would mean not even having to work out what is linked, since the COLOUR is just the TriggerID
-  - Also means that it will automatically work for buttons/keys/anything, since the colour is the triggerID
-- Hotbar with all different items at the bottom
-  - The item images can just be the tiles
-  - Q/E will cycle between different items
-  - A resource enum contains the currently selected item
-- UIHotbar will just be a new component
-  - It will take in the keycodes to move left/right
-  - It will take in a list of Image handles and some enum? maybe just ids?
-  - Then the dev can get the currently selected ID and map to an enum or whatever
-  - QUERY: Does the hotbar control listening for Q/E input or do I have a master input listener
-    - Just because when I'm placing a path for a saw, I don't want the user switching
-    - Or if they do switch, cancel all the pending path for the saw etc
-- Make a StageBuilder struct that can .AddSpike(pos) etc
-  - Then at the very end can do .Build() to return the stage_asset::Stage to be saved
-  - This way I can change how I maintain the current stage while building it (ie a 2d array for speedy grid position lookups)
-- UI Toolbar
-
-  - For many blocks they will need UI, such as saws for saw speed, or projectiles for rate and speed
-  - Can add a toolbar to the right that appears when you've got a specific block selected
-  - Then you tweak it and all blocks placed after that, will have those values
-
-  ## Stage Editor Data Idea
-
-  - Have a StageEdit struct
-    - Contains data in such a way where it's easy to check if new placements can be made, but is not efficient (ie a big array for the map)
-  - Have the actual Stage struct
-    - Stores data in the way it will be saved
-    - Much more efficient
-    - Stages will be built from this format
-  - Workflow for editing stage
-    - Click to build object
-    - Checks made on StageEdit struct to see if it's a legal edit
-    - If it is, update StageEdit struct to contain new object
-    - Convert StageEdit struct to Stage struct
-    - Rebuild stage using Stage struct
-
-  ## Stage Editor Hotbar Idea
-
-  - Have an enum for Objects (where the name is the object, value is the ID)
-  - Have an enum for object icon atlas ids
-  - Have a mapper for ObjectID => ObjectIconAtlasID
-  - Hotbar contains array of 9 ObjectIds
-  - Maintain the current hotbar index
-  - Can get the current objectID from hotbar index, and the atlasID from that objectID
+- [ ] Area drag
+  - Drag areas to place blocks
+- [ ] Moving saws
+  - Add moving saw placement
+- [ ] Smart rotations
+  - Auto rotates so it's placed on a ground block
+  - Will prioritise current rotation if multiple are options
+    - Controller holds an Option<auto-rotation> and the current-rotation
+    - This way it will have a memory of the last manual rotation and can prioritise that if it becomes an option again
+    - Placing an item sets the current rotation to whatever the rotation of that item is
+    - Basically, take the get_jumped map, when placing all the springs at the top, moving the mouse over to the next position will change auto rotation to be on the ceiling, but we don't want that, if possible it should stay as the user intended and only display ceiling if it's the only option, snapping back to right facing when that becomes an option.
+- [ ] Item Varients
+  - Triggers will need varients, displayed with colours, to set their triggerID
+  - They will be cycled with W/S
+- [ ] Current item needs to be slightly transparent
+- [ ] Save system with name
+- [ ] Resizeable stage
+- [ ] Stupid dumb UI that nobody likes
