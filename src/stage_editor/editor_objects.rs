@@ -9,6 +9,7 @@ pub enum EditorStageObject {
     PhantomBlock { entity: Entity },
     HalfSaw { entity: Entity, rotation: f32 },
     Key { entity: Entity },
+    LockBlock { entity: Entity },
 }
 
 
@@ -26,6 +27,7 @@ impl HasEntity for EditorStageObject {
             EditorStageObject::PhantomBlock { entity } => *entity,
             EditorStageObject::HalfSaw { entity, .. } => *entity,
             EditorStageObject::Key { entity } => *entity,
+            EditorStageObject::LockBlock { entity } => *entity,
         }
     }
 }
