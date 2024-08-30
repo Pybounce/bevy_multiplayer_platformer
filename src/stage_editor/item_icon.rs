@@ -72,6 +72,12 @@ pub fn handle_current_item_change(
     else if input.just_pressed(KeyCode::KeyA) {
         editor_con.cycle_prev_item()
     }
+    else if input.just_pressed(KeyCode::KeyW) {
+        editor_con.cycle_next_item_variant()
+    }
+    else if input.just_pressed(KeyCode::KeyS) {
+        editor_con.cycle_prev_item_variant()
+    }
     else {
         return;
     }

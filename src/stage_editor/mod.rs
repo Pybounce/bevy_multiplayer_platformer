@@ -1,4 +1,4 @@
-use bevy::{input::keyboard::KeyboardInput, math::VectorSpace, prelude::*};
+use bevy::prelude::*;
 use controller::{EditorController, GROUND_TILEMAP_SIZE};
 use item_icon::*;
 use crate::{camera::PixelPerfectTranslation, common::{mouse::MouseData, states::{AppState, DespawnOnStateExit}}, stage::stage_builder::stage_creator::TILE_SIZE};
@@ -6,7 +6,6 @@ use crate::{camera::PixelPerfectTranslation, common::{mouse::MouseData, states::
 mod enums;
 mod controller;
 mod item_icon;
-mod editor_objects;
 
 pub struct StageEditorPlugin;
 
@@ -153,7 +152,7 @@ fn update_ground_atlas_indices(
     for adjacent_grid_pos in &adjacent_grid_positions {
         if let Some(stage_object) = editor_con.stage_grid.get(adjacent_grid_pos) {
             match stage_object {
-                editor_objects::EditorStageObject::Ground { entity } => {
+                enums::EditorStageObject::Ground { entity } => {
                     if let Ok(mut s) = stage_entities_q.get_mut(*entity) {
                         let atlas_index = get_ground_atlas_index(&editor_con, *adjacent_grid_pos, ground_icon_grid_pos_opt) as f32;
                         let upper_left = Vec2::new(atlas_index % GROUND_TILEMAP_SIZE, (atlas_index / GROUND_TILEMAP_SIZE).trunc()) * TILE_SIZE;
@@ -190,7 +189,7 @@ fn get_ground_atlas_index(
         }
         if let Some(stage_object) = editor_con.stage_grid.get(adjacent_grid_pos) {
             match stage_object {
-                editor_objects::EditorStageObject::Ground { entity } => bitmask |= current_bit,
+                enums::EditorStageObject::Ground { entity } => bitmask |= current_bit,
                 _ => (),
             }
         };

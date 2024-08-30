@@ -3,7 +3,7 @@ use bevy::{prelude::*, scene::ron, utils::hashbrown::HashMap};
 
 use crate::stage::stage_builder::{stage_asset::{GroundTile, HalfSaw, Key, LockBlock, PhantomBlock, Spike, Spring, Stage}, stage_creator::TILE_SIZE};
 
-use super::{editor_objects::{EditorStageObject, HasEntity}, enums::EditorItem};
+use super::enums::*;
 
 const EDITOR_TILEMAP_SIZE: f32 = 16.0;
 pub const GROUND_TILEMAP_SIZE: f32 = 7.0;
@@ -47,6 +47,16 @@ impl EditorController {
             self.current_item = self.current_item.cycle_prev();
         }
     }
+    pub fn cycle_next_item_variant(&mut self) {
+        if self.can_cycle_item_variant() {
+            self.current_item = self.current_item.cycle_next_variant();
+        }
+    }
+    pub fn cycle_prev_item_variant(&mut self) {
+        if self.can_cycle_item_variant() {
+            self.current_item = self.current_item.cycle_prev_variant();
+        }
+    }
     pub fn get_item_icon_atlas_rect(&self) -> Rect {
         let (index, tile_size) = match self.current_item {
             EditorItem::Ground => (15.0, 16.0),
@@ -55,8 +65,20 @@ impl EditorController {
             EditorItem::Spring => (5.0, 16.0),
             EditorItem::PhantomBlock => (21.0, 16.0),
             EditorItem::HalfSaw => (0.0, 16.0),
-            EditorItem::Key => (255.0, 16.0),
-            EditorItem::LockBlock => (254.0, 16.0),
+            EditorItem::Key(variant) => {
+                match variant {
+                    KeyVarient::One => (255.0, 16.0),
+                    KeyVarient::Two => (239.0, 16.0),
+                    KeyVarient::Three => (223.0, 16.0),
+                }
+            },
+            EditorItem::LockBlock(variant) => {
+                match variant {
+                    LockBlockVarient::One => (254.0, 16.0),
+                    LockBlockVarient::Two => (238.0, 16.0),
+                    LockBlockVarient::Three => (222.0, 16.0),
+                }
+            },
         };
 
         let upper_left = Vec2::new(index % EDITOR_TILEMAP_SIZE, (index / EDITOR_TILEMAP_SIZE).trunc()) * tile_size;
@@ -104,11 +126,19 @@ impl EditorController {
             EditorItem::HalfSaw => {
                 self.stage_grid.insert(grid_pos, EditorStageObject::HalfSaw { entity: entity, rotation: self.rotation });
             },
-            EditorItem::Key => {
-                self.stage_grid.insert(grid_pos, EditorStageObject::Key { entity: entity });
+            EditorItem::Key(variant) => {
+                match variant {
+                    KeyVarient::One => self.stage_grid.insert(grid_pos, EditorStageObject::Key { entity: entity, trigger_id: 1 }),
+                    KeyVarient::Two => self.stage_grid.insert(grid_pos, EditorStageObject::Key { entity: entity, trigger_id: 2 }),
+                    KeyVarient::Three => self.stage_grid.insert(grid_pos, EditorStageObject::Key { entity: entity, trigger_id: 3 }),
+                };
             },
-            EditorItem::LockBlock => {
-                self.stage_grid.insert(grid_pos, EditorStageObject::LockBlock { entity: entity });
+            EditorItem::LockBlock(variant) => {
+                match variant {
+                    LockBlockVarient::One => self.stage_grid.insert(grid_pos, EditorStageObject::LockBlock { entity: entity, trigger_id: 1 }),
+                    LockBlockVarient::Two => self.stage_grid.insert(grid_pos, EditorStageObject::LockBlock { entity: entity, trigger_id: 2 }),
+                    LockBlockVarient::Three => self.stage_grid.insert(grid_pos, EditorStageObject::LockBlock { entity: entity, trigger_id: 3 }),
+                };
             },
         }
         self.saved = false;
@@ -172,6 +202,9 @@ impl EditorController {
     fn can_cycle_item(&self) -> bool {
         true
     }
+    fn can_cycle_item_variant(&self) -> bool {
+        true
+    }
     fn can_save(&self) -> bool {
         true
     }
@@ -213,16 +246,16 @@ impl EditorController {
                         movement_path_opt: None
                     });
                 },
-                EditorStageObject::Key { entity: _ } => {
+                EditorStageObject::Key { entity: _ , trigger_id} => {
                     stage.keys.push(Key {
                         grid_pos: grid_pos.as_vec2(),
-                        trigger_id: 0,
+                        trigger_id: *trigger_id,
                     });
                 },
-                EditorStageObject::LockBlock { entity: _ } => {
+                EditorStageObject::LockBlock { entity: _, trigger_id } => {
                     stage.lock_blocks.push(LockBlock {
                         grid_pos: grid_pos.as_vec2(),
-                        trigger_id: 0,
+                        trigger_id: *trigger_id,
                     });
                 },
             }
