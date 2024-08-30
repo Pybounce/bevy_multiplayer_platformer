@@ -67,16 +67,16 @@ impl EditorController {
             EditorItem::HalfSaw => (0.0, 16.0),
             EditorItem::Key(variant) => {
                 match variant {
-                    KeyVarient::One => (255.0, 16.0),
-                    KeyVarient::Two => (239.0, 16.0),
-                    KeyVarient::Three => (223.0, 16.0),
+                    KeyVariant::One => (255.0, 16.0),
+                    KeyVariant::Two => (239.0, 16.0),
+                    KeyVariant::Three => (223.0, 16.0),
                 }
             },
             EditorItem::LockBlock(variant) => {
                 match variant {
-                    LockBlockVarient::One => (254.0, 16.0),
-                    LockBlockVarient::Two => (238.0, 16.0),
-                    LockBlockVarient::Three => (222.0, 16.0),
+                    LockBlockVariant::One => (254.0, 16.0),
+                    LockBlockVariant::Two => (238.0, 16.0),
+                    LockBlockVariant::Three => (222.0, 16.0),
                 }
             },
         };
@@ -128,16 +128,16 @@ impl EditorController {
             },
             EditorItem::Key(variant) => {
                 match variant {
-                    KeyVarient::One => self.stage_grid.insert(grid_pos, EditorStageObject::Key { entity: entity, trigger_id: 1 }),
-                    KeyVarient::Two => self.stage_grid.insert(grid_pos, EditorStageObject::Key { entity: entity, trigger_id: 2 }),
-                    KeyVarient::Three => self.stage_grid.insert(grid_pos, EditorStageObject::Key { entity: entity, trigger_id: 3 }),
+                    KeyVariant::One => self.stage_grid.insert(grid_pos, EditorStageObject::Key { entity: entity, trigger_id: 1 }),
+                    KeyVariant::Two => self.stage_grid.insert(grid_pos, EditorStageObject::Key { entity: entity, trigger_id: 2 }),
+                    KeyVariant::Three => self.stage_grid.insert(grid_pos, EditorStageObject::Key { entity: entity, trigger_id: 3 }),
                 };
             },
             EditorItem::LockBlock(variant) => {
                 match variant {
-                    LockBlockVarient::One => self.stage_grid.insert(grid_pos, EditorStageObject::LockBlock { entity: entity, trigger_id: 1 }),
-                    LockBlockVarient::Two => self.stage_grid.insert(grid_pos, EditorStageObject::LockBlock { entity: entity, trigger_id: 2 }),
-                    LockBlockVarient::Three => self.stage_grid.insert(grid_pos, EditorStageObject::LockBlock { entity: entity, trigger_id: 3 }),
+                    LockBlockVariant::One => self.stage_grid.insert(grid_pos, EditorStageObject::LockBlock { entity: entity, trigger_id: 1 }),
+                    LockBlockVariant::Two => self.stage_grid.insert(grid_pos, EditorStageObject::LockBlock { entity: entity, trigger_id: 2 }),
+                    LockBlockVariant::Three => self.stage_grid.insert(grid_pos, EditorStageObject::LockBlock { entity: entity, trigger_id: 3 }),
                 };
             },
         }

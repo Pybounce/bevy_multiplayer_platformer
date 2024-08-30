@@ -44,32 +44,32 @@ pub enum EditorItem {
     Spring = 3,
     PhantomBlock = 4,
     HalfSaw = 5,
-    Key(KeyVarient) = 6,
-    LockBlock(LockBlockVarient) = 7,
+    Key(KeyVariant) = 6,
+    LockBlock(LockBlockVariant) = 7,
 }
 
 impl EditorItem {
     pub fn cycle_next(&self) -> Self {
         match self {
-            EditorItem::Ground => EditorItem::Key(KeyVarient::One),
+            EditorItem::Ground => EditorItem::Key(KeyVariant::One),
             EditorItem::Key(_) => EditorItem::Spike,
             EditorItem::Spike => EditorItem::Spawn,
             EditorItem::Spawn => EditorItem::Spring,
             EditorItem::Spring => EditorItem::PhantomBlock,
             EditorItem::PhantomBlock => EditorItem::HalfSaw,
-            EditorItem::HalfSaw => EditorItem::LockBlock(LockBlockVarient::One),
+            EditorItem::HalfSaw => EditorItem::LockBlock(LockBlockVariant::One),
             EditorItem::LockBlock(_) => EditorItem::Ground,
         }
     }
     pub fn cycle_prev(&self) -> Self {
         match self {
-            EditorItem::Ground => EditorItem::LockBlock(LockBlockVarient::One),
+            EditorItem::Ground => EditorItem::LockBlock(LockBlockVariant::One),
             EditorItem::LockBlock(_) => EditorItem::HalfSaw,
             EditorItem::HalfSaw => EditorItem::PhantomBlock,
             EditorItem::PhantomBlock => EditorItem::Spring,
             EditorItem::Spring => EditorItem::Spawn,
             EditorItem::Spawn => EditorItem::Spike,
-            EditorItem::Spike => EditorItem::Key(KeyVarient::One),
+            EditorItem::Spike => EditorItem::Key(KeyVariant::One),
             EditorItem::Key(_) => EditorItem::Ground,
         }
     }
@@ -94,57 +94,57 @@ impl EditorItem {
             EditorItem::Spring => EditorItem::Spring,
             EditorItem::Spawn => EditorItem::Spawn,
             EditorItem::Spike => EditorItem::Spike,
-            EditorItem::Key(variant) => EditorItem::Key(variant.cycle_next()),
+            EditorItem::Key(variant) => EditorItem::Key(variant.cycle_prev()),
         }
     }
 }
 
 #[derive(Default, Copy, Clone, Debug)]
-pub enum KeyVarient {
+pub enum KeyVariant {
     #[default]
     One,
     Two,
     Three,
 }
 
-impl KeyVarient {
+impl KeyVariant {
     pub fn cycle_next(&self) -> Self {
         match self {
-            KeyVarient::One => KeyVarient::Two,
-            KeyVarient::Two => KeyVarient::Three,
-            KeyVarient::Three => KeyVarient::One,
+            KeyVariant::One => KeyVariant::Two,
+            KeyVariant::Two => KeyVariant::Three,
+            KeyVariant::Three => KeyVariant::One,
         }
     }
     pub fn cycle_prev(&self) -> Self {
         match self {
-            KeyVarient::One => KeyVarient::Three,
-            KeyVarient::Three => KeyVarient::Two,
-            KeyVarient::Two => KeyVarient::One,
+            KeyVariant::One => KeyVariant::Three,
+            KeyVariant::Three => KeyVariant::Two,
+            KeyVariant::Two => KeyVariant::One,
         }
     }
 }
 
 #[derive(Default, Copy, Clone, Debug)]
-pub enum LockBlockVarient {
+pub enum LockBlockVariant {
     #[default]
     One,
     Two,
     Three,
 }
 
-impl LockBlockVarient {
+impl LockBlockVariant {
     pub fn cycle_next(&self) -> Self {
         match self {
-            LockBlockVarient::One => LockBlockVarient::Two,
-            LockBlockVarient::Two => LockBlockVarient::Three,
-            LockBlockVarient::Three => LockBlockVarient::One,
+            LockBlockVariant::One => LockBlockVariant::Two,
+            LockBlockVariant::Two => LockBlockVariant::Three,
+            LockBlockVariant::Three => LockBlockVariant::One,
         }
     }
     pub fn cycle_prev(&self) -> Self {
         match self {
-            LockBlockVarient::One => LockBlockVarient::Three,
-            LockBlockVarient::Three => LockBlockVarient::Two,
-            LockBlockVarient::Two => LockBlockVarient::One,
+            LockBlockVariant::One => LockBlockVariant::Three,
+            LockBlockVariant::Three => LockBlockVariant::Two,
+            LockBlockVariant::Two => LockBlockVariant::One,
         }
     }
 }

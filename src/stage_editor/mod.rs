@@ -189,7 +189,7 @@ fn get_ground_atlas_index(
         }
         if let Some(stage_object) = editor_con.stage_grid.get(adjacent_grid_pos) {
             match stage_object {
-                enums::EditorStageObject::Ground { entity } => bitmask |= current_bit,
+                enums::EditorStageObject::Ground { entity: _ } => bitmask |= current_bit,
                 _ => (),
             }
         };
