@@ -57,7 +57,7 @@ fn handle_placement(
     if buttons.just_pressed(MouseButton::Left) {
         if let Ok(e) = current_item_q.get_single_mut() {
             let mouse_pos = editor_con.world_to_grid_pos(mouse_data.world_position.extend(0.0));
-            if editor_con.try_place(mouse_pos, e.clone(), &mut commands) {
+            if editor_con.try_place(mouse_pos, e.clone()) {
                 commands.entity(e).remove::<ItemIcon>();
             }
         }

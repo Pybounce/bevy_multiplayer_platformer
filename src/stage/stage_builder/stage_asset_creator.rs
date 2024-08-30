@@ -5,7 +5,7 @@ use bevy::{
     prelude::*,
 };
 
-use crate::stage::stage_builder::stage_asset::{Checkpoint, GroundTile, HalfSaw, IntervalBlock, Key, LockBlock, MovementPath, PhantomBlock, Spike, Spring, Stage};
+use crate::stage::stage_builder::stage_asset::{Checkpoint, GroundTile, HalfSaw, IntervalBlock, Key, LockBlock, PhantomBlock, Spike, Spring, Stage};
 
 pub fn save_stage() {
     save_stage_0();

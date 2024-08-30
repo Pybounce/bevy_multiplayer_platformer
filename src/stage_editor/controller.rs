@@ -1,7 +1,7 @@
 
 use bevy::{prelude::*, scene::ron, utils::hashbrown::HashMap};
 
-use crate::stage::{stage_builder::{stage_asset::{GroundTile, HalfSaw, Key, LockBlock, PhantomBlock, Spike, Spring, Stage}, stage_creator::{get_object_tilemap_rect_from_index, TILE_SIZE, TILE_SIZE_HALF}}, stage_objects::spike::SpikeFactory};
+use crate::stage::stage_builder::{stage_asset::{GroundTile, HalfSaw, Key, LockBlock, PhantomBlock, Spike, Spring, Stage}, stage_creator::TILE_SIZE};
 
 use super::{editor_objects::{EditorStageObject, HasEntity}, enums::EditorItem};
 
@@ -82,7 +82,7 @@ impl EditorController {
             (world_pos.y /self.tile_size).trunc()as i32) 
     }
 
-    pub fn try_place(&mut self, grid_pos: IVec2, entity: Entity, commands: &mut Commands) -> bool {
+    pub fn try_place(&mut self, grid_pos: IVec2, entity: Entity) -> bool {
         if !self.can_place(grid_pos) { return false; }
         match self.current_item {
             EditorItem::Ground => {
