@@ -10,6 +10,7 @@ pub enum EditorStageObject {
     HalfSaw { entity: Entity, rotation: f32 },
     Key { entity: Entity, trigger_id: usize },
     LockBlock { entity: Entity, trigger_id: usize },
+    IntervalBlock { entity: Entity, is_active: bool },
 }
 
 
@@ -28,6 +29,7 @@ impl HasEntity for EditorStageObject {
             EditorStageObject::HalfSaw { entity, .. } => *entity,
             EditorStageObject::Key { entity, .. } => *entity,
             EditorStageObject::LockBlock { entity, .. } => *entity,
+            EditorStageObject::IntervalBlock { entity, .. } => *entity,
         }
     }
 }
@@ -46,6 +48,7 @@ pub enum EditorItem {
     HalfSaw = 5,
     Key(KeyVariant) = 6,
     LockBlock(LockBlockVariant) = 7,
+    IntervalBlock(IntervalBlockVariant) = 8,
 }
 
 impl EditorItem {
@@ -58,12 +61,14 @@ impl EditorItem {
             EditorItem::Spring => EditorItem::PhantomBlock,
             EditorItem::PhantomBlock => EditorItem::HalfSaw,
             EditorItem::HalfSaw => EditorItem::LockBlock(LockBlockVariant::One),
-            EditorItem::LockBlock(_) => EditorItem::Ground,
+            EditorItem::LockBlock(_) => EditorItem::IntervalBlock(IntervalBlockVariant::On),
+            EditorItem::IntervalBlock(_) => EditorItem::Ground,
         }
     }
     pub fn cycle_prev(&self) -> Self {
         match self {
-            EditorItem::Ground => EditorItem::LockBlock(LockBlockVariant::One),
+            EditorItem::Ground => EditorItem::IntervalBlock(IntervalBlockVariant::On),
+            EditorItem::IntervalBlock(_) => EditorItem::LockBlock(LockBlockVariant::One),
             EditorItem::LockBlock(_) => EditorItem::HalfSaw,
             EditorItem::HalfSaw => EditorItem::PhantomBlock,
             EditorItem::PhantomBlock => EditorItem::Spring,
@@ -83,6 +88,7 @@ impl EditorItem {
             EditorItem::PhantomBlock => EditorItem::PhantomBlock,
             EditorItem::HalfSaw => EditorItem::HalfSaw,
             EditorItem::LockBlock(variant) => EditorItem::LockBlock(variant.cycle_next()),
+            EditorItem::IntervalBlock(variant) => EditorItem::IntervalBlock(variant.cycle_next()),
         }
     }
     pub fn cycle_prev_variant(&self) -> Self {
@@ -95,6 +101,7 @@ impl EditorItem {
             EditorItem::Spawn => EditorItem::Spawn,
             EditorItem::Spike => EditorItem::Spike,
             EditorItem::Key(variant) => EditorItem::Key(variant.cycle_prev()),
+            EditorItem::IntervalBlock(variant) => EditorItem::IntervalBlock(variant.cycle_prev()),
         }
     }
 }
@@ -145,6 +152,28 @@ impl LockBlockVariant {
             LockBlockVariant::One => LockBlockVariant::Three,
             LockBlockVariant::Three => LockBlockVariant::Two,
             LockBlockVariant::Two => LockBlockVariant::One,
+        }
+    }
+}
+
+#[derive(Default, Copy, Clone, Debug)]
+pub enum IntervalBlockVariant {
+    #[default]
+    On,
+    Off,
+}
+
+impl IntervalBlockVariant {
+    pub fn cycle_next(&self) -> Self {
+        match self {
+            IntervalBlockVariant::On => IntervalBlockVariant::Off,
+            IntervalBlockVariant::Off => IntervalBlockVariant::On,
+        }
+    }
+    pub fn cycle_prev(&self) -> Self {
+        match self {
+            IntervalBlockVariant::On => IntervalBlockVariant::Off,
+            IntervalBlockVariant::Off => IntervalBlockVariant::On,
         }
     }
 }

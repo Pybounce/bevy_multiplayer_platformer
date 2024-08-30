@@ -206,6 +206,7 @@ fn stage_from_grid(mut layout: String, width: usize, height: usize, id: usize) {
         else if tile == '❔' {
             interval_blocks.push(IntervalBlock {
                 grid_pos: Vec2::new(x as f32, y as f32),
+                is_active: true
             });
         }
         else if tile == '🔲' {

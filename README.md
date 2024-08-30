@@ -216,7 +216,7 @@ Idea for block that produces spikes when the player steps on it, simiar to crumb
     - This way it will have a memory of the last manual rotation and can prioritise that if it becomes an option again
     - Placing an item sets the current rotation to whatever the rotation of that item is
     - Basically, take the get_jumped map, when placing all the springs at the top, moving the mouse over to the next position will change auto rotation to be on the ceiling, but we don't want that, if possible it should stay as the user intended and only display ceiling if it's the only option, snapping back to right facing when that becomes an option.
-- [ ] Item Varients
+- [x] Item Varients
   - Triggers will need varients, displayed with colours, to set their triggerID
   - They will be cycled with W/S
 - [ ] Current item needs to be slightly transparent

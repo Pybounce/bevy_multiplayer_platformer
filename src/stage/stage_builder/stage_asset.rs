@@ -93,7 +93,8 @@ pub struct Key {
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct IntervalBlock {
-    pub grid_pos: Vec2
+    pub grid_pos: Vec2,
+    pub is_active: bool
 }
 #[derive(Debug, Deserialize, Serialize)]
 pub struct PhantomBlock {

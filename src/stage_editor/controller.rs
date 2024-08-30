@@ -1,7 +1,7 @@
 
 use bevy::{prelude::*, scene::ron, utils::hashbrown::HashMap};
 
-use crate::stage::stage_builder::{stage_asset::{GroundTile, HalfSaw, Key, LockBlock, PhantomBlock, Spike, Spring, Stage}, stage_creator::TILE_SIZE};
+use crate::stage::stage_builder::{stage_asset::{GroundTile, HalfSaw, IntervalBlock, Key, LockBlock, PhantomBlock, Spike, Spring, Stage}, stage_creator::TILE_SIZE};
 
 use super::enums::*;
 
@@ -79,6 +79,12 @@ impl EditorController {
                     LockBlockVariant::Three => (222.0, 16.0),
                 }
             },
+            EditorItem::IntervalBlock(variant) => {
+                match variant {
+                    IntervalBlockVariant::On => (253.0, 16.0),
+                    IntervalBlockVariant::Off => (237.0, 16.0),
+                }
+            },
         };
 
         let upper_left = Vec2::new(index % EDITOR_TILEMAP_SIZE, (index / EDITOR_TILEMAP_SIZE).trunc()) * tile_size;
@@ -138,6 +144,12 @@ impl EditorController {
                     LockBlockVariant::One => self.stage_grid.insert(grid_pos, EditorStageObject::LockBlock { entity: entity, trigger_id: 1 }),
                     LockBlockVariant::Two => self.stage_grid.insert(grid_pos, EditorStageObject::LockBlock { entity: entity, trigger_id: 2 }),
                     LockBlockVariant::Three => self.stage_grid.insert(grid_pos, EditorStageObject::LockBlock { entity: entity, trigger_id: 3 }),
+                };
+            },
+            EditorItem::IntervalBlock(variant) => {
+                match variant {
+                    IntervalBlockVariant::On => self.stage_grid.insert(grid_pos, EditorStageObject::IntervalBlock { entity: entity, is_active: true }),
+                    IntervalBlockVariant::Off => self.stage_grid.insert(grid_pos, EditorStageObject::IntervalBlock { entity: entity, is_active:  false }),
                 };
             },
         }
@@ -256,6 +268,12 @@ impl EditorController {
                     stage.lock_blocks.push(LockBlock {
                         grid_pos: grid_pos.as_vec2(),
                         trigger_id: *trigger_id,
+                    });
+                },
+                EditorStageObject::IntervalBlock { entity: _, is_active } => {
+                    stage.interval_blocks.push(IntervalBlock {
+                        grid_pos: grid_pos.as_vec2(),
+                        is_active: *is_active
                     });
                 },
             }
