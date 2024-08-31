@@ -283,3 +283,9 @@ Idea for block that produces spikes when the player steps on it, simiar to crumb
   - So moving to a new part of the grid, or going in some menu, will just remove the uncommited events and re-render that part
   - Saving will also clear uncommited events beforehand
   - Would likely just need an index for the uncommited events since you shouldn't be able to commit, uncommit, commit and leave an uncommited in the middle
+
+## Steamworks Integration
+
+- I could let the download system for stages use steamIds
+- This would let players like stages, also using Steam as the auth
+- Would not be portable to places other than steam but, can cross that bridge when we get there, since we will never get there
