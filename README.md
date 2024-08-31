@@ -237,3 +237,49 @@ Idea for block that produces spikes when the player steps on it, simiar to crumb
   - This object could be another StageGrid hashmap
   - Then on draw, we draw the normal stage grid, but in the next step, replace the tiles with the changes stagegrid, but slightly transparent
   - Then when we save, it uses the actual stage grid, but the render uses the actual + changes
+- Idea 2:
+  - Similar to Idea 1 in that we hold some data for the next change
+  - The data is a list of an enum called StageEditEvent
+  - This enum can be Deletion(grid_pos), Addition(EditorStageObject), Resize(new_size)
+  - Then when we change either current data or event data, we do a re-render of affected areas?
+- Ideas Refined:
+  - So you still have an enum for ChangeRequest
+  - That's a list of all the preview changes
+  - Then you have a func for add_request that appends it
+    - This will happen when you move the mouse and go to a new tile
+    - But it will clear_requests first
+  - Deletions will not use the change requests:
+    - ChangeRequests are really just previews, that's all
+    - Deletion is an instant change and can be applied to the StageGrid, bypassing the changerequests
+
+## Event Driven Stage Editor
+
+- Have an enum for StageEditEvent
+- The controller should be able to take in this event and apply it to the current data
+- The controller also needs to be able to reverse the event
+- This way ctrl+Z will just undo the last event and decrement the pointer
+- ctrl+shift+z will, if the pointer isn't at the top of the stack, run the event above it and increment
+- Events could be as follows:
+
+  - InsertGround(pos)
+  - InsertSpike(pos)
+  - ResizeStage(x, y)
+  - RemoveTile(pos)
+  - I could add InsertTile(TileType), but then I'd just be matching on TileType anyway
+  - PROBLEM: RemoveTile and Resize don't have clear undo's, we would need some events, but the stack consists of changes, and those changes can have undo's?
+
+- Better way for events:
+  - Instead of an event being AddGround(pos), there would just be a function add_ground(pos)
+  - This function would then go through and create a group of events that add the new ground and update all existing surrounding grounds etc, perhaps even a delete event for the current tile if there is one
+  - When an event is APPLIED, we can work out the re-render area and after it's been applied, run a re-render on that area
+  - resize_stage(x, y) would also be a function, that then generates a group of events for removing the ground at the boarders, and adding the ground at the new boarders, also updating the actual size value in the editor controller
+  - This way, the 'undo' and 'redo' don't run one event, they run one group of events
+  - Functions like add_ground(pos), add_spike(pos), resize_stage(x, y), generate a group of specific events, and the group is added to the stack
+- Previews:
+  - As for the previews, we could actually have a bool on each event group, that shows if it's been commited or not.
+  - So the render always uses the StageGrid, which includes all changes, including preview changes
+  - However, in the event stack, the preview changes will be marked as uncommited
+  - We can then clear uncommited, which will undo those changes and pop them from the stack
+  - So moving to a new part of the grid, or going in some menu, will just remove the uncommited events and re-render that part
+  - Saving will also clear uncommited events beforehand
+  - Would likely just need an index for the uncommited events since you shouldn't be able to commit, uncommit, commit and leave an uncommited in the middle
