@@ -289,3 +289,12 @@ Idea for block that produces spikes when the player steps on it, simiar to crumb
 - I could let the download system for stages use steamIds
 - This would let players like stages, also using Steam as the auth
 - Would not be portable to places other than steam but, can cross that bridge when we get there, since we will never get there
+
+## Potential Future Event Issue
+
+- If I add 2 events to the same tile, before the stage grid reads the latest event, then the checks will be using the old stage grid
+- Will need to make sure stage grid is _always_ up to date, but this also feels pretty icky...idk, will revisit
+
+## Achievements
+
+- Bounce off a single spring 10.000 times

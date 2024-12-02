@@ -6,6 +6,7 @@ use crate::{camera::PixelPerfectTranslation, common::{mouse::MouseData, states::
 mod enums;
 mod controller;
 mod item_icon;
+mod events;
 
 pub struct StageEditorPlugin;
 

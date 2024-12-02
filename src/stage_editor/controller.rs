@@ -1,9 +1,9 @@
 
 use bevy::{prelude::*, scene::ron, utils::hashbrown::HashMap};
 
-use crate::stage::stage_builder::{stage_asset::{GroundTile, HalfSaw, IntervalBlock, Key, LockBlock, PhantomBlock, Spike, Spring, Stage}, stage_creator::TILE_SIZE};
+use crate::{common::limited_stack::LimitedStack, stage::stage_builder::{stage_asset::{GroundTile, HalfSaw, IntervalBlock, Key, LockBlock, PhantomBlock, Spike, Spring, Stage}, stage_creator::TILE_SIZE}};
 
-use super::enums::*;
+use super::{enums::*, events::*};
 
 const EDITOR_TILEMAP_SIZE: f32 = 16.0;
 pub const GROUND_TILEMAP_SIZE: f32 = 7.0;
@@ -18,10 +18,11 @@ pub struct EditorController {
     pub ground_atlas: Handle<Image>,
     pub stage_grid: HashMap<IVec2, EditorStageObject>,
     grid_size: IVec2,
-    pub rotation: f32
+    pub rotation: f32,
+    event_groups: LimitedStack<EditorEventGroup>
 }
 
-
+///API
 impl EditorController {
     pub fn new(object_atlas: &Handle<Image>, ground_atlas: &Handle<Image>) -> Self {
         
@@ -33,7 +34,8 @@ impl EditorController {
             ground_atlas: ground_atlas.clone(),
             grid_size: IVec2::splat(30),
             stage_grid: HashMap::new(),
-            rotation: 0.0
+            rotation: 0.0,
+            event_groups: LimitedStack::new(50)
          }
     }
 
@@ -114,20 +116,24 @@ impl EditorController {
         if !self.can_place(grid_pos) { return false; }
         match self.current_item {
             EditorItem::Ground => {
-                self.stage_grid.insert(grid_pos, EditorStageObject::Ground { entity } );
+                self.insert_ground_at(grid_pos);
+                //self.stage_grid.insert(grid_pos, EditorStageObject::Ground { entity } );
             },
             EditorItem::Spike => {
-                self.stage_grid.insert(grid_pos, EditorStageObject::Spike { entity: entity, rotation: self.rotation });
+                self.insert_spike_at(grid_pos, self.rotation);
+                //self.stage_grid.insert(grid_pos, EditorStageObject::Spike { entity: entity, rotation: self.rotation });
             },
             EditorItem::Spawn => {
-                //TODO: Remove old spawn self.stage_grid.remove_entry(&);
-                self.stage_grid.insert(grid_pos, EditorStageObject::Spawn { entity } );
+                self.insert_spawn_at(grid_pos);
+                //self.stage_grid.insert(grid_pos, EditorStageObject::Spawn { entity } );
             },
             EditorItem::Spring => {
-                self.stage_grid.insert(grid_pos, EditorStageObject::Spring { entity: entity, rotation: self.rotation });
+                self.insert_spring_at(grid_pos, self.rotation);
+                //self.stage_grid.insert(grid_pos, EditorStageObject::Spring { entity: entity, rotation: self.rotation });
             },
             EditorItem::PhantomBlock => {
-                self.stage_grid.insert(grid_pos, EditorStageObject::PhantomBlock { entity: entity });
+                self.insert_phantom_block_at(grid_pos);
+                //self.stage_grid.insert(grid_pos, EditorStageObject::PhantomBlock { entity: entity });
             },
             EditorItem::HalfSaw => {
                 self.stage_grid.insert(grid_pos, EditorStageObject::HalfSaw { entity: entity, rotation: self.rotation });
@@ -201,15 +207,27 @@ impl EditorController {
 
         return true;
     }
-}
-
-impl EditorController {
     pub fn can_remove(&self, grid_pos: IVec2) -> bool {
         grid_pos.x > 0 && 
         grid_pos.x < self.grid_size.x as i32 - 1 &&
         grid_pos.y > 0 && 
         grid_pos.y < self.grid_size.y as i32 - 1 &&
         self.stage_grid.contains_key(&grid_pos)
+    }
+}
+
+/// Helper Functions
+impl EditorController {
+    fn get_spawn_grid_pos(&self) -> Option<IVec2> {
+        for (key, val) in self.stage_grid.iter() {
+            match val {
+                EditorStageObject::Spawn { entity: _ } => {
+                    return Some(*key);
+                },
+                _ => ()
+            }
+        }
+        return None;
     }
     fn can_cycle_item(&self) -> bool {
         true
@@ -279,5 +297,75 @@ impl EditorController {
             }
         }
         return stage;
+    }
+}
+
+/// Events
+impl EditorController {
+    fn create_removal_event(&self, grid_pos: IVec2) -> Option<EditorEvent> {
+        if let Some(stage_object) = self.stage_grid.get(&grid_pos) {
+            match stage_object {
+                EditorStageObject::Spike { entity: _, rotation } => {
+                    return EditorEvent::RemoveSpike { grid_pos, rotation: *rotation }.into();
+                },
+                EditorStageObject::Ground { entity: _ } => {
+                    return EditorEvent::RemoveGround { grid_pos: grid_pos }.into();
+                },
+                EditorStageObject::Spawn { entity: _ } => {
+                    return EditorEvent::RemoveSpawn { grid_pos: grid_pos }.into();
+                },
+                EditorStageObject::Spring { entity: _, rotation } => {
+                    return EditorEvent::RemoveSpring { grid_pos, rotation: *rotation }.into();
+                },
+                EditorStageObject::PhantomBlock { entity } => todo!(),
+                EditorStageObject::HalfSaw { entity, rotation } => todo!(),
+                EditorStageObject::Key { entity, trigger_id } => todo!(),
+                EditorStageObject::LockBlock { entity, trigger_id } => todo!(),
+                EditorStageObject::IntervalBlock { entity, is_active } => todo!(),
+            }
+        }
+        return None;
+    }
+    fn add_removal_event_to_group(&self, group: &mut EditorEventGroup, grid_pos: IVec2) 
+    {
+        if let Some(removal_event) = self.create_removal_event(grid_pos) {
+            group.events.push_front(removal_event);
+        }
+    }
+    fn insert_ground_at(&mut self, grid_pos: IVec2) {
+        let mut event_group = EditorEventGroup::new();
+        self.add_removal_event_to_group(&mut event_group, grid_pos);
+        event_group.events.push_front(EditorEvent::InsertGround { grid_pos });
+        self.event_groups.push(event_group);
+    }
+    fn insert_spike_at(&mut self, grid_pos: IVec2, rotation: f32) {
+        let mut event_group = EditorEventGroup::new();
+        self.add_removal_event_to_group(&mut event_group, grid_pos);
+        event_group.events.push_front(EditorEvent::InsertSpike { grid_pos, rotation });
+        self.event_groups.push(event_group);
+    }
+    fn insert_spawn_at(&mut self, grid_pos: IVec2) {
+        let mut event_group = EditorEventGroup::new();
+        if let Some(spawn_pos) = self.get_spawn_grid_pos() {
+            if !spawn_pos == grid_pos { 
+                self.add_removal_event_to_group(&mut event_group, spawn_pos);
+            }
+        }
+        self.add_removal_event_to_group(&mut event_group, grid_pos);
+
+        event_group.events.push_front(EditorEvent::InsertSpawn { grid_pos });
+        self.event_groups.push(event_group);
+    }
+    fn insert_spring_at(&mut self, grid_pos: IVec2, rotation: f32) {
+        let mut event_group = EditorEventGroup::new();
+        self.add_removal_event_to_group(&mut event_group, grid_pos);
+        event_group.events.push_front(EditorEvent::InsertSpring { grid_pos, rotation });
+        self.event_groups.push(event_group);
+    }
+    fn insert_phantom_block_at(&mut self, grid_pos: IVec2) {
+        let mut event_group = EditorEventGroup::new();
+        self.add_removal_event_to_group(&mut event_group, grid_pos);
+        event_group.events.push_front(EditorEvent::InsertPhantomBlock { grid_pos });
+        self.event_groups.push(event_group);
     }
 }

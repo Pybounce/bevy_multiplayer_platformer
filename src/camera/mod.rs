@@ -1,5 +1,5 @@
 
-use bevy::{input::mouse::MouseWheel, prelude::*};
+use bevy::{core_pipeline::bloom::BloomSettings, input::mouse::MouseWheel, prelude::*};
 use bevy_rapier2d::prelude::*;
 
 use crate::local_player::LocalPlayer;
@@ -20,6 +20,7 @@ pub fn spawn_camera(mut commands: Commands) {
             },
             camera: Camera {
                 //clear_color: ClearColorConfig::Custom(Color::linear_rgb(0.5, 0.5, 0.5)),
+                hdr: true,
                 ..default()
             },
             transform: Transform {
@@ -28,7 +29,10 @@ pub fn spawn_camera(mut commands: Commands) {
             },
             ..default()
         })
-        //.insert(BloomSettings::default())
+        .insert(BloomSettings {
+            intensity: 1.5,
+            ..default()
+        })
         .insert(Velocity::default())
         .insert(RigidBody::Dynamic)
         .insert(PixelPerfectTranslation {
