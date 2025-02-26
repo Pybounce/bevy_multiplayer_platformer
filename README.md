@@ -284,6 +284,13 @@ Idea for block that produces spikes when the player steps on it, simiar to crumb
   - Saving will also clear uncommited events beforehand
   - Would likely just need an index for the uncommited events since you shouldn't be able to commit, uncommit, commit and leave an uncommited in the middle
 
+## More Stage Editor Notes
+
+- It would be best to separate the data and the rendering in such a way that the data can be inserted, and the rendering can come just from data
+  - So I can take in an existing stage, and create a stage editor stage from it
+  - Right now the stage editor data includes an entity, but that entity won't exist until we begin rendering
+  - Also right now the way it's rendered is by the us just remove the EditorIcon component so that sprite stays in place, instead of it reacting to the data
+
 ## Steamworks Integration
 
 - I could let the download system for stages use steamIds

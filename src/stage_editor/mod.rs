@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 use controller::{EditorController, GROUND_TILEMAP_SIZE};
 use item_icon::*;
-use crate::{camera::PixelPerfectTranslation, common::{mouse::MouseData, states::{AppState, DespawnOnStateExit}}, stage::stage_builder::stage_creator::TILE_SIZE};
+use crate::{camera::PixelPerfectTranslation, common::{mouse::MouseData, states::{AppState, DespawnOnStateExit, StageEditorState}}, stage::stage_builder::{stage_asset::Stage, stage_creator::TILE_SIZE}};
 
 mod enums;
 mod controller;
@@ -12,24 +12,70 @@ pub struct StageEditorPlugin;
 impl Plugin for StageEditorPlugin {
     fn build(&self, app: &mut App) {
         app
-        .add_systems(OnEnter(AppState::StageEditor), build_stage_editor)
+        .add_systems(OnEnter(AppState::StageEditor), load_stage_editor_assets)
+        .add_systems(Update, check_stage_editor_loaded.run_if(in_state(StageEditorState::Loading)).run_if(in_state(AppState::StageEditor)))
+        .add_systems(OnEnter(StageEditorState::InEdit), build_stage_editor)
         .add_systems(OnExit(AppState::StageEditor), teardown_stage_editor)
         .add_systems(Update, (
             (handle_current_item_change, add_item_icon, display_item_icon, move_item_icon, update_ground_atlas_indices),
             (handle_rotate, handle_placement, handle_grid_object_removals),
             handle_save,
             move_camera
-        ).run_if(in_state(AppState::StageEditor)));
+        ).run_if(in_state(StageEditorState::InEdit)));
+    }
 }
+
+fn load_stage_editor_assets(
+    mut stage_editor_load_details: ResMut<StageEditorLoadDetails>,
+    asset_server: Res<AssetServer>
+) {
+    stage_editor_load_details.template_stage_handle = match stage_editor_load_details.template_stage_id {
+        Some(template_stage_id) => asset_server.load(format!("stage_{}.stage", template_stage_id)).into(),
+        None => None,
+    };
+}
+
+fn check_stage_editor_loaded(
+    stage_editor_load_details: Res<StageEditorLoadDetails>,
+    asset_server: Res<AssetServer>,
+    mut app_state: ResMut<NextState<AppState>>,
+    mut stage_editor_state: ResMut<NextState<StageEditorState>>,
+) {
+    if let Some(handle) = &stage_editor_load_details.template_stage_handle {
+        match asset_server.load_state(handle) {
+            bevy::asset::LoadState::NotLoaded => {
+                app_state.set(AppState::StageSelect);
+                return;
+            },
+            bevy::asset::LoadState::Loading => { return; },
+            bevy::asset::LoadState::Loaded => (),
+            bevy::asset::LoadState::Failed(_) => {
+                app_state.set(AppState::StageSelect);
+                return;
+            },
+        }
+    }
+    stage_editor_state.set(StageEditorState::InEdit);
 }
 
 fn build_stage_editor(
     mut commands: Commands,
-    asset_server: Res<AssetServer>
+    asset_server: Res<AssetServer>,
+    stage_assets: Res<Assets<Stage>>,
+    stage_editor_load_details: Res<StageEditorLoadDetails>,
+    mut app_state: ResMut<NextState<AppState>>,
 ) {
     let object_atlas: Handle<Image> = asset_server.load("object_tilemap.png");
     let ground_atlas: Handle<Image> = asset_server.load("tilemap.png");
-    commands.insert_resource(EditorController::new(&object_atlas, &ground_atlas));
+    let mut editor_controller = EditorController::new(&object_atlas, &ground_atlas);
+
+    if let Some(handle) = &stage_editor_load_details.template_stage_handle {
+        match stage_assets.get(handle) {
+            Some(asset) => editor_controller.set_template(asset),
+            None => app_state.set(AppState::StageSelect),
+        }
+    }
+    commands.insert_resource(editor_controller);
 
     commands.spawn(Text2dBundle {
         text: Text::from_section("Stage Editor", TextStyle::default()),
@@ -40,11 +86,20 @@ fn build_stage_editor(
 }
 
 fn teardown_stage_editor(
-    mut commands: Commands
+    mut commands: Commands,
+    mut editor_state: ResMut<NextState<StageEditorState>>,
+
 ) {
     commands.remove_resource::<EditorController>();
+    editor_state.set(StageEditorState::Loading);
 }
 
+#[derive(Resource)]
+pub struct StageEditorLoadDetails {
+    pub template_stage_id: Option<usize>,
+    pub new_stage_id: usize,
+    pub template_stage_handle: Option<Handle<Stage>>
+}
 
 fn handle_placement(
     buttons: Res<ButtonInput<MouseButton>>,

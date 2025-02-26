@@ -207,6 +207,17 @@ impl EditorController {
         grid_pos.y < self.grid_size.y as i32 - 1 &&
         self.stage_grid.contains_key(&grid_pos)
     }
+    pub fn set_template(&mut self, template_stage: &Stage) {
+        //TODO: ISSUES:
+        // So the editor places tiles as we go, we currently have no way to get that data from just the grid data in editor
+        // This may mean refactoring the editor so that placing an item updates the data and marks it as dirty
+        // And then something comes through, adds it, marks it clean.
+        // Would also need a way for deleting things.
+        // Basically it looks like this is a good reason for having the event based editor.
+        for ground in &template_stage.ground_tiles {
+            //self.stage_grid.insert(ground.grid_pos.as_ivec2(), EditorStageObject::Ground { entity: () })
+        }
+    }
 }
 
 /// Helper Functions
@@ -234,6 +245,7 @@ impl EditorController {
     fn can_rotate(&self) -> bool {
         true
     }
+
     fn build_stage(&self) -> Stage {
         let mut stage: Stage = Stage::new(4, self.grid_size);
         for (grid_pos, stage_editor_obj) in &self.stage_grid {
@@ -247,7 +259,7 @@ impl EditorController {
                 EditorStageObject::Ground { entity: _ } => {
                     stage.ground_tiles.push(GroundTile {
                         grid_pos: grid_pos.as_vec2(),
-                        tilemap_index: get_ground_atlas_index(self, *grid_pos, None),   //TODO
+                        tilemap_index: get_ground_atlas_index(self, *grid_pos, None),
                     });
                 },
                 EditorStageObject::Spawn { entity: _ } => stage.spawn_grid_pos = grid_pos.as_vec2(),

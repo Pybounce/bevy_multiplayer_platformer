@@ -8,6 +8,7 @@ impl Plugin for StatesPlugin {
         app.init_state::<AppState>()
         .init_state::<GameState>()
         .init_state::<NetworkingState>()
+        .init_state::<StageEditorState>()
         .add_systems(Update, check_state_transitions);
     }
 }
@@ -19,6 +20,13 @@ pub enum AppState {
     #[default]
     StageSelect,
     StageEditor
+}
+
+#[derive(States, Debug, Hash, Eq, PartialEq, Clone, Default)]
+pub enum StageEditorState {
+    #[default]
+    Loading,
+    InEdit
 }
 
 #[derive(States, Debug, Hash, Eq, PartialEq, Clone, Default)]

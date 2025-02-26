@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::{common::states::{AppState, DespawnOnStateExit}, stage::stage_builder::events::{BuildStageEvent, LoadStageEvent}};
+use crate::{common::states::{AppState, DespawnOnStateExit}, stage::stage_builder::events::{BuildStageEvent, LoadStageEvent}, stage_editor::StageEditorLoadDetails};
 
 
 pub struct StageSelectPlugin;
@@ -40,8 +40,14 @@ pub fn try_enter_stage(
 pub fn try_enter_stage_editor(
     input: Res<ButtonInput<KeyCode>>,
     mut app_state: ResMut<NextState<AppState>>,
+    mut commands: Commands
 ) {
     if input.just_released(KeyCode::KeyE) {
+        commands.insert_resource(StageEditorLoadDetails {
+            template_stage_id: 4.into(),
+            new_stage_id: 4,
+            template_stage_handle: None
+        });
         app_state.set(AppState::StageEditor);
     }
 }
