@@ -6,7 +6,6 @@ use crate::{camera::PixelPerfectTranslation, common::{mouse::MouseData, states::
 mod enums;
 mod controller;
 mod item_icon;
-mod events;
 
 pub struct StageEditorPlugin;
 
@@ -170,8 +169,8 @@ fn update_ground_atlas_indices(
 
 }
 
-fn get_ground_atlas_index(
-    editor_con: &Res<EditorController>,
+pub fn get_ground_atlas_index(
+    editor_con: &EditorController,
     grid_pos: IVec2,
     ground_icon_grid_pos_opt: Option<IVec2>
 ) -> usize {
