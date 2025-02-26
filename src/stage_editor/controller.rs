@@ -116,24 +116,19 @@ impl EditorController {
         if !self.can_place(grid_pos) { return false; }
         match self.current_item {
             EditorItem::Ground => {
-                self.insert_ground_at(grid_pos);
-                //self.stage_grid.insert(grid_pos, EditorStageObject::Ground { entity } );
+                self.stage_grid.insert(grid_pos, EditorStageObject::Ground { entity } );
             },
             EditorItem::Spike => {
-                self.insert_spike_at(grid_pos, self.rotation);
-                //self.stage_grid.insert(grid_pos, EditorStageObject::Spike { entity: entity, rotation: self.rotation });
+                self.stage_grid.insert(grid_pos, EditorStageObject::Spike { entity: entity, rotation: self.rotation });
             },
             EditorItem::Spawn => {
-                self.insert_spawn_at(grid_pos);
-                //self.stage_grid.insert(grid_pos, EditorStageObject::Spawn { entity } );
+                self.stage_grid.insert(grid_pos, EditorStageObject::Spawn { entity } );
             },
             EditorItem::Spring => {
-                self.insert_spring_at(grid_pos, self.rotation);
-                //self.stage_grid.insert(grid_pos, EditorStageObject::Spring { entity: entity, rotation: self.rotation });
+                self.stage_grid.insert(grid_pos, EditorStageObject::Spring { entity: entity, rotation: self.rotation });
             },
             EditorItem::PhantomBlock => {
-                self.insert_phantom_block_at(grid_pos);
-                //self.stage_grid.insert(grid_pos, EditorStageObject::PhantomBlock { entity: entity });
+                self.stage_grid.insert(grid_pos, EditorStageObject::PhantomBlock { entity: entity });
             },
             EditorItem::HalfSaw => {
                 self.stage_grid.insert(grid_pos, EditorStageObject::HalfSaw { entity: entity, rotation: self.rotation });

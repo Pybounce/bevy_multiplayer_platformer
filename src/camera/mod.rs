@@ -19,7 +19,7 @@ pub fn spawn_camera(mut commands: Commands) {
                 ..default()
             },
             camera: Camera {
-                //clear_color: ClearColorConfig::Custom(Color::linear_rgb(0.5, 0.5, 0.5)),
+                clear_color: ClearColorConfig::Custom(Color::linear_rgb(0.0, 0.0, 0.0)),
                 hdr: true,
                 ..default()
             },
@@ -30,7 +30,7 @@ pub fn spawn_camera(mut commands: Commands) {
             ..default()
         })
         .insert(BloomSettings {
-            intensity: 1.5,
+            intensity: 0.2,
             ..default()
         })
         .insert(Velocity::default())
