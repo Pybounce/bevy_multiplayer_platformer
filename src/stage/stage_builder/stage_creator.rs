@@ -1,4 +1,4 @@
-use crate::{common::checkpoint::CheckpointBundle, player::spawner::LocalPlayerSpawner, stage::stage_objects::{goal::GoalFactory, half_saw::SawFactory, interval_block::IntervalBlockFactory, key::KeyFactory, lock_block::LockBlockFactory, phantom_block::PhantomBlockFactory, spike::SpikeFactory, spring::SpringFactory, tiles::{GroundTileBundle, TileBundle}, StageObject}};
+use crate::{common::checkpoint::CheckpointBundle, player::spawner::LocalPlayerSpawner, stage::stage_objects::{goal::GoalFactory, half_saw::SawFactory, interval_block::IntervalBlockFactory, key::KeyFactory, lock_block::LockBlockFactory, phantom_block::PhantomBlockFactory, saw_shooter::SawShooterFactory, spike::SpikeFactory, spring::SpringFactory, tiles::{GroundTileBundle, TileBundle}, StageObject}};
 
 use super::stage_asset::Stage;
 use bevy::prelude::*;
@@ -38,6 +38,10 @@ pub enum ObjectAtlasIndices {
     PhantomBlock2 = 23,
     PhantomBlock3 = 24,
     PhantomBlock4 = 25,
+    SawProjectile0 = 32,
+    SawProjectile1 = 33,
+    SawProjectile2 = 34,
+    SawShooter = 27,
 }
 
 
@@ -66,6 +70,7 @@ impl<'a> StageCreator<'a> {
         && build_keys(self, commands)
         && build_interval_blocks(self, commands)
         && build_phantom_blocks(self, commands)
+        && build_saw_shooters(self, commands)
     }
 
 
@@ -216,6 +221,14 @@ fn build_interval_blocks(stage_creator: &StageCreator, commands: &mut Commands) 
     ];
     for interval_block in &stage_creator.stage.interval_blocks {
         IntervalBlockFactory::spawn(commands, stage_creator, atlas_rects.clone(), interval_block);
+    }
+    return true;
+}
+
+fn build_saw_shooters(stage_creator: &StageCreator, commands: &mut Commands) -> bool {
+    let atlas_rects = vec![get_object_tilemap_rect_from_index(ObjectAtlasIndices::SawShooter)];
+    for saw_shooter_block in &stage_creator.stage.saw_shooter_blocks {
+        SawShooterFactory::spawn(commands, stage_creator, atlas_rects.clone(), saw_shooter_block);
     }
     return true;
 }

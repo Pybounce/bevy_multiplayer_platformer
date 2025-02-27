@@ -20,6 +20,7 @@ pub struct Stage {
     pub lock_blocks: Vec<LockBlock>,
     pub keys: Vec<Key>,
     pub interval_blocks: Vec<IntervalBlock>,
+    pub saw_shooter_blocks: Vec<SawShooterBlock>,
     pub phantom_blocks: Vec<PhantomBlock>,
     pub checkpoints: Vec<Checkpoint>,
     pub grid_width: usize,
@@ -39,6 +40,7 @@ impl Stage {
             lock_blocks: vec![],
             keys: vec![],
             interval_blocks: vec![],
+            saw_shooter_blocks: vec![],
             phantom_blocks: vec![],
             checkpoints: vec![],
             grid_width: grid_size.x as usize,
@@ -98,6 +100,11 @@ pub struct IntervalBlock {
 }
 #[derive(Debug, Deserialize, Serialize)]
 pub struct PhantomBlock {
+    pub grid_pos: Vec2
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct SawShooterBlock {
     pub grid_pos: Vec2
 }
 

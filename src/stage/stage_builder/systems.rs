@@ -2,7 +2,7 @@ use bevy::prelude::*;
 
 use crate::stage::stage_objects::StageObject;
 
-use super::{events::{StageBuildCompleteEvent, StageBuildFailedEvent}, stage_asset::Stage, stage_creator::{StageCreator, TILE_SIZE}, CurrentStageData, StageBuilderData};
+use super::{events::{StageBuildCompleteEvent, StageBuildFailedEvent}, stage_asset::Stage, stage_creator::{StageCreator, TILE_SIZE}, CurrentStageData, StageAssets, StageBuilderData};
 
 
 pub fn unload_old_stage(
@@ -45,6 +45,9 @@ pub fn try_build_stage(
 
     match stage_asset {
         Some(stage) => {
+            commands.insert_resource(StageAssets {
+                stage_object_tilemap_handle: object_tilemap_handle.clone()
+            });
             let stage_creator = StageCreator::new(&stage, &tilemap_handle, &object_tilemap_handle);
             if stage_creator.build(&mut commands) {
                 commands.insert_resource(CurrentStageData {

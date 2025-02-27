@@ -234,7 +234,8 @@ fn stage_from_grid(mut layout: String, width: usize, height: usize, id: usize) {
         lock_blocks,
         keys,
         interval_blocks,
-        phantom_blocks
+        phantom_blocks,
+        saw_shooter_blocks: vec![]
     };
 
     let mut bytes: Vec<u8> = vec![];
