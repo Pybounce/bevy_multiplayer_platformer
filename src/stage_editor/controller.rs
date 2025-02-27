@@ -1,7 +1,7 @@
 
 use bevy::{prelude::*, scene::ron, utils::hashbrown::HashMap};
 
-use crate::stage::stage_builder::{stage_asset::{GroundTile, HalfSaw, IntervalBlock, Key, LockBlock, PhantomBlock, Spike, Spring, Stage}, stage_creator::TILE_SIZE};
+use crate::stage::stage_builder::{stage_asset::{GroundTile, HalfSaw, IntervalBlock, Key, LockBlock, PhantomBlock, SawShooterBlock, Spike, Spring, Stage}, stage_creator::TILE_SIZE};
 
 use super::{enums::*, get_ground_atlas_index};
 
@@ -66,25 +66,26 @@ impl EditorController {
             EditorItem::PhantomBlock => (21.0, 16.0),
             EditorItem::HalfSaw => (0.0, 16.0),
             EditorItem::Key(variant) => {
-                match variant {
-                    KeyVariant::One => (255.0, 16.0),
-                    KeyVariant::Two => (239.0, 16.0),
-                    KeyVariant::Three => (223.0, 16.0),
-                }
-            },
+                        match variant {
+                            KeyVariant::One => (255.0, 16.0),
+                            KeyVariant::Two => (239.0, 16.0),
+                            KeyVariant::Three => (223.0, 16.0),
+                        }
+                    },
             EditorItem::LockBlock(variant) => {
-                match variant {
-                    LockBlockVariant::One => (254.0, 16.0),
-                    LockBlockVariant::Two => (238.0, 16.0),
-                    LockBlockVariant::Three => (222.0, 16.0),
-                }
-            },
+                        match variant {
+                            LockBlockVariant::One => (254.0, 16.0),
+                            LockBlockVariant::Two => (238.0, 16.0),
+                            LockBlockVariant::Three => (222.0, 16.0),
+                        }
+                    },
             EditorItem::IntervalBlock(variant) => {
-                match variant {
-                    IntervalBlockVariant::On => (253.0, 16.0),
-                    IntervalBlockVariant::Off => (237.0, 16.0),
-                }
-            },
+                        match variant {
+                            IntervalBlockVariant::On => (253.0, 16.0),
+                            IntervalBlockVariant::Off => (237.0, 16.0),
+                        }
+                    },
+            EditorItem::SawShooter => (27.0, 16.0),
         };
 
         let upper_left = Vec2::new(index % EDITOR_TILEMAP_SIZE, (index / EDITOR_TILEMAP_SIZE).trunc()) * tile_size;
@@ -114,42 +115,45 @@ impl EditorController {
         if !self.can_place(grid_pos) { return false; }
         match self.current_item {
             EditorItem::Ground => {
-                self.stage_grid.insert(grid_pos, EditorStageObject::Ground { entity } );
-            },
+                        self.stage_grid.insert(grid_pos, EditorStageObject::Ground { entity } );
+                    },
             EditorItem::Spike => {
-                self.stage_grid.insert(grid_pos, EditorStageObject::Spike { entity: entity, rotation: self.rotation });
-            },
+                        self.stage_grid.insert(grid_pos, EditorStageObject::Spike { entity: entity, rotation: self.rotation });
+                    },
             EditorItem::Spawn => {
-                self.stage_grid.insert(grid_pos, EditorStageObject::Spawn { entity } );
-            },
+                        self.stage_grid.insert(grid_pos, EditorStageObject::Spawn { entity } );
+                    },
             EditorItem::Spring => {
-                self.stage_grid.insert(grid_pos, EditorStageObject::Spring { entity: entity, rotation: self.rotation });
-            },
+                        self.stage_grid.insert(grid_pos, EditorStageObject::Spring { entity: entity, rotation: self.rotation });
+                    },
             EditorItem::PhantomBlock => {
-                self.stage_grid.insert(grid_pos, EditorStageObject::PhantomBlock { entity: entity });
-            },
+                        self.stage_grid.insert(grid_pos, EditorStageObject::PhantomBlock { entity: entity });
+                    },
             EditorItem::HalfSaw => {
-                self.stage_grid.insert(grid_pos, EditorStageObject::HalfSaw { entity: entity, rotation: self.rotation });
-            },
+                        self.stage_grid.insert(grid_pos, EditorStageObject::HalfSaw { entity: entity, rotation: self.rotation });
+                    },
             EditorItem::Key(variant) => {
-                match variant {
-                    KeyVariant::One => self.stage_grid.insert(grid_pos, EditorStageObject::Key { entity: entity, trigger_id: 1 }),
-                    KeyVariant::Two => self.stage_grid.insert(grid_pos, EditorStageObject::Key { entity: entity, trigger_id: 2 }),
-                    KeyVariant::Three => self.stage_grid.insert(grid_pos, EditorStageObject::Key { entity: entity, trigger_id: 3 }),
-                };
-            },
+                        match variant {
+                            KeyVariant::One => self.stage_grid.insert(grid_pos, EditorStageObject::Key { entity: entity, trigger_id: 1 }),
+                            KeyVariant::Two => self.stage_grid.insert(grid_pos, EditorStageObject::Key { entity: entity, trigger_id: 2 }),
+                            KeyVariant::Three => self.stage_grid.insert(grid_pos, EditorStageObject::Key { entity: entity, trigger_id: 3 }),
+                        };
+                    },
             EditorItem::LockBlock(variant) => {
-                match variant {
-                    LockBlockVariant::One => self.stage_grid.insert(grid_pos, EditorStageObject::LockBlock { entity: entity, trigger_id: 1 }),
-                    LockBlockVariant::Two => self.stage_grid.insert(grid_pos, EditorStageObject::LockBlock { entity: entity, trigger_id: 2 }),
-                    LockBlockVariant::Three => self.stage_grid.insert(grid_pos, EditorStageObject::LockBlock { entity: entity, trigger_id: 3 }),
-                };
-            },
+                        match variant {
+                            LockBlockVariant::One => self.stage_grid.insert(grid_pos, EditorStageObject::LockBlock { entity: entity, trigger_id: 1 }),
+                            LockBlockVariant::Two => self.stage_grid.insert(grid_pos, EditorStageObject::LockBlock { entity: entity, trigger_id: 2 }),
+                            LockBlockVariant::Three => self.stage_grid.insert(grid_pos, EditorStageObject::LockBlock { entity: entity, trigger_id: 3 }),
+                        };
+                    },
             EditorItem::IntervalBlock(variant) => {
-                match variant {
-                    IntervalBlockVariant::On => self.stage_grid.insert(grid_pos, EditorStageObject::IntervalBlock { entity: entity, is_active: true }),
-                    IntervalBlockVariant::Off => self.stage_grid.insert(grid_pos, EditorStageObject::IntervalBlock { entity: entity, is_active:  false }),
-                };
+                        match variant {
+                            IntervalBlockVariant::On => self.stage_grid.insert(grid_pos, EditorStageObject::IntervalBlock { entity: entity, is_active: true }),
+                            IntervalBlockVariant::Off => self.stage_grid.insert(grid_pos, EditorStageObject::IntervalBlock { entity: entity, is_active:  false }),
+                        };
+                    },
+            EditorItem::SawShooter => { 
+                self.stage_grid.insert(grid_pos, EditorStageObject::SawShooter { entity: entity, rotation: self.rotation }); 
             },
         }
         self.saved = false;
@@ -297,6 +301,12 @@ impl EditorController {
                     stage.interval_blocks.push(IntervalBlock {
                         grid_pos: grid_pos.as_vec2(),
                         is_active: *is_active
+                    });
+                },
+                EditorStageObject::SawShooter { entity: _, rotation } => {
+                    stage.saw_shooter_blocks.push(SawShooterBlock {
+                        grid_pos: grid_pos.as_vec2(),
+                        rotation: *rotation,
                     });
                 },
             }

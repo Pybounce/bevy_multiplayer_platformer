@@ -11,6 +11,7 @@ pub enum EditorStageObject {
     Key { entity: Entity, trigger_id: usize },
     LockBlock { entity: Entity, trigger_id: usize },
     IntervalBlock { entity: Entity, is_active: bool },
+    SawShooter { entity: Entity, rotation: f32 },
 }
 
 
@@ -30,6 +31,7 @@ impl HasEntity for EditorStageObject {
             EditorStageObject::Key { entity, .. } => *entity,
             EditorStageObject::LockBlock { entity, .. } => *entity,
             EditorStageObject::IntervalBlock { entity, .. } => *entity,
+            EditorStageObject::SawShooter { entity, .. } => *entity,
         }
     }
 }
@@ -49,6 +51,7 @@ pub enum EditorItem {
     Key(KeyVariant) = 6,
     LockBlock(LockBlockVariant) = 7,
     IntervalBlock(IntervalBlockVariant) = 8,
+    SawShooter = 9,
 }
 
 impl EditorItem {
@@ -62,12 +65,14 @@ impl EditorItem {
             EditorItem::PhantomBlock => EditorItem::HalfSaw,
             EditorItem::HalfSaw => EditorItem::LockBlock(LockBlockVariant::One),
             EditorItem::LockBlock(_) => EditorItem::IntervalBlock(IntervalBlockVariant::On),
-            EditorItem::IntervalBlock(_) => EditorItem::Ground,
+            EditorItem::IntervalBlock(_) => EditorItem::SawShooter,
+            EditorItem::SawShooter => EditorItem::Ground,
         }
     }
     pub fn cycle_prev(&self) -> Self {
         match self {
-            EditorItem::Ground => EditorItem::IntervalBlock(IntervalBlockVariant::On),
+            EditorItem::SawShooter => EditorItem::IntervalBlock(IntervalBlockVariant::On),
+            EditorItem::Ground => EditorItem::SawShooter,
             EditorItem::IntervalBlock(_) => EditorItem::LockBlock(LockBlockVariant::One),
             EditorItem::LockBlock(_) => EditorItem::HalfSaw,
             EditorItem::HalfSaw => EditorItem::PhantomBlock,
@@ -89,6 +94,7 @@ impl EditorItem {
             EditorItem::HalfSaw => EditorItem::HalfSaw,
             EditorItem::LockBlock(variant) => EditorItem::LockBlock(variant.cycle_next()),
             EditorItem::IntervalBlock(variant) => EditorItem::IntervalBlock(variant.cycle_next()),
+            EditorItem::SawShooter => EditorItem::SawShooter,
         }
     }
     pub fn cycle_prev_variant(&self) -> Self {
@@ -102,6 +108,7 @@ impl EditorItem {
             EditorItem::Spike => EditorItem::Spike,
             EditorItem::Key(variant) => EditorItem::Key(variant.cycle_prev()),
             EditorItem::IntervalBlock(variant) => EditorItem::IntervalBlock(variant.cycle_prev()),
+            EditorItem::SawShooter => EditorItem::SawShooter,
         }
     }
 }

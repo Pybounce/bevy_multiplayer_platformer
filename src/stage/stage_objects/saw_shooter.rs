@@ -1,4 +1,4 @@
-use bevy::{math::{Rect, Vec2}, prelude::{Commands, Component, Entity, Query, Res, With}, sprite::{Sprite, SpriteBundle}, time::{Time, Timer, TimerMode}, transform::{bundles::TransformBundle, components::Transform}, utils::default};
+use bevy::{math::{Quat, Rect, Vec2}, prelude::{Commands, Component, Entity, Query, Res, With}, sprite::{Sprite, SpriteBundle}, time::{Time, Timer, TimerMode}, transform::{bundles::TransformBundle, components::Transform}, utils::default};
 use bevy_rapier2d::prelude::{ActiveEvents, Collider, CollisionGroups, GravityScale, Group, LockedAxes, RigidBody, Sensor, Velocity};
 
 use crate::{common::{animated_sprite::SpriteAnimator, physics::fragile::{Fragile, FragileShield}}, ground::Ground, obstacles::InstantKiller, stage::stage_builder::{stage_asset, stage_creator::{get_object_tilemap_rect_from_index, ObjectAtlasIndices, StageCreator, TILE_SIZE_HALF}, StageAssets}};
@@ -21,7 +21,7 @@ impl SawShooterFactory {
     pub fn spawn(commands: &mut Commands, stage_creator: &StageCreator, atlas_rects: Vec<Rect>, saw_shooter_block_asset: &stage_asset::SawShooterBlock) {
         
         commands.spawn((
-            PhysicalTileBundle::new(stage_creator, saw_shooter_block_asset.grid_pos, atlas_rects[0], 0.0, stage_creator.object_tilemap, CollisionGroups::new(Group::GROUP_1, Group::ALL)),
+            PhysicalTileBundle::new(stage_creator, saw_shooter_block_asset.grid_pos, atlas_rects[0], saw_shooter_block_asset.rotation, stage_creator.object_tilemap, CollisionGroups::new(Group::GROUP_1, Group::ALL)),
             SawShooter {
                 timer: Timer::from_seconds(3.0, TimerMode::Repeating)
             },
@@ -46,10 +46,10 @@ pub fn tick_saw_shooters(
         get_object_tilemap_rect_from_index(ObjectAtlasIndices::SawProjectile1),
         get_object_tilemap_rect_from_index(ObjectAtlasIndices::SawProjectile2)
     ];
-    for (mut interval_block, transform) in &mut query {
-        interval_block.timer.tick(time.delta());
-        if interval_block.timer.just_finished() {
-            commands.spawn((SmallSaw, Fragile, FragileShield, InstantKiller, Collider::ball(0.3 * 16.0), Velocity::linear(Vec2::new(0.0, 100.0)),
+    for (mut saw_shooter, transform) in &mut query {
+        saw_shooter.timer.tick(time.delta());
+        if saw_shooter.timer.just_finished() {
+            commands.spawn((SmallSaw, Fragile, FragileShield, InstantKiller, Collider::ball(0.3 * 16.0), Velocity::linear((transform.rotation * Vec2::new(0.0, 100.0).extend(0.0)).truncate()),
             Sensor,
             RigidBody::Dynamic,
             GravityScale(0.0),
