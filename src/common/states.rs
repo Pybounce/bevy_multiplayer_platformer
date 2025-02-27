@@ -8,6 +8,7 @@ impl Plugin for StatesPlugin {
         app.init_state::<AppState>()
         .init_state::<GameState>()
         .init_state::<NetworkingState>()
+        .init_state::<StageEditorState>()
         .add_systems(Update, check_state_transitions);
     }
 }
@@ -18,6 +19,14 @@ pub enum AppState {
     Game,
     #[default]
     StageSelect,
+    StageEditor
+}
+
+#[derive(States, Debug, Hash, Eq, PartialEq, Clone, Default)]
+pub enum StageEditorState {
+    #[default]
+    Loading,
+    InEdit
 }
 
 #[derive(States, Debug, Hash, Eq, PartialEq, Clone, Default)]
@@ -73,23 +82,29 @@ fn check_state_transitions(
         match state_lifetime {
             DespawnOnStateExit::App(x) => {
                 for ste in &app_state_events {
-                    //if x == &ste.before {
-                    //    commands.entity(entity).despawn();
-                    //}
+                    if let Some(exit_state) = &ste.exited {
+                        if exit_state == x {
+                            commands.entity(entity).despawn();
+                        }
+                    }
                 }
             }
             DespawnOnStateExit::Game(x) => {
                 for ste in &game_state_events {
-                    //if x == &ste.before {
-                   //     commands.entity(entity).despawn();
-                    //}
+                    if let Some(exit_state) = &ste.exited {
+                        if exit_state == x {
+                            commands.entity(entity).despawn();
+                        }
+                    }
                 }
             }
             DespawnOnStateExit::Networking(x) => {
                 for ste in &networking_state_events {
-                   // if x == &ste.before {
-                   //     commands.entity(entity).despawn();
-                   // }
+                    if let Some(exit_state) = &ste.exited {
+                        if exit_state == x {
+                            commands.entity(entity).despawn();
+                        }
+                    }
                 }
             }
         }
@@ -102,23 +117,29 @@ fn check_state_transitions(
         match state_lifetime {
             DespawnOnStateEnter::App(x) => {
                 for ste in &app_state_events {
-                   // if x == &ste.after {
-                    //    commands.entity(entity).despawn();
-                   // }
+                    if let Some(exit_state) = &ste.entered {
+                        if exit_state == x {
+                            commands.entity(entity).despawn();
+                        }
+                    }
                 }
             }
             DespawnOnStateEnter::Game(x) => {
                 for ste in &game_state_events {
-                   // if x == &ste.after {
-                   //     commands.entity(entity).despawn();
-                   // }
+                    if let Some(exit_state) = &ste.entered {
+                        if exit_state == x {
+                            commands.entity(entity).despawn();
+                        }
+                    }
                 }
             }
             DespawnOnStateEnter::Networking(x) => {
                 for ste in &networking_state_events {
-                   // if x == &ste.after {
-                   //     commands.entity(entity).despawn();
-                   // }
+                    if let Some(exit_state) = &ste.entered {
+                        if exit_state == x {
+                            commands.entity(entity).despawn();
+                        }
+                    }
                 }
             }
         }

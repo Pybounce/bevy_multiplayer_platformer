@@ -5,7 +5,7 @@ use bevy::{
     prelude::*,
 };
 
-use crate::stage::stage_builder::stage_asset::{Checkpoint, GroundTile, HalfSaw, IntervalBlock, Key, LockBlock, MovementPath, PhantomBlock, Spike, Spring, Stage};
+use crate::stage::stage_builder::stage_asset::{Checkpoint, GroundTile, HalfSaw, IntervalBlock, Key, LockBlock, PhantomBlock, Spike, Spring, Stage};
 
 pub fn save_stage() {
     save_stage_0();
@@ -158,7 +158,10 @@ fn stage_from_grid(mut layout: String, width: usize, height: usize, id: usize) {
         }
         else if tile == '🟥' { 
             //spike
-            spikes.push(Spike {grid_pos: Vec2::new(x as f32, y as f32), rotation: get_rotation(&layout, i, width)});
+            spikes.push(Spike {
+                grid_pos: Vec2::new(x as f32, y as f32), 
+                rotation: get_rotation(&layout, i, width)
+            });
         }
         else if tile == '🔴' { 
             //spike
@@ -203,6 +206,7 @@ fn stage_from_grid(mut layout: String, width: usize, height: usize, id: usize) {
         else if tile == '❔' {
             interval_blocks.push(IntervalBlock {
                 grid_pos: Vec2::new(x as f32, y as f32),
+                is_active: true
             });
         }
         else if tile == '🔲' {

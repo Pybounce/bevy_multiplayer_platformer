@@ -31,8 +31,14 @@
 
 ## To Theory Craft
 
+- Ground Types:
+  - Similar to portal 2 gels
+  - Ice ground: slippery
+  - Bouncing ground: bouncy
+  - Fire ground: Damages player over time
 - Moustache/player appearance (floating hats, such as a crown, and googly eyes)
 - Fancy stage loading (fancy animation for a stage being loaded/unloaded)
+- A certain game with very low concurrent players has cool traps, but they are all triggered based on where the player is. This would make it hard to show in networking since players have their own stage, not a shared one
 
 ## Critical Bugs
 
@@ -48,6 +54,11 @@
 
 ## Bugs
 
+- Editor Grid Negatives
+  - When the mouse is on the tile left of the y axis, the grid position says it's at x = 0
+  - Since the way it's calculated is (x / tile_size).trunc()
+  - The x pos might be -14, then after that calc it should be -0.0, or 0.0 I guess?
+  - This functionally just means you can place a tile at the edge of the grid (in bounds), by clicking out of bounds
 - Cannot preload (with a stage load event) on build complete, will try building that stage immediately and fail
   - Need to test the build failed events at different points (1 stage in, 0 stages in etc)
   - Seems like it's not scrubbing the current stage
@@ -62,6 +73,9 @@
 
 ## Refactorings
 
+- Grid
+  - Helper functions for grid_to_world
+  - Possibly a whole Grid struct that takes in the data of the grid such as size etc
 - Move the logic to get the atlas rect into the factories
   - ie the obstacle factories like saw or spike
 - Add in actual player states, or SOMETHING that works with networking
@@ -69,6 +83,7 @@
   - Take look direction, if you press left it should be left, but we don't get input from networked players.
     - So to keep it as a state we need to add a looking state and update it for local and networked players
   - This will become a larger issue when more effects are added for onJump or onDeath etc
+- Add CollidingEntities to the spring and key etc instead
 
 ## Web Build
 
@@ -188,23 +203,105 @@ Saw Placement
 
 Idea for block that produces spikes when the player steps on it, simiar to crumbling block
 
-## Stage Editor Ideas
+## Stage Editor
 
-- Hotbar with all different items at the bottom
-  - The item images can just be the tiles
-  - Q/E will cycle between different items
-  - A resource enum contains the currently selected item
-- UIHotbar will just be a new component
-  - It will take in the keycodes to move left/right
-  - It will take in a list of Image handles and some enum? maybe just ids?
-  - Then the dev can get the currently selected ID and map to an enum or whatever
-  - QUERY: Does the hotbar control listening for Q/E input or do I have a master input listener
-    - Just because when I'm placing a path for a saw, I don't want the user switching
-    - Or if they do switch, cancel all the pending path for the saw etc
-- Make a StageBuilder struct that can .AddSpike(pos) etc
-  - Then at the very end can do .Build() to return the stage_asset::Stage to be saved
-  - This way I can change how I maintain the current stage while building it (ie a 2d array for speedy grid position lookups)
-- UI Toolbar
-  - For many blocks they will need UI, such as saws for saw speed, or projectiles for rate and speed
-  - Can add a toolbar to the right that appears when you've got a specific block selected
-  - Then you tweak it and all blocks placed after that, will have those values
+- [ ] Area drag
+  - Drag areas to place blocks
+- [ ] Moving saws
+  - Add moving saw placement
+- [ ] Smart rotations
+  - Auto rotates so it's placed on a ground block
+  - Will prioritise current rotation if multiple are options
+    - Controller holds an Option<auto-rotation> and the current-rotation
+    - This way it will have a memory of the last manual rotation and can prioritise that if it becomes an option again
+    - Placing an item sets the current rotation to whatever the rotation of that item is
+    - Basically, take the get_jumped map, when placing all the springs at the top, moving the mouse over to the next position will change auto rotation to be on the ceiling, but we don't want that, if possible it should stay as the user intended and only display ceiling if it's the only option, snapping back to right facing when that becomes an option.
+- [x] Item Varients
+  - Triggers will need varients, displayed with colours, to set their triggerID
+  - They will be cycled with W/S
+- [ ] Current item needs to be slightly transparent
+- [ ] Save system with name
+- [ ] Resizeable stage
+- [ ] Stupid dumb UI that nobody likes
+
+## Stage Editor Ground
+
+- Updates:
+  - Placing/removing would update the StageGrid field in the controller
+  - Then a draw(rect) call will be made, taking in the Rect of what tiles to update
+  - Ground atlas indices will need to be copied from StageGrid on draw
+- Working with item previews
+  - Just holding the ground item should be able to change the surrounding tiles (like a preview)
+- Idea 1:
+  - Hold some object for the next changes
+  - This object could be another StageGrid hashmap
+  - Then on draw, we draw the normal stage grid, but in the next step, replace the tiles with the changes stagegrid, but slightly transparent
+  - Then when we save, it uses the actual stage grid, but the render uses the actual + changes
+- Idea 2:
+  - Similar to Idea 1 in that we hold some data for the next change
+  - The data is a list of an enum called StageEditEvent
+  - This enum can be Deletion(grid_pos), Addition(EditorStageObject), Resize(new_size)
+  - Then when we change either current data or event data, we do a re-render of affected areas?
+- Ideas Refined:
+  - So you still have an enum for ChangeRequest
+  - That's a list of all the preview changes
+  - Then you have a func for add_request that appends it
+    - This will happen when you move the mouse and go to a new tile
+    - But it will clear_requests first
+  - Deletions will not use the change requests:
+    - ChangeRequests are really just previews, that's all
+    - Deletion is an instant change and can be applied to the StageGrid, bypassing the changerequests
+
+## Event Driven Stage Editor
+
+- Have an enum for StageEditEvent
+- The controller should be able to take in this event and apply it to the current data
+- The controller also needs to be able to reverse the event
+- This way ctrl+Z will just undo the last event and decrement the pointer
+- ctrl+shift+z will, if the pointer isn't at the top of the stack, run the event above it and increment
+- Events could be as follows:
+
+  - InsertGround(pos)
+  - InsertSpike(pos)
+  - ResizeStage(x, y)
+  - RemoveTile(pos)
+  - I could add InsertTile(TileType), but then I'd just be matching on TileType anyway
+  - PROBLEM: RemoveTile and Resize don't have clear undo's, we would need some events, but the stack consists of changes, and those changes can have undo's?
+
+- Better way for events:
+  - Instead of an event being AddGround(pos), there would just be a function add_ground(pos)
+  - This function would then go through and create a group of events that add the new ground and update all existing surrounding grounds etc, perhaps even a delete event for the current tile if there is one
+  - When an event is APPLIED, we can work out the re-render area and after it's been applied, run a re-render on that area
+  - resize_stage(x, y) would also be a function, that then generates a group of events for removing the ground at the boarders, and adding the ground at the new boarders, also updating the actual size value in the editor controller
+  - This way, the 'undo' and 'redo' don't run one event, they run one group of events
+  - Functions like add_ground(pos), add_spike(pos), resize_stage(x, y), generate a group of specific events, and the group is added to the stack
+- Previews:
+  - As for the previews, we could actually have a bool on each event group, that shows if it's been commited or not.
+  - So the render always uses the StageGrid, which includes all changes, including preview changes
+  - However, in the event stack, the preview changes will be marked as uncommited
+  - We can then clear uncommited, which will undo those changes and pop them from the stack
+  - So moving to a new part of the grid, or going in some menu, will just remove the uncommited events and re-render that part
+  - Saving will also clear uncommited events beforehand
+  - Would likely just need an index for the uncommited events since you shouldn't be able to commit, uncommit, commit and leave an uncommited in the middle
+
+## More Stage Editor Notes
+
+- It would be best to separate the data and the rendering in such a way that the data can be inserted, and the rendering can come just from data
+  - So I can take in an existing stage, and create a stage editor stage from it
+  - Right now the stage editor data includes an entity, but that entity won't exist until we begin rendering
+  - Also right now the way it's rendered is by the us just remove the EditorIcon component so that sprite stays in place, instead of it reacting to the data
+
+## Steamworks Integration
+
+- I could let the download system for stages use steamIds
+- This would let players like stages, also using Steam as the auth
+- Would not be portable to places other than steam but, can cross that bridge when we get there, since we will never get there
+
+## Potential Future Event Issue
+
+- If I add 2 events to the same tile, before the stage grid reads the latest event, then the checks will be using the old stage grid
+- Will need to make sure stage grid is _always_ up to date, but this also feels pretty icky...idk, will revisit
+
+## Achievements
+
+- Bounce off a single spring 10.000 times

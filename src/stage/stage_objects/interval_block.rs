@@ -23,7 +23,7 @@ impl IntervalBlockFactory {
             PhysicalTileBundle::new(stage_creator, interval_block_asset.grid_pos, atlas_rects[0], 0.0, stage_creator.object_tilemap, CollisionGroups::new(Group::GROUP_1, Group::ALL)),
             IntervalBlock {
                 timer: Timer::from_seconds(1.0, TimerMode::Repeating),
-                currently_active: true
+                currently_active: interval_block_asset.is_active
             },
             SpriteAnimator::new_non_repeating(50, atlas_rects),
             Ground,

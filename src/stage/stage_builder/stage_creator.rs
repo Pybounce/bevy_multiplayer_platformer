@@ -74,7 +74,7 @@ impl<'a> StageCreator<'a> {
 fn build_player_spawner(stage_creator: &StageCreator, commands: &mut Commands) -> bool {
     commands.spawn(LocalPlayerSpawner {
         spawn_time: 0.0,
-        translation: (stage_creator.stage.spawn_grid_pos * TILE_SIZE).extend(0.0),
+        translation: ((stage_creator.stage.spawn_grid_pos * TILE_SIZE) + TILE_SIZE_HALF).extend(0.0),
     });
     return true;
 }
@@ -89,8 +89,8 @@ fn build_ground(stage_creator: &StageCreator, commands: &mut Commands) -> bool {
 
 fn build_background(stage_creator: &StageCreator, commands: &mut Commands) -> bool {
 
-    let grid_pos = Vec2::new((stage_creator.stage.grid_width as f32 - 1.0) / 2.0, 
-    (stage_creator.stage.grid_height as f32 - 1.0) / 2.0);
+    let grid_pos = Vec2::new(stage_creator.stage.grid_width as f32 / 2.0, 
+    stage_creator.stage.grid_height as f32 / 2.0);
     
     commands.spawn(
         SpriteBundle {
@@ -101,7 +101,7 @@ fn build_background(stage_creator: &StageCreator, commands: &mut Commands) -> bo
             },
             sprite: Sprite {
                 custom_size: Some(Vec2::new(1.0, 1.0)),
-                color: Color::linear_rgb(0.5, 0.5, 0.5),
+                color: Color::linear_rgb(0.0, 0.0, 0.0),
                 ..default()
             },
             ..default()
@@ -120,8 +120,8 @@ fn build_far_background(stage_creator: &StageCreator, commands: &mut Commands) -
 
     let mut background = TileBundle::new(
         stage_creator, 
-        Vec2::new((stage_creator.stage.grid_width as f32 - 1.0) / 2.0, 
-        (stage_creator.stage.grid_height as f32 - 1.0) / 2.0), 
+        Vec2::new(stage_creator.stage.grid_width as f32 / 2.0, 
+        stage_creator.stage.grid_height as f32 / 2.0), 
         sprite_rect, 0.0, stage_creator.tilemap);
     background.sprite_bundle.transform.translation.z = -20.0;
     background.sprite_bundle.transform.scale = Vec3::new(
@@ -262,7 +262,7 @@ fn build_ground_tile(commands: &mut Commands, stage_creator: &StageCreator, grid
 
 }
 
-fn get_object_tilemap_rect_from_index(atlas_index: ObjectAtlasIndices) -> Rect {
+pub fn get_object_tilemap_rect_from_index(atlas_index: ObjectAtlasIndices) -> Rect {
     let index = atlas_index as usize;
     let upper_left = Vec2::new((index as f32 % OBJECT_TILEMAP_SIZE as f32) as f32 * OBJECT_TILE_TILEMAP_SIZE, (index / OBJECT_TILEMAP_SIZE) as f32 * OBJECT_TILE_TILEMAP_SIZE);
     let lower_right = Vec2::new(upper_left.x + OBJECT_TILE_TILEMAP_SIZE, upper_left.y + OBJECT_TILE_TILEMAP_SIZE);

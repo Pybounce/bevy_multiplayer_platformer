@@ -8,6 +8,8 @@ use bevy::{
 use serde::{ Deserialize, Serialize};
 use thiserror::Error;
 
+use super::stage_creator::TILE_SIZE;
+
 #[derive(Asset, TypePath, Debug, Deserialize, Serialize)]
 pub struct Stage {
     pub id: usize,
@@ -24,6 +26,27 @@ pub struct Stage {
     pub grid_height: usize,
     pub spawn_grid_pos: Vec2,
     pub goal_grid_pos: Vec2
+}
+
+impl Stage {
+    pub fn new(id: usize, grid_size: IVec2) -> Self {
+        Self {
+            id: id,
+            ground_tiles: vec![],
+            spikes: vec![],
+            half_saws: vec![],
+            springs: vec![],
+            lock_blocks: vec![],
+            keys: vec![],
+            interval_blocks: vec![],
+            phantom_blocks: vec![],
+            checkpoints: vec![],
+            grid_width: grid_size.x as usize,
+            grid_height: grid_size.y as usize,
+            spawn_grid_pos: Vec2::default(),
+            goal_grid_pos: Vec2::new(100.0 * TILE_SIZE, 0.0),
+        }
+    }
 }
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -70,7 +93,8 @@ pub struct Key {
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct IntervalBlock {
-    pub grid_pos: Vec2
+    pub grid_pos: Vec2,
+    pub is_active: bool
 }
 #[derive(Debug, Deserialize, Serialize)]
 pub struct PhantomBlock {

@@ -38,7 +38,7 @@ impl TileBundle {
             sprite_bundle: SpriteBundle {
                 transform: Transform {
                     rotation: Quat::from_rotation_z(tile_rotation),
-                    translation: Vec3::new(grid_pos.x * TILE_SIZE, grid_pos.y * TILE_SIZE, 0.0),
+                    translation: Vec3::new((grid_pos.x * TILE_SIZE) + TILE_SIZE_HALF, (grid_pos.y * TILE_SIZE) + TILE_SIZE_HALF, 0.0),
                     ..default()
                 },
                 texture: image_handle.clone(),
