@@ -1,7 +1,9 @@
+use std::time::Duration;
+
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
 
-use crate::{common::{death::Killable, physics::gravity::Gravity}, ground::Groundable, networking::networked_players::NetworkedPlayer, player::{death::Respawnable, horizontal_movement_controller::{AirbourneHorizontalMovementController, GroundedHorizontalMovementController}, jump_controller::JumpController, look_state::PlayerLookState, physics_controller::PhysicsController, wall_jump_controller::{WallJumpController, WallStickable}}, stage::{stage_builder::stage_creator::TILE_SIZE, stage_objects::StageObject}, wall::Wallable};
+use crate::{common::{death::Killable, physics::gravity::Gravity}, ground::Groundable, networking::networked_players::NetworkedPlayer, player::{dash_controller::{DashController, DASH_COOLDOWN, DASH_DURATION, DASH_KEY, DASH_SPEED}, death::Respawnable, horizontal_movement_controller::{AirbourneHorizontalMovementController, GroundedHorizontalMovementController}, jump_controller::JumpController, look_state::PlayerLookState, physics_controller::PhysicsController, wall_jump_controller::{WallJumpController, WallStickable}}, stage::{stage_builder::stage_creator::TILE_SIZE, stage_objects::StageObject}, wall::Wallable};
 
 pub const FORCE_MUL: f32 = TILE_SIZE / 16.0;
 
@@ -9,9 +11,9 @@ pub const PLAYER_SIZE: Vec2 = Vec2::new(TILE_SIZE * 0.8, TILE_SIZE * 0.8);
 
 const PLAYER_ACCELERATION: f32 = 1000.0 * FORCE_MUL;
 const PLAYER_DECELERATION: f32 = 1000.0 * FORCE_MUL;
-const MAX_HORIZONTAL_SPEED: f32 = 225.0 * FORCE_MUL;
+pub const MAX_HORIZONTAL_SPEED: f32 = 225.0 * FORCE_MUL;
 
-const PLAYER_MIN_VELOCITY: Vec2 = Vec2::new(-700.0 * FORCE_MUL, -400.0 * FORCE_MUL);
+const PLAYER_MIN_VELOCITY: Vec2 = Vec2::new(-500.0 * FORCE_MUL, -400.0 * FORCE_MUL);
 const PLAYER_MAX_VELOCITY: Vec2 = Vec2::new(500.0 * FORCE_MUL, 400.0 * FORCE_MUL);
 
 const PLAYER_JUMP_SPEED: f32 = 200.0 * FORCE_MUL;
@@ -53,6 +55,7 @@ pub struct LocalPlayerBundle {
     wall_stickable: WallStickable,
     grounded_horizontal_movement_controller: GroundedHorizontalMovementController,
     airbourne_horizontal_movement_controller: AirbourneHorizontalMovementController,
+    dash_controller: DashController,
     respawnable: Respawnable,
     stage_object: StageObject,
     killable: Killable
@@ -134,6 +137,7 @@ impl Default for LocalPlayerBundle {
             stage_object: StageObject { stage_id: usize::max_value() },
             killable: Killable,
             wallable_marker: Wallable,
+            dash_controller: DashController::default(),
         }
     }
 }

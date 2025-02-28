@@ -34,9 +34,7 @@ pub fn move_ground_horizontal_controller(
         vel.linvel.x += change;
 
         if vel.linvel.x.abs() > con.max_speed {
-            let friction = change.abs();
-            let diff = vel.linvel.x.abs() - con.max_speed;
-            vel.linvel.x -= vel.linvel.x.signum() * diff.abs().min(friction);
+            vel.linvel.x -= 0.4 * (vel.linvel.x.abs() - con.max_speed.abs()).powi(2) * vel.linvel.x.signum() * time.delta_seconds();
         } 
         if change.abs() < 0.01 {
             let friction = con.deceleration * time.delta_seconds();
@@ -88,9 +86,7 @@ pub fn move_airbourne_horizontal_controller(
         vel.linvel.x += change;
         
         if vel.linvel.x.abs() > con.max_speed {
-            let friction = change.abs();
-            let diff = vel.linvel.x.abs() - con.max_speed;
-            vel.linvel.x -= vel.linvel.x.signum() * diff.abs().min(friction);
+            vel.linvel.x -= 0.4 * (vel.linvel.x.abs() - con.max_speed.abs()).powi(2) * vel.linvel.x.signum() * time.delta_seconds();
         } 
         if change.abs() < 0.01 {
             let friction = con.deceleration * time.delta_seconds();
