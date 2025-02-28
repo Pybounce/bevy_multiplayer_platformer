@@ -1,116 +1,102 @@
 
-use bevy::prelude::*;
-
-pub enum EditorStageObject {
-    Spike { entity: Entity, rotation: f32 },
-    Ground { entity: Entity },
-    Spawn { entity: Entity },
-    Spring { entity: Entity, rotation: f32 },
-    PhantomBlock { entity: Entity },
-    HalfSaw { entity: Entity, rotation: f32 },
-    Key { entity: Entity, trigger_id: usize },
-    LockBlock { entity: Entity, trigger_id: usize },
-    IntervalBlock { entity: Entity, is_active: bool },
-    SawShooter { entity: Entity, rotation: f32 },
-}
-
-
-pub trait HasEntity { 
-    fn entity(&self) -> Entity;
-}
-
-impl HasEntity for EditorStageObject {
-    fn entity(&self) -> Entity {
-        match self {
-            EditorStageObject::Spike { entity, .. } => *entity,
-            EditorStageObject::Spring { entity, .. } => *entity,
-            EditorStageObject::Ground { entity } => *entity,
-            EditorStageObject::Spawn { entity } => *entity,
-            EditorStageObject::PhantomBlock { entity } => *entity,
-            EditorStageObject::HalfSaw { entity, .. } => *entity,
-            EditorStageObject::Key { entity, .. } => *entity,
-            EditorStageObject::LockBlock { entity, .. } => *entity,
-            EditorStageObject::IntervalBlock { entity, .. } => *entity,
-            EditorStageObject::SawShooter { entity, .. } => *entity,
-        }
-    }
-}
-
-
-
 #[derive(Default, Copy, Clone, Debug)]
 #[repr(u8)]
 pub enum EditorItem {
     #[default]
     Ground = 0,
-    Spike = 1,
+    Spike { rotation: f32 }= 1,
     Spawn = 2,
-    Spring = 3,
+    Spring { rotation: f32 }= 3,
     PhantomBlock = 4,
-    HalfSaw = 5,
-    Key(KeyVariant) = 6,
-    LockBlock(LockBlockVariant) = 7,
-    IntervalBlock(IntervalBlockVariant) = 8,
-    SawShooter = 9,
+    HalfSaw { rotation: f32 }= 5,
+    Key { variant: KeyVariant } = 6,
+    LockBlock { variant: LockBlockVariant } = 7,
+    IntervalBlock { variant: IntervalBlockVariant } = 8,
+    SawShooter { rotation: f32 } = 9,
 }
 
 impl EditorItem {
     pub fn cycle_next(&self) -> Self {
         match self {
-            EditorItem::Ground => EditorItem::Key(KeyVariant::One),
-            EditorItem::Key(_) => EditorItem::Spike,
-            EditorItem::Spike => EditorItem::Spawn,
-            EditorItem::Spawn => EditorItem::Spring,
-            EditorItem::Spring => EditorItem::PhantomBlock,
-            EditorItem::PhantomBlock => EditorItem::HalfSaw,
-            EditorItem::HalfSaw => EditorItem::LockBlock(LockBlockVariant::One),
-            EditorItem::LockBlock(_) => EditorItem::IntervalBlock(IntervalBlockVariant::On),
-            EditorItem::IntervalBlock(_) => EditorItem::SawShooter,
-            EditorItem::SawShooter => EditorItem::Ground,
+            EditorItem::Ground => EditorItem::Key { variant: KeyVariant::One },
+            EditorItem::Key { .. } => EditorItem::Spike { rotation: 0.0 },
+            EditorItem::Spike { .. } => EditorItem::Spawn,
+            EditorItem::Spawn => EditorItem::Spring { rotation: 0.0 },
+            EditorItem::Spring { .. } => EditorItem::PhantomBlock,
+            EditorItem::PhantomBlock => EditorItem::HalfSaw { rotation: 0.0 },
+            EditorItem::HalfSaw { .. } => EditorItem::LockBlock { variant: LockBlockVariant::One },
+            EditorItem::LockBlock { .. } => EditorItem::IntervalBlock { variant: IntervalBlockVariant::On },
+            EditorItem::IntervalBlock { .. } => EditorItem::SawShooter { rotation: 0.0 },
+            EditorItem::SawShooter { .. } => EditorItem::Ground,
         }
     }
     pub fn cycle_prev(&self) -> Self {
         match self {
-            EditorItem::SawShooter => EditorItem::IntervalBlock(IntervalBlockVariant::On),
-            EditorItem::Ground => EditorItem::SawShooter,
-            EditorItem::IntervalBlock(_) => EditorItem::LockBlock(LockBlockVariant::One),
-            EditorItem::LockBlock(_) => EditorItem::HalfSaw,
-            EditorItem::HalfSaw => EditorItem::PhantomBlock,
-            EditorItem::PhantomBlock => EditorItem::Spring,
-            EditorItem::Spring => EditorItem::Spawn,
-            EditorItem::Spawn => EditorItem::Spike,
-            EditorItem::Spike => EditorItem::Key(KeyVariant::One),
-            EditorItem::Key(_) => EditorItem::Ground,
+            EditorItem::SawShooter { .. } => EditorItem::IntervalBlock { variant: IntervalBlockVariant::On },
+            EditorItem::Ground => EditorItem::SawShooter { rotation: 0.0 },
+            EditorItem::IntervalBlock { .. } => EditorItem::LockBlock { variant: LockBlockVariant::One },
+            EditorItem::LockBlock { .. } => EditorItem::HalfSaw { rotation: 0.0 },
+            EditorItem::HalfSaw { .. } => EditorItem::PhantomBlock,
+            EditorItem::PhantomBlock => EditorItem::Spring { rotation: 0.0 },
+            EditorItem::Spring { .. } => EditorItem::Spawn,
+            EditorItem::Spawn => EditorItem::Spike { rotation: 0.0 },
+            EditorItem::Spike { .. } => EditorItem::Key { variant: KeyVariant::One },
+            EditorItem::Key { .. } => EditorItem::Ground,
         }
     }
     pub fn cycle_next_variant(&self) -> Self {
         match self {
             EditorItem::Ground => EditorItem::Ground,
-            EditorItem::Key(variant) => EditorItem::Key(variant.cycle_next()),
-            EditorItem::Spike => EditorItem::Spike,
+            EditorItem::Key { variant } => EditorItem::Key { variant: variant.cycle_next() },
+            EditorItem::Spike { rotation } => EditorItem::Spike { rotation: *rotation },
             EditorItem::Spawn => EditorItem::Spawn,
-            EditorItem::Spring => EditorItem::Spring,
+            EditorItem::Spring { rotation } => EditorItem::Spring { rotation: *rotation },
             EditorItem::PhantomBlock => EditorItem::PhantomBlock,
-            EditorItem::HalfSaw => EditorItem::HalfSaw,
-            EditorItem::LockBlock(variant) => EditorItem::LockBlock(variant.cycle_next()),
-            EditorItem::IntervalBlock(variant) => EditorItem::IntervalBlock(variant.cycle_next()),
-            EditorItem::SawShooter => EditorItem::SawShooter,
+            EditorItem::HalfSaw { rotation } => EditorItem::HalfSaw { rotation: *rotation },
+            EditorItem::LockBlock { variant } => EditorItem::LockBlock { variant: variant.cycle_next() },
+            EditorItem::IntervalBlock { variant } => EditorItem::IntervalBlock { variant: variant.cycle_next() },
+            EditorItem::SawShooter { rotation } => EditorItem::SawShooter { rotation: *rotation },
         }
     }
     pub fn cycle_prev_variant(&self) -> Self {
         match self {
             EditorItem::Ground => EditorItem::Ground,
-            EditorItem::LockBlock(variant) => EditorItem::LockBlock(variant.cycle_prev()),
-            EditorItem::HalfSaw => EditorItem::HalfSaw,
+            EditorItem::LockBlock { variant } => EditorItem::LockBlock { variant: variant.cycle_prev() },
+            EditorItem::HalfSaw { rotation } => EditorItem::HalfSaw { rotation: *rotation },
             EditorItem::PhantomBlock => EditorItem::PhantomBlock,
-            EditorItem::Spring => EditorItem::Spring,
+            EditorItem::Spring { rotation } => EditorItem::Spring { rotation: *rotation },
             EditorItem::Spawn => EditorItem::Spawn,
-            EditorItem::Spike => EditorItem::Spike,
-            EditorItem::Key(variant) => EditorItem::Key(variant.cycle_prev()),
-            EditorItem::IntervalBlock(variant) => EditorItem::IntervalBlock(variant.cycle_prev()),
-            EditorItem::SawShooter => EditorItem::SawShooter,
+            EditorItem::Spike { rotation } => EditorItem::Spike { rotation: *rotation },
+            EditorItem::Key { variant } => EditorItem::Key { variant: variant.cycle_prev() },
+            EditorItem::IntervalBlock { variant } => EditorItem::IntervalBlock { variant: variant.cycle_prev() },
+            EditorItem::SawShooter { rotation } => EditorItem::SawShooter { rotation: *rotation },
         }
     }
+
+    pub fn try_rotate(&mut self) -> bool {
+
+        match self {
+            EditorItem::Ground => return false,
+            EditorItem::Spike { rotation } => rotate_quater_bounded(*rotation),
+            EditorItem::Spawn => return false,
+            EditorItem::Spring { rotation } => rotate_quater_bounded(*rotation),
+            EditorItem::PhantomBlock => return false,
+            EditorItem::HalfSaw { rotation } => rotate_quater_bounded(*rotation),
+            EditorItem::Key { variant } => return false,
+            EditorItem::LockBlock { variant } => return false,
+            EditorItem::IntervalBlock { variant } => return false,
+            EditorItem::SawShooter { rotation } => rotate_quater_bounded(*rotation),
+        };
+        return true;
+    }
+}
+
+fn rotate_quater_bounded(mut r: f32) -> f32 {
+    r -= std::f32::consts::FRAC_PI_2;
+    if r <= 0.0 {
+        r = std::f32::consts::PI * 2.0;
+    }
+    return r;
 }
 
 #[derive(Default, Copy, Clone, Debug)]

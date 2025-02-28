@@ -6,6 +6,7 @@ use crate::{camera::PixelPerfectTranslation, common::{mouse::MouseData, states::
 mod enums;
 mod controller;
 mod item_icon;
+mod editor_renderer;
 
 pub struct StageEditorPlugin;
 
@@ -67,14 +68,22 @@ fn build_stage_editor(
 ) {
     let object_atlas: Handle<Image> = asset_server.load("object_tilemap.png");
     let ground_atlas: Handle<Image> = asset_server.load("tilemap.png");
-    let mut editor_controller = EditorController::new(&object_atlas, &ground_atlas);
+    
+    let editor_controller: EditorController;
 
     if let Some(handle) = &stage_editor_load_details.template_stage_handle {
         match stage_assets.get(handle) {
-            Some(asset) => editor_controller.set_template(asset),
-            None => app_state.set(AppState::StageSelect),
+            Some(asset) => {editor_controller = EditorController::from_stage(asset, &object_atlas, &ground_atlas); },
+            None => {
+                app_state.set(AppState::StageSelect);
+                return;
+            },
         }
     }
+    else {
+        editor_controller = EditorController::new(&object_atlas, &ground_atlas);
+    }
+
     commands.insert_resource(editor_controller);
 
     commands.spawn(Text2dBundle {
@@ -104,18 +113,13 @@ pub struct StageEditorLoadDetails {
 fn handle_placement(
     buttons: Res<ButtonInput<MouseButton>>,
     mut editor_con: ResMut<EditorController>,
-    mouse_data: Res<MouseData>,
-    mut commands: Commands,
-    mut current_item_q: Query<Entity, With<ItemIcon>>
+    mouse_data: Res<MouseData>
 ) {
     if buttons.just_pressed(MouseButton::Left) {
-        if let Ok(e) = current_item_q.get_single_mut() {
-            let mouse_pos = editor_con.world_to_grid_pos(mouse_data.world_position.extend(0.0));
-            if editor_con.try_place(mouse_pos, e.clone()) {
-                commands.entity(e).remove::<ItemIcon>();
-            }
-        }
+        let mouse_pos = editor_con.world_to_grid_pos(mouse_data.world_position.extend(0.0));
+        if editor_con.try_place(mouse_pos) {
 
+        }
     }
 }
 
@@ -185,42 +189,42 @@ fn update_ground_atlas_indices(
     mut item_icon_query: Query<&mut Sprite, With<ItemIcon>>,
 
 ) {
-    let current_grid_pos = editor_con.world_to_grid_pos(mouse_data.world_position.extend(0.0));
-    let adjacent_grid_positions = get_not_clockwise_adjacent_grid_positions_but_2_layers_hardcoded_because_thats_the_neutron_style(current_grid_pos);
-
-    let mut ground_icon_grid_pos_opt: Option<IVec2> = None;
-
-    match editor_con.current_item {
-        enums::EditorItem::Ground => {
-            if let Ok(mut s) = item_icon_query.get_single_mut() {
-                let atlas_index = get_ground_atlas_index(&editor_con, current_grid_pos, None) as f32;
-                let upper_left = Vec2::new(atlas_index % GROUND_TILEMAP_SIZE, (atlas_index / GROUND_TILEMAP_SIZE).trunc()) * TILE_SIZE;
-                let lower_right = upper_left + TILE_SIZE;
-                let atlas_rect = Rect::new(upper_left.x, upper_left.y, lower_right.x, lower_right.y);
-                s.rect = Some(atlas_rect);
-                ground_icon_grid_pos_opt = Some(current_grid_pos);
-            }
-        },
-        _ => (),
-    }
-
-    for adjacent_grid_pos in &adjacent_grid_positions {
-        if let Some(stage_object) = editor_con.stage_grid.get(adjacent_grid_pos) {
-            match stage_object {
-                enums::EditorStageObject::Ground { entity } => {
-                    if let Ok(mut s) = stage_entities_q.get_mut(*entity) {
-                        let atlas_index = get_ground_atlas_index(&editor_con, *adjacent_grid_pos, ground_icon_grid_pos_opt) as f32;
-                        let upper_left = Vec2::new(atlas_index % GROUND_TILEMAP_SIZE, (atlas_index / GROUND_TILEMAP_SIZE).trunc()) * TILE_SIZE;
-                        let lower_right = upper_left + TILE_SIZE;
-                        let atlas_rect = Rect::new(upper_left.x, upper_left.y, lower_right.x, lower_right.y);
-                        s.rect = Some(atlas_rect);
-                    }
-                }
-                _ => (),
-            }
-        }
-    }
-
+    //let current_grid_pos = editor_con.world_to_grid_pos(mouse_data.world_position.extend(0.0));
+    //let adjacent_grid_positions = get_not_clockwise_adjacent_grid_positions_but_2_layers_hardcoded_because_thats_the_neutron_style(current_grid_pos);
+//
+    //let mut ground_icon_grid_pos_opt: Option<IVec2> = None;
+//
+    //match editor_con.current_item {
+    //    enums::EditorItem::Ground => {
+    //        if let Ok(mut s) = item_icon_query.get_single_mut() {
+    //            let atlas_index = get_ground_atlas_index(&editor_con, current_grid_pos, None) as f32;
+    //            let upper_left = Vec2::new(atlas_index % GROUND_TILEMAP_SIZE, (atlas_index / GROUND_TILEMAP_SIZE).trunc()) * TILE_SIZE;
+    //            let lower_right = upper_left + TILE_SIZE;
+    //            let atlas_rect = Rect::new(upper_left.x, upper_left.y, lower_right.x, lower_right.y);
+    //            s.rect = Some(atlas_rect);
+    //            ground_icon_grid_pos_opt = Some(current_grid_pos);
+    //        }
+    //    },
+    //    _ => (),
+    //}
+//
+    //for adjacent_grid_pos in &adjacent_grid_positions {
+    //    if let Some(stage_object) = editor_con.stage_grid.get(adjacent_grid_pos) {
+    //        match stage_object {
+    //            enums::EditorStageObject::Ground { entity } => {
+    //                if let Ok(mut s) = stage_entities_q.get_mut(*entity) {
+    //                    let atlas_index = get_ground_atlas_index(&editor_con, *adjacent_grid_pos, ground_icon_grid_pos_opt) as f32;
+    //                    let upper_left = Vec2::new(atlas_index % GROUND_TILEMAP_SIZE, (atlas_index / GROUND_TILEMAP_SIZE).trunc()) * TILE_SIZE;
+    //                    let lower_right = upper_left + TILE_SIZE;
+    //                    let atlas_rect = Rect::new(upper_left.x, upper_left.y, lower_right.x, lower_right.y);
+    //                    s.rect = Some(atlas_rect);
+    //                }
+    //            }
+    //            _ => (),
+    //        }
+    //    }
+    //}
+    // commented out whilst working on the editor refactor
 
 }
 
@@ -244,7 +248,7 @@ pub fn get_ground_atlas_index(
         }
         if let Some(stage_object) = editor_con.stage_grid.get(adjacent_grid_pos) {
             match stage_object {
-                enums::EditorStageObject::Ground { entity: _ } => bitmask |= current_bit,
+                enums::EditorItem::Ground => bitmask |= current_bit,
                 _ => (),
             }
         };

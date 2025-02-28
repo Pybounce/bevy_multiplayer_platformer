@@ -5,7 +5,7 @@ use crate::stage::stage_builder::{stage_asset::{GroundTile, HalfSaw, IntervalBlo
 
 use super::{enums::*, get_ground_atlas_index};
 
-const EDITOR_TILEMAP_SIZE: f32 = 16.0;
+pub const EDITOR_TILEMAP_SIZE: f32 = 16.0;
 pub const GROUND_TILEMAP_SIZE: f32 = 7.0;
 
 #[derive(Resource)]
@@ -16,9 +16,9 @@ pub struct EditorController {
     saved: bool,
     pub object_atlas: Handle<Image>,
     pub ground_atlas: Handle<Image>,
-    pub stage_grid: HashMap<IVec2, EditorStageObject>,
+    pub stage_grid: HashMap<IVec2, EditorItem>,
     grid_size: IVec2,
-    pub rotation: f32,
+    pub version: usize
 }
 
 ///API
@@ -33,8 +33,24 @@ impl EditorController {
             ground_atlas: ground_atlas.clone(),
             grid_size: IVec2::splat(30),
             stage_grid: HashMap::new(),
-            rotation: 0.0,
+            version: 0
          }
+    }
+
+    pub fn from_stage(stage: &Stage, object_atlas: &Handle<Image>, ground_atlas: &Handle<Image>) -> Self {
+        
+        let mut editor = Self { 
+            current_item: EditorItem::default(),
+            tile_size: TILE_SIZE,
+            saved: false,
+            object_atlas: object_atlas.clone(),
+            ground_atlas: ground_atlas.clone(),
+            grid_size: IVec2::new(stage.grid_width as i32, stage.grid_height as i32),
+            stage_grid: HashMap::new(),
+            version: 0
+         };
+         editor.set_stage_template(stage);
+         return editor;
     }
 
     pub fn cycle_next_item(&mut self) {
@@ -60,32 +76,32 @@ impl EditorController {
     pub fn get_item_icon_atlas_rect(&self) -> Rect {
         let (index, tile_size) = match self.current_item {
             EditorItem::Ground => (15.0, 16.0),
-            EditorItem::Spike => (4.0, 16.0),
+            EditorItem::Spike { .. } => (4.0, 16.0),
             EditorItem::Spawn => (18.0, 16.0),
-            EditorItem::Spring => (5.0, 16.0),
+            EditorItem::Spring { .. } => (5.0, 16.0),
             EditorItem::PhantomBlock => (21.0, 16.0),
-            EditorItem::HalfSaw => (0.0, 16.0),
-            EditorItem::Key(variant) => {
+            EditorItem::HalfSaw { .. } => (0.0, 16.0),
+            EditorItem::Key { variant } => {
                         match variant {
                             KeyVariant::One => (255.0, 16.0),
                             KeyVariant::Two => (239.0, 16.0),
                             KeyVariant::Three => (223.0, 16.0),
                         }
                     },
-            EditorItem::LockBlock(variant) => {
+            EditorItem::LockBlock { variant } => {
                         match variant {
                             LockBlockVariant::One => (254.0, 16.0),
                             LockBlockVariant::Two => (238.0, 16.0),
                             LockBlockVariant::Three => (222.0, 16.0),
                         }
                     },
-            EditorItem::IntervalBlock(variant) => {
+            EditorItem::IntervalBlock { variant }=> {
                         match variant {
                             IntervalBlockVariant::On => (253.0, 16.0),
                             IntervalBlockVariant::Off => (237.0, 16.0),
                         }
                     },
-            EditorItem::SawShooter => (27.0, 16.0),
+            EditorItem::SawShooter { .. } => (27.0, 16.0),
         };
 
         let upper_left = Vec2::new(index % EDITOR_TILEMAP_SIZE, (index / EDITOR_TILEMAP_SIZE).trunc()) * tile_size;
@@ -111,51 +127,9 @@ impl EditorController {
             (world_pos.y /self.tile_size).trunc()as i32) 
     }
 
-    pub fn try_place(&mut self, grid_pos: IVec2, entity: Entity) -> bool {
+    pub fn try_place(&mut self, grid_pos: IVec2) -> bool {
         if !self.can_place(grid_pos) { return false; }
-        match self.current_item {
-            EditorItem::Ground => {
-                        self.stage_grid.insert(grid_pos, EditorStageObject::Ground { entity } );
-                    },
-            EditorItem::Spike => {
-                        self.stage_grid.insert(grid_pos, EditorStageObject::Spike { entity: entity, rotation: self.rotation });
-                    },
-            EditorItem::Spawn => {
-                        self.stage_grid.insert(grid_pos, EditorStageObject::Spawn { entity } );
-                    },
-            EditorItem::Spring => {
-                        self.stage_grid.insert(grid_pos, EditorStageObject::Spring { entity: entity, rotation: self.rotation });
-                    },
-            EditorItem::PhantomBlock => {
-                        self.stage_grid.insert(grid_pos, EditorStageObject::PhantomBlock { entity: entity });
-                    },
-            EditorItem::HalfSaw => {
-                        self.stage_grid.insert(grid_pos, EditorStageObject::HalfSaw { entity: entity, rotation: self.rotation });
-                    },
-            EditorItem::Key(variant) => {
-                        match variant {
-                            KeyVariant::One => self.stage_grid.insert(grid_pos, EditorStageObject::Key { entity: entity, trigger_id: 1 }),
-                            KeyVariant::Two => self.stage_grid.insert(grid_pos, EditorStageObject::Key { entity: entity, trigger_id: 2 }),
-                            KeyVariant::Three => self.stage_grid.insert(grid_pos, EditorStageObject::Key { entity: entity, trigger_id: 3 }),
-                        };
-                    },
-            EditorItem::LockBlock(variant) => {
-                        match variant {
-                            LockBlockVariant::One => self.stage_grid.insert(grid_pos, EditorStageObject::LockBlock { entity: entity, trigger_id: 1 }),
-                            LockBlockVariant::Two => self.stage_grid.insert(grid_pos, EditorStageObject::LockBlock { entity: entity, trigger_id: 2 }),
-                            LockBlockVariant::Three => self.stage_grid.insert(grid_pos, EditorStageObject::LockBlock { entity: entity, trigger_id: 3 }),
-                        };
-                    },
-            EditorItem::IntervalBlock(variant) => {
-                        match variant {
-                            IntervalBlockVariant::On => self.stage_grid.insert(grid_pos, EditorStageObject::IntervalBlock { entity: entity, is_active: true }),
-                            IntervalBlockVariant::Off => self.stage_grid.insert(grid_pos, EditorStageObject::IntervalBlock { entity: entity, is_active:  false }),
-                        };
-                    },
-            EditorItem::SawShooter => { 
-                self.stage_grid.insert(grid_pos, EditorStageObject::SawShooter { entity: entity, rotation: self.rotation }); 
-            },
-        }
+        self.stage_grid.insert(grid_pos, self.current_item);
         self.saved = false;
         return true;
     }
@@ -172,7 +146,8 @@ impl EditorController {
         if !self.can_remove(grid_pos) { return false; }
 
         if let Some((_entry_key, entry_val)) = self.stage_grid.remove_entry(&grid_pos) {
-            commands.entity(entry_val.entity()).despawn_recursive();
+            self.version += 1;
+            //TODO: raise delete event!
         }
         return true;
     }
@@ -195,14 +170,7 @@ impl EditorController {
         return true;
     }
     pub fn try_rotate(&mut self) -> bool {
-
-        if !self.can_rotate() { return false; }
-        self.rotation -= std::f32::consts::FRAC_PI_2;
-        if self.rotation <= 0.0 {
-            self.rotation = std::f32::consts::PI * 2.0;
-        }
-
-        return true;
+        return self.current_item.try_rotate();
     }
     pub fn can_remove(&self, grid_pos: IVec2) -> bool {
         grid_pos.x > 0 && 
@@ -211,17 +179,7 @@ impl EditorController {
         grid_pos.y < self.grid_size.y as i32 - 1 &&
         self.stage_grid.contains_key(&grid_pos)
     }
-    pub fn set_template(&mut self, template_stage: &Stage) {
-        //TODO: ISSUES:
-        // So the editor places tiles as we go, we currently have no way to get that data from just the grid data in editor
-        // This may mean refactoring the editor so that placing an item updates the data and marks it as dirty
-        // And then something comes through, adds it, marks it clean.
-        // Would also need a way for deleting things.
-        // Basically it looks like this is a good reason for having the event based editor.
-        for ground in &template_stage.ground_tiles {
-            //self.stage_grid.insert(ground.grid_pos.as_ivec2(), EditorStageObject::Ground { entity: () })
-        }
-    }
+
 }
 
 /// Helper Functions
@@ -229,7 +187,7 @@ impl EditorController {
     fn get_spawn_grid_pos(&self) -> Option<IVec2> {
         for (key, val) in self.stage_grid.iter() {
             match val {
-                EditorStageObject::Spawn { entity: _ } => {
+                EditorItem::Spawn => {
                     return Some(*key);
                 },
                 _ => ()
@@ -250,60 +208,77 @@ impl EditorController {
         true
     }
 
+    fn set_stage_template(&mut self, stage: &Stage) {
+        for ground in &stage.ground_tiles {
+
+        }
+    }
+
     fn build_stage(&self) -> Stage {
         let mut stage: Stage = Stage::new(4, self.grid_size);
         for (grid_pos, stage_editor_obj) in &self.stage_grid {
             match stage_editor_obj {
-                EditorStageObject::Spike { entity: _, rotation } => {
+                EditorItem::Spike { rotation } => {
                     stage.spikes.push(Spike {
                         grid_pos: grid_pos.as_vec2(),
                         rotation: *rotation,
                     });
                 },
-                EditorStageObject::Ground { entity: _ } => {
+                EditorItem::Ground => {
                     stage.ground_tiles.push(GroundTile {
                         grid_pos: grid_pos.as_vec2(),
                         tilemap_index: get_ground_atlas_index(self, *grid_pos, None),
                     });
                 },
-                EditorStageObject::Spawn { entity: _ } => stage.spawn_grid_pos = grid_pos.as_vec2(),
-                EditorStageObject::Spring { entity: _, rotation } => {
+                EditorItem::Spawn => stage.spawn_grid_pos = grid_pos.as_vec2(),
+                EditorItem::Spring { rotation } => {
                     stage.springs.push(Spring {
                         grid_pos: grid_pos.as_vec2(),
                         rotation: *rotation,
                     });
                 }
-                EditorStageObject::PhantomBlock { entity: _ } => {
+                EditorItem::PhantomBlock => {
                     stage.phantom_blocks.push(PhantomBlock {
                         grid_pos: grid_pos.as_vec2(),
                     });
                 },
-                EditorStageObject::HalfSaw { entity: _, rotation } => {
+                EditorItem::HalfSaw { rotation } => {
                     stage.half_saws.push(HalfSaw {
                         grid_pos: grid_pos.as_vec2(),
                         rotation: *rotation,
                         movement_path_opt: None
                     });
                 },
-                EditorStageObject::Key { entity: _ , trigger_id} => {
+                EditorItem::Key { variant } => {
                     stage.keys.push(Key {
                         grid_pos: grid_pos.as_vec2(),
-                        trigger_id: *trigger_id,
+                        trigger_id: match variant {
+                            KeyVariant::One => 1,
+                            KeyVariant::Two => 2,
+                            KeyVariant::Three => 3,
+                        },
                     });
                 },
-                EditorStageObject::LockBlock { entity: _, trigger_id } => {
+                EditorItem::LockBlock { variant } => {
                     stage.lock_blocks.push(LockBlock {
                         grid_pos: grid_pos.as_vec2(),
-                        trigger_id: *trigger_id,
+                        trigger_id: match variant {
+                            LockBlockVariant::One => 1,
+                            LockBlockVariant::Two => 2,
+                            LockBlockVariant::Three => 3,
+                        },
                     });
                 },
-                EditorStageObject::IntervalBlock { entity: _, is_active } => {
+                EditorItem::IntervalBlock { variant } => {
                     stage.interval_blocks.push(IntervalBlock {
                         grid_pos: grid_pos.as_vec2(),
-                        is_active: *is_active
+                        is_active: match variant {
+                            IntervalBlockVariant::On => true,
+                            IntervalBlockVariant::Off => false,
+                        }
                     });
                 },
-                EditorStageObject::SawShooter { entity: _, rotation } => {
+                EditorItem::SawShooter { rotation } => {
                     stage.saw_shooter_blocks.push(SawShooterBlock {
                         grid_pos: grid_pos.as_vec2(),
                         rotation: *rotation,

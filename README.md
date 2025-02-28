@@ -84,6 +84,7 @@
     - So to keep it as a state we need to add a looking state and update it for local and networked players
   - This will become a larger issue when more effects are added for onJump or onDeath etc
 - Add CollidingEntities to the spring and key etc instead
+- Make a separate sprite atlas for editor
 
 ## Web Build
 
