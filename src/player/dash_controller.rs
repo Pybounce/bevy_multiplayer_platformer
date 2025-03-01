@@ -11,7 +11,7 @@ use super::look_state::PlayerLookState;
 pub const DASH_COOLDOWN: f32 = 1.0;
 pub const DASH_SPEED: f32 = 400.0 * FORCE_MUL;
 pub const DASH_DURATION: f32 = 0.2;
-pub const DASH_END_SPEED: f32 = 400.0 * FORCE_MUL;
+pub const DASH_END_SPEED: f32 = MAX_HORIZONTAL_SPEED * FORCE_MUL;
 pub const DASH_KEY: KeyCode = KeyCode::Space;
 
 #[derive(Component)]
