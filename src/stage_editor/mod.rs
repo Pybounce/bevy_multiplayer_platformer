@@ -1,8 +1,8 @@
 use bevy::prelude::*;
-use controller::{EditorController, GROUND_TILEMAP_SIZE};
+use controller::EditorController;
 use item_icon::*;
 use renderer::editor_renderer::EditorRenderer;
-use crate::{camera::PixelPerfectTranslation, common::{mouse::MouseData, states::{AppState, DespawnOnStateExit, StageEditorState}}, stage::stage_builder::{stage_asset::Stage, stage_creator::TILE_SIZE}};
+use crate::{camera::PixelPerfectTranslation, common::{mouse::MouseData, states::{AppState, DespawnOnStateExit, StageEditorState}}, stage::stage_builder::stage_asset::Stage};
 
 mod enums;
 mod controller;
@@ -19,7 +19,7 @@ impl Plugin for StageEditorPlugin {
         .add_systems(OnEnter(StageEditorState::InEdit), build_stage_editor)
         .add_systems(OnExit(AppState::StageEditor), teardown_stage_editor)
         .add_systems(Update, (
-            (handle_current_item_change, add_item_icon, display_item_icon, move_item_icon, update_ground_atlas_indices),
+            (handle_current_item_change, add_item_icon, move_item_icon, update_ground_atlas_indices),
             (handle_rotate, handle_placement, handle_grid_object_removals),
             handle_save,
             move_camera
@@ -129,12 +129,11 @@ fn handle_placement(
 fn handle_grid_object_removals(
     buttons: Res<ButtonInput<MouseButton>>,
     mut editor_con: ResMut<EditorController>,
-    mouse_data: Res<MouseData>,
-    mut commands: Commands
+    mouse_data: Res<MouseData>
 ) {
     if buttons.just_pressed(MouseButton::Right) {
         let mouse_pos = editor_con.world_to_grid_pos(mouse_data.world_position.extend(0.0));
-        editor_con.try_remove(mouse_pos, &mut commands);
+        editor_con.try_remove(mouse_pos);
     }
 }
 

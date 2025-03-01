@@ -59,7 +59,7 @@ pub fn refresh_editor_renderer(
             texture: atlas,
             sprite: Sprite {
                 custom_size: Some(Vec2::new(TILE_SIZE, TILE_SIZE)),
-                rect: Some(renderer.get_item_icon_atlas_rect(&editor_item)),
+                rect: Some(EditorRenderer::get_item_icon_atlas_rect(&editor_item)),
                 ..default()
             },
             transform: Transform { 

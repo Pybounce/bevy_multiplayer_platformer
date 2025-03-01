@@ -27,7 +27,7 @@ impl EditorRenderer {
 
 //Helper Methods
 impl EditorRenderer {
-    pub fn get_item_icon_atlas_rect(&self, editor_item: &EditorItem) -> Rect {
+    pub fn get_item_icon_atlas_rect(editor_item: &EditorItem) -> Rect {
         let (index, tile_size) = match editor_item {
             EditorItem::Ground => (15.0, 16.0),
             EditorItem::Spike { .. } => (4.0, 16.0),

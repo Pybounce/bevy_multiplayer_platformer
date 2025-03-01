@@ -3,7 +3,7 @@ use bevy::{prelude::*, scene::ron, utils::hashbrown::HashMap};
 
 use crate::stage::stage_builder::{stage_asset::{GroundTile, HalfSaw, IntervalBlock, Key, LockBlock, PhantomBlock, SawShooterBlock, Spike, Spring, Stage}, stage_creator::TILE_SIZE};
 
-use super::{enums::*, get_ground_atlas_index, StageEditorLoadDetails};
+use super::{enums::*, get_ground_atlas_index};
 
 pub const EDITOR_TILEMAP_SIZE: f32 = 16.0;
 pub const GROUND_TILEMAP_SIZE: f32 = 7.0;
@@ -75,41 +75,7 @@ impl EditorController {
             self.current_item = self.current_item.cycle_prev_variant();
         }
     }
-    pub fn get_item_icon_atlas_rect(&self) -> Rect {
-        let (index, tile_size) = match self.current_item {
-            EditorItem::Ground => (15.0, 16.0),
-            EditorItem::Spike { .. } => (4.0, 16.0),
-            EditorItem::Spawn => (18.0, 16.0),
-            EditorItem::Spring { .. } => (5.0, 16.0),
-            EditorItem::PhantomBlock => (21.0, 16.0),
-            EditorItem::HalfSaw { .. } => (0.0, 16.0),
-            EditorItem::Key { variant } => {
-                        match variant {
-                            KeyVariant::One => (255.0, 16.0),
-                            KeyVariant::Two => (239.0, 16.0),
-                            KeyVariant::Three => (223.0, 16.0),
-                        }
-                    },
-            EditorItem::LockBlock { variant } => {
-                        match variant {
-                            LockBlockVariant::One => (254.0, 16.0),
-                            LockBlockVariant::Two => (238.0, 16.0),
-                            LockBlockVariant::Three => (222.0, 16.0),
-                        }
-                    },
-            EditorItem::IntervalBlock { variant }=> {
-                        match variant {
-                            IntervalBlockVariant::On => (253.0, 16.0),
-                            IntervalBlockVariant::Off => (237.0, 16.0),
-                        }
-                    },
-            EditorItem::SawShooter { .. } => (27.0, 16.0),
-        };
-
-        let upper_left = Vec2::new(index % EDITOR_TILEMAP_SIZE, (index / EDITOR_TILEMAP_SIZE).trunc()) * tile_size;
-        let lower_right = upper_left + tile_size;
-        Rect::new(upper_left.x, upper_left.y, lower_right.x, lower_right.y)
-    }
+    
     pub fn should_display_item_icon(&self) -> bool {
         true
     }
@@ -148,10 +114,10 @@ impl EditorController {
         !self.stage_grid.contains_key(&grid_pos)
     }
 
-    pub fn try_remove(&mut self, grid_pos: IVec2, commands: &mut Commands) -> bool{
+    pub fn try_remove(&mut self, grid_pos: IVec2) -> bool{
         if !self.can_remove(grid_pos) { return false; }
 
-        if let Some((_entry_key, entry_val)) = self.stage_grid.remove_entry(&grid_pos) {
+        if let Some(_) = self.stage_grid.remove_entry(&grid_pos) {
             self.version += 1;
             //TODO: raise delete event!
         }
@@ -190,17 +156,6 @@ impl EditorController {
 
 /// Helper Functions
 impl EditorController {
-    fn get_spawn_grid_pos(&self) -> Option<IVec2> {
-        for (key, val) in self.stage_grid.iter() {
-            match val {
-                EditorItem::Spawn => {
-                    return Some(*key);
-                },
-                _ => ()
-            }
-        }
-        return None;
-    }
     fn can_cycle_item(&self) -> bool {
         true
     }
@@ -208,9 +163,6 @@ impl EditorController {
         true
     }
     fn can_save(&self) -> bool {
-        true
-    }
-    fn can_rotate(&self) -> bool {
         true
     }
 
