@@ -77,15 +77,15 @@ impl EditorItem {
 
         match self {
             EditorItem::Ground => return false,
-            EditorItem::Spike { rotation } => rotate_quater_bounded(*rotation),
+            EditorItem::Spike { rotation } => rotate_quater_bounded(rotation),
             EditorItem::Spawn => return false,
-            EditorItem::Spring { rotation } => rotate_quater_bounded(*rotation),
+            EditorItem::Spring { rotation } => rotate_quater_bounded(rotation),
             EditorItem::PhantomBlock => return false,
-            EditorItem::HalfSaw { rotation } => rotate_quater_bounded(*rotation),
-            EditorItem::Key { variant } => return false,
-            EditorItem::LockBlock { variant } => return false,
-            EditorItem::IntervalBlock { variant } => return false,
-            EditorItem::SawShooter { rotation } => rotate_quater_bounded(*rotation),
+            EditorItem::HalfSaw { rotation } => rotate_quater_bounded(rotation),
+            EditorItem::Key { .. } => return false,
+            EditorItem::LockBlock { .. } => return false,
+            EditorItem::IntervalBlock { .. } => return false,
+            EditorItem::SawShooter { rotation } => rotate_quater_bounded(rotation),
         };
         return true;
     }
@@ -105,12 +105,11 @@ impl EditorItem {
     }
 }
 
-fn rotate_quater_bounded(mut r: f32) -> f32 {
-    r -= std::f32::consts::FRAC_PI_2;
-    if r <= 0.0 {
-        r = std::f32::consts::PI * 2.0;
+fn rotate_quater_bounded(r: &mut f32) {
+    *r -= std::f32::consts::FRAC_PI_2;
+    if *r <= 0.0 {
+        *r = std::f32::consts::PI * 2.0;
     }
-    return r;
 }
 
 #[derive(Default, Copy, Clone, Debug)]
