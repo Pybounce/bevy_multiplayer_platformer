@@ -1,15 +1,29 @@
 
+use std::default;
+
 use bevy::{prelude::*, utils::hashbrown::HashMap};
 
-use super::{controller::{EditorController, EDITOR_TILEMAP_SIZE}, enums::{EditorItem, IntervalBlockVariant, KeyVariant, LockBlockVariant}};
+use super::super::{controller::{EditorController, EDITOR_TILEMAP_SIZE}, enums::{EditorItem, IntervalBlockVariant, KeyVariant, LockBlockVariant}};
 
 #[derive(Resource)]
 pub struct EditorRenderer {
-    stage_grid: HashMap<IVec2, Entity>,
-    version: usize,
-    full_refresh: bool
+    pub stage_grid: HashMap<IVec2, Entity>,
+    pub version: usize,
+    pub full_refresh: bool
 }
 
+#[derive(Component)]
+pub struct RenderedEditorItem;
+
+impl EditorRenderer {
+    pub fn new() -> Self {
+        Self {
+            stage_grid: HashMap::new(),
+            version: 0,
+            full_refresh: true
+        }
+    }
+}
 
 //Helper Methods
 impl EditorRenderer {
@@ -50,49 +64,3 @@ impl EditorRenderer {
     }
 }
 
-pub fn draw_editor(
-    renderer_opt: Option<ResMut<EditorRenderer>>,
-    editor_controller_opt: Option<Res<EditorController>>
-) {
-    if renderer_opt.is_none() || editor_controller_opt.is_none() {
-        return;
-    }
-    let mut renderer = renderer_opt.unwrap();
-    let editor_controller = editor_controller_opt.unwrap();
-
-    //nothing to be updated
-    if editor_controller.version == renderer.version { return; }
-    
-    //out of sync, renderer should never be ahead
-    if editor_controller.version < renderer.version {
-        renderer.full_refresh = true;
-        return;
-    }
-
-    renderer.full_refresh = true;   //TEMPORARY
-
-
-}
-
-pub fn refresh_editor_renderer(    
-    renderer_opt: Option<ResMut<EditorRenderer>>,
-    editor_controller_opt: Option<Res<EditorController>>
-) {
-    if renderer_opt.is_none() || editor_controller_opt.is_none() {
-        return;
-    }
-    let mut renderer = renderer_opt.unwrap();
-    let editor_controller = editor_controller_opt.unwrap();
-
-    if renderer.full_refresh == false { return; }
-
-
-    for grid_pos in editor_controller.stage_grid.keys() {
-        let editor_object = editor_controller.stage_grid[grid_pos];
-
-    }
-
-
-    renderer.version = editor_controller.version;
-    renderer.full_refresh = false;
-}

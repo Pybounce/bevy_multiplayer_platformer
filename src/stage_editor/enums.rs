@@ -89,6 +89,20 @@ impl EditorItem {
         };
         return true;
     }
+    pub fn get_rotation(&self) -> f32 {
+        match self {
+            EditorItem::Ground => 0.0,
+            EditorItem::Spike { rotation } => *rotation,
+            EditorItem::Spawn => 0.0,
+            EditorItem::Spring { rotation } => *rotation,
+            EditorItem::PhantomBlock => 0.0,
+            EditorItem::HalfSaw { rotation } => *rotation,
+            EditorItem::Key { .. } => 0.0,
+            EditorItem::LockBlock { .. } => 0.0,
+            EditorItem::IntervalBlock { .. } => 0.0,
+            EditorItem::SawShooter { rotation } => *rotation,
+        }
+    }
 }
 
 fn rotate_quater_bounded(mut r: f32) -> f32 {

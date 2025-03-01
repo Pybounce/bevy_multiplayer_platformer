@@ -3,7 +3,7 @@ use bevy::{prelude::*, scene::ron, utils::hashbrown::HashMap};
 
 use crate::stage::stage_builder::{stage_asset::{GroundTile, HalfSaw, IntervalBlock, Key, LockBlock, PhantomBlock, SawShooterBlock, Spike, Spring, Stage}, stage_creator::TILE_SIZE};
 
-use super::{enums::*, get_ground_atlas_index};
+use super::{enums::*, get_ground_atlas_index, StageEditorLoadDetails};
 
 pub const EDITOR_TILEMAP_SIZE: f32 = 16.0;
 pub const GROUND_TILEMAP_SIZE: f32 = 7.0;
@@ -18,12 +18,13 @@ pub struct EditorController {
     pub ground_atlas: Handle<Image>,
     pub stage_grid: HashMap<IVec2, EditorItem>,
     grid_size: IVec2,
-    pub version: usize
+    pub version: usize,
+    new_stage_id: usize
 }
 
 ///API
 impl EditorController {
-    pub fn new(object_atlas: &Handle<Image>, ground_atlas: &Handle<Image>) -> Self {
+    pub fn new(new_stage_id: usize, object_atlas: &Handle<Image>, ground_atlas: &Handle<Image>) -> Self {
         
         Self { 
             current_item: EditorItem::default(),
@@ -33,12 +34,12 @@ impl EditorController {
             ground_atlas: ground_atlas.clone(),
             grid_size: IVec2::splat(30),
             stage_grid: HashMap::new(),
-            version: 0
+            version: 0,
+            new_stage_id
          }
     }
 
-    pub fn from_stage(stage: &Stage, object_atlas: &Handle<Image>, ground_atlas: &Handle<Image>) -> Self {
-        
+    pub fn from_stage(stage: &Stage, new_stage_id: usize, object_atlas: &Handle<Image>, ground_atlas: &Handle<Image>) -> Self {
         let mut editor = Self { 
             current_item: EditorItem::default(),
             tile_size: TILE_SIZE,
@@ -47,7 +48,8 @@ impl EditorController {
             ground_atlas: ground_atlas.clone(),
             grid_size: IVec2::new(stage.grid_width as i32, stage.grid_height as i32),
             stage_grid: HashMap::new(),
-            version: 0
+            version: 0,
+            new_stage_id
          };
          editor.set_stage_template(stage);
          return editor;
@@ -115,10 +117,13 @@ impl EditorController {
     /// In other words, snaps the world pos to the grid and returns that snapped world pos
     pub fn world_to_grid_world_pos(&self, world_pos: Vec3) -> Vec3 {
         let grid_pos = self.world_to_grid_pos(world_pos);
+        return self.grid_pos_to_world_grid_pos(grid_pos);
+    }
+    pub fn grid_pos_to_world_grid_pos(&self, grid_pos: IVec2) -> Vec3 {
         Vec3::new(
-            (grid_pos.x as f32 + (world_pos.x.signum() * 0.5)) * self.tile_size, 
-            (grid_pos.y as f32 + (world_pos.y.signum() * 0.5)) * self.tile_size, 
-            world_pos.z)
+            (grid_pos.x as f32 + (grid_pos.x.signum() as f32 * 0.5)) * self.tile_size, 
+            (grid_pos.y as f32 + (grid_pos.y.signum() as f32 * 0.5)) * self.tile_size, 
+            0.0)
     }
     /// Returns the grid position
     pub fn world_to_grid_pos(&self, world_pos: Vec3) -> IVec2 {
@@ -131,6 +136,7 @@ impl EditorController {
         if !self.can_place(grid_pos) { return false; }
         self.stage_grid.insert(grid_pos, self.current_item);
         self.saved = false;
+        self.version += 1;
         return true;
     }
     
@@ -209,13 +215,53 @@ impl EditorController {
     }
 
     fn set_stage_template(&mut self, stage: &Stage) {
-        for ground in &stage.ground_tiles {
 
+        self.stage_grid.insert(stage.spawn_grid_pos.as_ivec2(), EditorItem::Spawn);
+        self.version += 1;
+
+        for ground in &stage.ground_tiles {
+            self.stage_grid.insert(ground.grid_pos.as_ivec2(), EditorItem::Ground);
         }
+        for spike in &stage.spikes {
+            self.stage_grid.insert(spike.grid_pos.as_ivec2(), EditorItem::Spike { rotation: spike.rotation });
+        }
+        for half_saw in &stage.half_saws {
+            self.stage_grid.insert(half_saw.grid_pos.as_ivec2(), EditorItem::HalfSaw { rotation: half_saw.rotation });
+        }
+        for spring in &stage.springs {
+            self.stage_grid.insert(spring.grid_pos.as_ivec2(), EditorItem::Spring { rotation: spring.rotation });
+        }
+        for lock_block in &stage.lock_blocks {
+            self.stage_grid.insert(lock_block.grid_pos.as_ivec2(), EditorItem::LockBlock { variant: match lock_block.trigger_id {
+                1 => LockBlockVariant::One,
+                2 => LockBlockVariant::Two,
+                _ => LockBlockVariant::Three,
+            }});
+        }
+        for key in &stage.keys {
+            self.stage_grid.insert(key.grid_pos.as_ivec2(), EditorItem::Key { variant: match key.trigger_id {
+                1 => KeyVariant::One,
+                2 => KeyVariant::Two,
+                _ => KeyVariant::Three,
+            }});
+        }
+        for interval_block in &stage.interval_blocks {
+            self.stage_grid.insert(interval_block.grid_pos.as_ivec2(), EditorItem::IntervalBlock { variant: match interval_block.is_active {
+                true => IntervalBlockVariant::On,
+                false => IntervalBlockVariant::Off
+            }});
+        }
+        for saw_shooter in &stage.saw_shooter_blocks {
+            self.stage_grid.insert(saw_shooter.grid_pos.as_ivec2(), EditorItem::SawShooter { rotation: saw_shooter.rotation });
+        }
+        for phantom_block in &stage.phantom_blocks {
+            self.stage_grid.insert(phantom_block.grid_pos.as_ivec2(), EditorItem::PhantomBlock);
+        }
+        
     }
 
     fn build_stage(&self) -> Stage {
-        let mut stage: Stage = Stage::new(4, self.grid_size);
+        let mut stage: Stage = Stage::new(self.new_stage_id, self.grid_size);
         for (grid_pos, stage_editor_obj) in &self.stage_grid {
             match stage_editor_obj {
                 EditorItem::Spike { rotation } => {

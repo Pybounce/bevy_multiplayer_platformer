@@ -1,12 +1,13 @@
 use bevy::prelude::*;
 use controller::{EditorController, GROUND_TILEMAP_SIZE};
 use item_icon::*;
+use renderer::editor_renderer::EditorRenderer;
 use crate::{camera::PixelPerfectTranslation, common::{mouse::MouseData, states::{AppState, DespawnOnStateExit, StageEditorState}}, stage::stage_builder::{stage_asset::Stage, stage_creator::TILE_SIZE}};
 
 mod enums;
 mod controller;
 mod item_icon;
-mod editor_renderer;
+pub mod renderer;
 
 pub struct StageEditorPlugin;
 
@@ -73,7 +74,7 @@ fn build_stage_editor(
 
     if let Some(handle) = &stage_editor_load_details.template_stage_handle {
         match stage_assets.get(handle) {
-            Some(asset) => {editor_controller = EditorController::from_stage(asset, &object_atlas, &ground_atlas); },
+            Some(stage) => {editor_controller = EditorController::from_stage(stage, stage.id, &object_atlas, &ground_atlas); },
             None => {
                 app_state.set(AppState::StageSelect);
                 return;
@@ -81,10 +82,11 @@ fn build_stage_editor(
         }
     }
     else {
-        editor_controller = EditorController::new(&object_atlas, &ground_atlas);
+        editor_controller = EditorController::new(100, &object_atlas, &ground_atlas);
     }
 
     commands.insert_resource(editor_controller);
+    commands.insert_resource(EditorRenderer::new());
 
     commands.spawn(Text2dBundle {
         text: Text::from_section("Stage Editor", TextStyle::default()),
@@ -100,6 +102,7 @@ fn teardown_stage_editor(
 
 ) {
     commands.remove_resource::<EditorController>();
+    commands.remove_resource::<EditorRenderer>();
     editor_state.set(StageEditorState::Loading);
 }
 
