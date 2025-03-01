@@ -84,6 +84,7 @@
     - So to keep it as a state we need to add a looking state and update it for local and networked players
   - This will become a larger issue when more effects are added for onJump or onDeath etc
 - Add CollidingEntities to the spring and key etc instead
+- Make a separate sprite atlas for editor
 
 ## Web Build
 
@@ -305,3 +306,19 @@ Idea for block that produces spikes when the player steps on it, simiar to crumb
 ## Achievements
 
 - Bounce off a single spring 10.000 times
+
+## New ToDo!
+
+- [ ] Level select with actual selectable levels
+- [ ] Nice art
+- [ ] Audio
+- [ ] Particles etc (also art)
+- [ ] Add in level goal to editor
+- [ ] Make actual levels
+- [ ] Tweak movement controller
+- [ ] Add moving objects to game + level editor
+  - Pixel perfect may ruin everything
+- [ ] Possibly add sub varient things so I have 2 dimentions to work with
+- [ ] Editor middle mouse button copies
+- [ ] Editor quick test
+- [ ] Reset levels on death

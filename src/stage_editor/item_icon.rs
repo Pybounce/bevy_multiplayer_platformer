@@ -2,7 +2,7 @@ use bevy::prelude::*;
 
 use crate::{common::{mouse::MouseData, states::{AppState, DespawnOnStateExit}}, stage::stage_builder::stage_creator::TILE_SIZE};
 
-use super::controller::EditorController;
+use super::{controller::EditorController, renderer::editor_renderer::EditorRenderer};
 
 #[derive(Component)]
 pub struct ItemIcon;
@@ -32,7 +32,7 @@ pub fn add_item_icon(
             texture: atlas,
             sprite: Sprite {
                 custom_size: Some(Vec2::new(TILE_SIZE, TILE_SIZE)),
-                rect: Some(editor_con.get_item_icon_atlas_rect()),
+                rect: Some(EditorRenderer::get_item_icon_atlas_rect(&editor_con.current_item)),
                 ..default()
             },
             ..default()
@@ -42,13 +42,6 @@ pub fn add_item_icon(
     }
 }
 
-pub fn display_item_icon(
-    mut editor_con: ResMut<EditorController>
-) {
-
-}
-
-
 pub fn move_item_icon(
     mut item_icon_query: Query<&mut Transform, With<ItemIcon>>,
     mouse_data: Res<MouseData>,
@@ -57,7 +50,7 @@ pub fn move_item_icon(
 ) {
     if let Ok(mut t) = item_icon_query.get_single_mut() {
         t.translation = editor_con.world_to_grid_world_pos(mouse_data.world_position.extend(t.translation.z));
-        t.rotation = Quat::from_rotation_z(editor_con.rotation);
+        t.rotation = Quat::from_rotation_z(editor_con.current_item.get_rotation());
     }
 }
 
@@ -86,7 +79,7 @@ pub fn handle_current_item_change(
             super::enums::EditorItem::Ground => *image = editor_con.ground_atlas.clone(),
             _ => *image = editor_con.object_atlas.clone(),
         }
-        s.rect = Some(editor_con.get_item_icon_atlas_rect());
+        s.rect = Some(EditorRenderer::get_item_icon_atlas_rect(&editor_con.current_item));
     }
 }
 
