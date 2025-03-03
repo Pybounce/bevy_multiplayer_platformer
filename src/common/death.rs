@@ -2,17 +2,34 @@ use bevy::prelude::*;
 use bevy_rapier2d::prelude::CollidingEntities;
 
 #[derive(Component)]
-pub struct DeathMarker;
+pub struct DeathMarker {
+    pub countdown: Timer
+}
+
+impl DeathMarker {
+    pub fn from_seconds(seconds: f32) -> Self {
+        Self {
+            countdown: Timer::from_seconds(seconds, TimerMode::Once)
+        }
+    }
+    pub fn instant() -> Self {
+        DeathMarker::from_seconds(0.0)
+    }
+}
 
 #[derive(Component)]
 pub struct Killable;
 
 pub fn despawn_death_marked(
     mut commands: Commands,
-    query: Query<Entity, With<DeathMarker>>
+    mut query: Query<(Entity, &mut DeathMarker)>,
+    time: Res<Time>
 ) {
-    for e in &query {
-        commands.entity(e).despawn();
+    for (e, mut death_marker) in &mut query {
+        death_marker.countdown.tick(time.delta());
+        if death_marker.countdown.finished() {
+            commands.entity(e).despawn();
+        }
     }
 }
 
@@ -28,7 +45,7 @@ pub fn check_touched_by_death(
     for colliding_entities in &query {
         for colliding_entity in colliding_entities.iter() {
             if let Ok(entity) = death_marked_on_touch_query.get(colliding_entity) {
-                commands.entity(entity).try_insert(DeathMarker);
+                commands.entity(entity).try_insert(DeathMarker::instant());
             }
         }
     }

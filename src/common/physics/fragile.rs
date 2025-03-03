@@ -35,6 +35,6 @@ pub struct FragileShield;
 fn fragile_hit(commands: &mut Commands, entity: Entity, shield: Option<&FragileShield>) {
     match shield {
         Some(_) => commands.entity(entity).remove::<FragileShield>(),
-        None => commands.entity(entity).insert(DeathMarker),
+        None => commands.entity(entity).insert(DeathMarker::instant()),
     };
 }
