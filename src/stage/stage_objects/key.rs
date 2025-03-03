@@ -1,7 +1,7 @@
 use bevy::{math::Rect, prelude::{Commands, Component}};
 use bevy_rapier2d::prelude::{CollisionGroups, Group};
 
-use crate::{common::death::DeathMarkOnTouch, stage::stage_builder::{stage_asset, stage_creator::StageCreator}};
+use crate::{common::{death::DeathMarkOnTouch, physics::glass::Glass}, stage::stage_builder::{stage_asset, stage_creator::StageCreator}};
 
 use super::tiles::PhysicalTileBundle;
 use crate::common::triggers::*;
@@ -22,6 +22,7 @@ impl KeyFactory {
                 trigger_id: key_asset.trigger_id
             },
             TriggerOnTouch,
+            Glass::new_fast(),
             DeathMarkOnTouch
         ));
     }

@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use bevy_rapier2d::prelude::{Ccd, Collider, GravityScale, RigidBody, Velocity};
+use bevy_rapier2d::prelude::{Ccd, Collider, CollisionGroups, GravityScale, Group, RigidBody, Velocity};
 use rand::Rng;
 
 use crate::{common::{death::DeathMarker, physics::gravity::Gravity}, local_player::LocalPlayer, stage::stage_builder::StageAssets};
@@ -59,6 +59,7 @@ pub fn player_death_particles(
                         GravityScale(0.0),
                         Ccd::enabled(),
                         DeathMarker::from_seconds(death_delay),
+                        CollisionGroups::new(Group::GROUP_10, Group::ALL),
                         ColorTween {
                             start_time: time.elapsed_seconds(),
                             duration: death_delay, 
