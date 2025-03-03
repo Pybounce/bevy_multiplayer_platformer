@@ -25,7 +25,6 @@ pub fn break_fragiles(
         }
     }
 }
-
 // Ok so this is pretty dumb but I can't be fucked to deal with the physics system right now
 // If you spawn a fragile thing (such as a sawblade), inside of something that can kill it (such as ground/saw dispenser), it should not break.
 // So this just makes it so the first collision entry doesn't kill it.
@@ -35,6 +34,6 @@ pub struct FragileShield;
 fn fragile_hit(commands: &mut Commands, entity: Entity, shield: Option<&FragileShield>) {
     match shield {
         Some(_) => commands.entity(entity).remove::<FragileShield>(),
-        None => commands.entity(entity).insert(DeathMarker::instant()),
+        None => commands.entity(entity).try_insert(DeathMarker::instant()),
     };
 }

@@ -33,7 +33,6 @@ pub fn despawn_death_marked(
     }
 }
 
-
 #[derive(Component)]
 pub struct DeathMarkOnTouch;
 

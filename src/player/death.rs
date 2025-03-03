@@ -28,46 +28,47 @@ pub fn trigger_dead_local_player_respawn(
 
 pub fn player_death_particles(
     mut commands: Commands,
-    query: Query<&Transform, (With<LocalPlayer>, With<DeathMarker>)>,
+    query: Query<(&Transform, &Velocity), (With<LocalPlayer>, With<DeathMarker>)>,
     time: Res<Time>
 ) {
-    for player_transform in &query {
+    for (player_transform, vel) in &query {
 
-        let particle_count = 50;
-        
-        for i in 0..particle_count {
-            let x = rand::thread_rng().gen_range(-8.0..8.0);
-            let y = rand::thread_rng().gen_range(-8.0..8.0);
-            let x_force = rand::thread_rng().gen_range(-50.0..50.0);
-            let y_force = rand::thread_rng().gen_range(30.0..120.0);
-            commands.spawn((
-                SpriteBundle {
-                sprite: Sprite { color: Color::LinearRgba(LinearRgba::new(2.0, 2.0, 2.0, 1.0)),
-                    custom_size: Vec2::new(1.0, 1.0).into(), 
-                    ..default() },
-                transform: Transform::from_translation(player_transform.translation + Vec3::new(x, y, 0.0)),
-                ..default()
-                },
-                Velocity::linear(Vec2::new(x_force, y_force)),
-                Gravity {
-                    max_force: 500.0,
-                    current_force: 0.0,
-                    acceleration: 1000.0,
-                },
-                RigidBody::Dynamic,
-                Collider::ball(0.5),
-                GravityScale(0.0),
-                Ccd::enabled(),
-                DeathMarker::from_seconds(1.5),
-                ColorTween {
-                    start_time: time.elapsed_seconds(),
-                    duration: 1.5, 
-                    start_color: Color::LinearRgba(LinearRgba::new(2.0, 2.0, 2.0, 1.0)),
-                    target_color: Color::LinearRgba(LinearRgba::new(2.0, 2.0, 2.0, 0.0)),                    
+
+        for x in 0..16 {
+            for y in 0..16 {
+                if y == 0 || y == 15 || x == 0 || x == 15 {
+                    let x_force = rand::thread_rng().gen_range(-1.0..1.0);
+                    let y_force = rand::thread_rng().gen_range(-1.0..1.0);
+                    let death_delay = rand::thread_rng().gen_range(1.3..2.0);
+                    commands.spawn((
+                        SpriteBundle {
+                        sprite: Sprite { color: Color::LinearRgba(LinearRgba::new(2.0, 2.0, 2.0, 1.0)),
+                            custom_size: Vec2::new(1.0, 1.0).into(), 
+                            ..default() },
+                        transform: Transform::from_translation(player_transform.translation + Vec3::new((x - 8) as f32, (y - 8) as f32, 0.0)),
+                        ..default()
+                        },
+                        Velocity::linear(vel.linvel + Vec2::new(x_force, y_force)),
+                        Gravity {
+                            max_force: 500.0,
+                            current_force: 0.0,
+                            acceleration: 1000.0,
+                        },
+                        RigidBody::Dynamic,
+                        Collider::ball(0.5),
+                        GravityScale(0.0),
+                        Ccd::enabled(),
+                        DeathMarker::from_seconds(death_delay),
+                        ColorTween {
+                            start_time: time.elapsed_seconds(),
+                            duration: death_delay, 
+                            start_color: Color::LinearRgba(LinearRgba::new(2.0, 2.0, 2.0, 1.0)),
+                            target_color: Color::LinearRgba(LinearRgba::new(2.0, 2.0, 2.0, 0.0)),                    
+                        }
+                    ));
                 }
-            ));
+            }
         }
-
 
     }
 }
