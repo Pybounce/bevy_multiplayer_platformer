@@ -19,8 +19,18 @@ impl SpikeFactory {
             TileBundle::new(stage_creator, grid_pos, atlas_rect, rotation, stage_creator.object_tilemap)
         ).with_children(|parent| {
             parent.spawn((
-                Collider::cuboid(TILE_SIZE_HALF * 0.8, TILE_SIZE_HALF * 0.8),
-                TransformBundle::from(Transform::from_xyz(0.0, -(TILE_SIZE_HALF * 0.2), 0.0)),
+                Collider::cuboid(TILE_SIZE_HALF * 0.2, TILE_SIZE_HALF * 0.8),
+                TransformBundle::from(Transform::from_xyz(-(TILE_SIZE_HALF * 0.5), -(TILE_SIZE_HALF * 0.2), 0.0)),
+                CollisionGroups::new(Group::GROUP_2, Group::ALL),
+                ActiveEvents::COLLISION_EVENTS,
+                RigidBody::Fixed,
+                InstantKiller,
+                Spike,
+                StageObject { stage_id: stage_creator.stage.id }
+            ));
+            parent.spawn((
+                Collider::cuboid(TILE_SIZE_HALF * 0.2, TILE_SIZE_HALF * 0.8),
+                TransformBundle::from(Transform::from_xyz((TILE_SIZE_HALF * 0.5), -(TILE_SIZE_HALF * 0.2), 0.0)),
                 CollisionGroups::new(Group::GROUP_2, Group::ALL),
                 ActiveEvents::COLLISION_EVENTS,
                 RigidBody::Fixed,
