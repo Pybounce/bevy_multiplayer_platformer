@@ -170,7 +170,8 @@ impl EditorController {
 
         self.stage_grid.insert(stage.spawn_grid_pos.as_ivec2(), EditorItem::Spawn);
         self.version += 1;
-
+        self.stage_grid.insert(stage.goal_grid_pos.as_ivec2(), EditorItem::Goal);
+        
         for ground in &stage.ground_tiles {
             self.stage_grid.insert(ground.grid_pos.as_ivec2(), EditorItem::Ground);
         }
@@ -281,6 +282,9 @@ impl EditorController {
                         grid_pos: grid_pos.as_vec2(),
                         rotation: *rotation,
                     });
+                },
+                EditorItem::Goal => {
+                    stage.goal_grid_pos = grid_pos.as_vec2()
                 },
             }
         }

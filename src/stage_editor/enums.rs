@@ -13,6 +13,7 @@ pub enum EditorItem {
     LockBlock { variant: LockBlockVariant } = 7,
     IntervalBlock { variant: IntervalBlockVariant } = 8,
     SawShooter { rotation: f32 } = 9,
+    Goal = 10,
 }
 
 impl EditorItem {
@@ -27,13 +28,14 @@ impl EditorItem {
             EditorItem::HalfSaw { .. } => EditorItem::LockBlock { variant: LockBlockVariant::One },
             EditorItem::LockBlock { .. } => EditorItem::IntervalBlock { variant: IntervalBlockVariant::On },
             EditorItem::IntervalBlock { .. } => EditorItem::SawShooter { rotation: 0.0 },
-            EditorItem::SawShooter { .. } => EditorItem::Ground,
+            EditorItem::SawShooter { .. } => EditorItem::Goal,
+            EditorItem::Goal => EditorItem::Ground,
         }
     }
     pub fn cycle_prev(&self) -> Self {
         match self {
             EditorItem::SawShooter { .. } => EditorItem::IntervalBlock { variant: IntervalBlockVariant::On },
-            EditorItem::Ground => EditorItem::SawShooter { rotation: 0.0 },
+            EditorItem::Ground => EditorItem::Goal,
             EditorItem::IntervalBlock { .. } => EditorItem::LockBlock { variant: LockBlockVariant::One },
             EditorItem::LockBlock { .. } => EditorItem::HalfSaw { rotation: 0.0 },
             EditorItem::HalfSaw { .. } => EditorItem::PhantomBlock,
@@ -42,6 +44,7 @@ impl EditorItem {
             EditorItem::Spawn => EditorItem::Spike { rotation: 0.0 },
             EditorItem::Spike { .. } => EditorItem::Key { variant: KeyVariant::One },
             EditorItem::Key { .. } => EditorItem::Ground,
+            EditorItem::Goal { .. } => EditorItem::SawShooter { rotation: 0.0 },
         }
     }
     pub fn cycle_next_variant(&self) -> Self {
@@ -56,6 +59,8 @@ impl EditorItem {
             EditorItem::LockBlock { variant } => EditorItem::LockBlock { variant: variant.cycle_next() },
             EditorItem::IntervalBlock { variant } => EditorItem::IntervalBlock { variant: variant.cycle_next() },
             EditorItem::SawShooter { rotation } => EditorItem::SawShooter { rotation: *rotation },
+            EditorItem::Goal => EditorItem::Goal,
+
         }
     }
     pub fn cycle_prev_variant(&self) -> Self {
@@ -70,6 +75,7 @@ impl EditorItem {
             EditorItem::Key { variant } => EditorItem::Key { variant: variant.cycle_prev() },
             EditorItem::IntervalBlock { variant } => EditorItem::IntervalBlock { variant: variant.cycle_prev() },
             EditorItem::SawShooter { rotation } => EditorItem::SawShooter { rotation: *rotation },
+            EditorItem::Goal => EditorItem::Goal,
         }
     }
 
@@ -86,6 +92,7 @@ impl EditorItem {
             EditorItem::LockBlock { .. } => return false,
             EditorItem::IntervalBlock { .. } => return false,
             EditorItem::SawShooter { rotation } => rotate_quater_bounded(rotation),
+            EditorItem::Goal => return false,
         };
         return true;
     }
@@ -101,6 +108,7 @@ impl EditorItem {
             EditorItem::LockBlock { .. } => 0.0,
             EditorItem::IntervalBlock { .. } => 0.0,
             EditorItem::SawShooter { rotation } => *rotation,
+            EditorItem::Goal => 0.0,
         }
     }
 }
