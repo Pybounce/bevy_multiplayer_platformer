@@ -322,3 +322,5 @@ Idea for block that produces spikes when the player steps on it, simiar to crumb
 - [ ] Editor middle mouse button copies
 - [ ] Editor quick test
 - [ ] Reset levels on death
+- [ ] Triggered metal spike trap
+  - In discord sub, make it so you step on them, 0.5 seconds later, spikes come up
