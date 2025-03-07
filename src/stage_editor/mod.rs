@@ -241,11 +241,12 @@ pub fn get_ground_atlas_index(
     let mut current_bit: u8 = 1;
 
     for adjacent_grid_pos in &adjacent_grid_positions {
+        if adjacent_grid_pos.x == -1 || adjacent_grid_pos.x == editor_con.grid_size.x || adjacent_grid_pos.y == -1 || adjacent_grid_pos.y == editor_con.grid_size.y {
+            bitmask |= current_bit
+        }
         if let Some(ground_icon_grid_pos) = ground_icon_grid_pos_opt {
             if ground_icon_grid_pos == *adjacent_grid_pos {
                 bitmask |= current_bit;
-                current_bit <<= 1;
-                continue;
             }
         }
         if let Some(stage_object) = editor_con.stage_grid.get(adjacent_grid_pos) {

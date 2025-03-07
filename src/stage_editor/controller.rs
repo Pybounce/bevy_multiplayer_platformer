@@ -17,7 +17,7 @@ pub struct EditorController {
     pub object_atlas: Handle<Image>,
     pub ground_atlas: Handle<Image>,
     pub stage_grid: HashMap<IVec2, EditorItem>,
-    grid_size: IVec2,
+    pub grid_size: IVec2,
     pub version: usize,
     new_stage_id: usize
 }
@@ -107,10 +107,10 @@ impl EditorController {
     }
     
     pub fn can_place(&self, grid_pos: IVec2) -> bool {
-        grid_pos.x > 0 && 
-        grid_pos.x < self.grid_size.x as i32 - 1 &&
-        grid_pos.y > 0 && 
-        grid_pos.y < self.grid_size.y as i32 - 1 &&
+        grid_pos.x >= 0 && 
+        grid_pos.x <= self.grid_size.x as i32 - 1 &&
+        grid_pos.y >= 0 && 
+        grid_pos.y <= self.grid_size.y as i32 - 1 &&
         !self.stage_grid.contains_key(&grid_pos)
     }
 
@@ -145,10 +145,10 @@ impl EditorController {
         return self.current_item.try_rotate();
     }
     pub fn can_remove(&self, grid_pos: IVec2) -> bool {
-        grid_pos.x > 0 && 
-        grid_pos.x < self.grid_size.x as i32 - 1 &&
-        grid_pos.y > 0 && 
-        grid_pos.y < self.grid_size.y as i32 - 1 &&
+        grid_pos.x >= 0 && 
+        grid_pos.x <= self.grid_size.x as i32 - 1 &&
+        grid_pos.y >= 0 && 
+        grid_pos.y <= self.grid_size.y as i32 - 1 &&
         self.stage_grid.contains_key(&grid_pos)
     }
 
