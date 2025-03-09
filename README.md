@@ -324,3 +324,18 @@ Idea for block that produces spikes when the player steps on it, simiar to crumb
 - [ ] Reset levels on death
 - [ ] Triggered metal spike trap
   - In discord sub, make it so you step on them, 0.5 seconds later, spikes come up
+
+## Background
+
+- Have set weathers
+  - Snow
+  - Rain
+  - Clear
+- Have set landscapes
+  - Mountains
+  - Hills
+  - Clear
+- Weather and Landscape are both varients of the editor options
+- The individual types are sub varients of those options
+- Clicking with one will set it, and will randomise the seed
+  - So if you want to set a new seed, just click again
