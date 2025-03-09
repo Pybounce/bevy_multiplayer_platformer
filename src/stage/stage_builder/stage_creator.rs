@@ -42,6 +42,9 @@ pub enum ObjectAtlasIndices {
     SawProjectile1 = 33,
     SawProjectile2 = 34,
     SawShooter = 27,
+    PlayerIdle0 = 187,
+    PlayerRight0 = 188,
+    PlayerRight1 = 189,
 }
 
 

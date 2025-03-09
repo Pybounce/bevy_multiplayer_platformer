@@ -154,7 +154,7 @@ pub fn load_player_sprite(
 
     for (e, mut s) in &mut query {
         commands.entity(e).try_insert(tilemap.clone());
-        s.rect = Some(player_rect);
+        //s.rect = Some(player_rect);
         s.custom_size = Some(Vec2::new(1.0, 1.0));
     }
 }
