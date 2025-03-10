@@ -339,3 +339,9 @@ Idea for block that produces spikes when the player steps on it, simiar to crumb
 - The individual types are sub varients of those options
 - Clicking with one will set it, and will randomise the seed
   - So if you want to set a new seed, just click again
+
+## Clean Editor Hotbar
+
+- Only have the hotbar fade in when you change a varient
+  - Then fade out after 0.5s of not changing varient
+- It should appear where ever the cursor is

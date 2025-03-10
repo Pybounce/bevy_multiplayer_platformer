@@ -18,6 +18,7 @@ pub struct EditorController {
     pub ground_atlas: Handle<Image>,
     pub stage_grid: HashMap<IVec2, EditorItem>,
     pub grid_size: IVec2,
+    grid_snap_unit: f32,
     pub version: usize,
     new_stage_id: usize
 }
@@ -35,7 +36,8 @@ impl EditorController {
             grid_size: IVec2::splat(30),
             stage_grid: HashMap::new(),
             version: 0,
-            new_stage_id
+            new_stage_id,
+            grid_snap_unit: 1.0
          }
     }
 
@@ -49,7 +51,8 @@ impl EditorController {
             grid_size: IVec2::new(stage.grid_width as i32, stage.grid_height as i32),
             stage_grid: HashMap::new(),
             version: 0,
-            new_stage_id
+            new_stage_id,
+            grid_snap_unit: 1.0
          };
          editor.set_stage_template(stage);
          return editor;
@@ -82,8 +85,13 @@ impl EditorController {
     /// Returns the grid position in world space <br/>
     /// In other words, snaps the world pos to the grid and returns that snapped world pos
     pub fn world_to_grid_world_pos(&self, world_pos: Vec3) -> Vec3 {
-        let grid_pos = self.world_to_grid_pos(world_pos);
-        return self.grid_pos_to_world_grid_pos(grid_pos);
+        return Vec3::new(
+            (world_pos.x / self.grid_snap_unit / self.tile_size).round() * self.grid_snap_unit * self.tile_size,
+            (world_pos.y / self.grid_snap_unit / self.tile_size).round() * self.grid_snap_unit * self.tile_size,
+            (world_pos.z / self.grid_snap_unit / self.tile_size).round() * self.grid_snap_unit * self.tile_size,
+        ) + Vec3::new(8.0, 8.0, 8.0);
+        //let grid_pos = self.world_to_grid_pos(world_pos);
+        // self.grid_pos_to_world_grid_pos(grid_pos);
     }
     pub fn grid_pos_to_world_grid_pos(&self, grid_pos: IVec2) -> Vec3 {
         Vec3::new(
