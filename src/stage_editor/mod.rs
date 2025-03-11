@@ -82,7 +82,7 @@ fn build_stage_editor(
         }
     }
     else {
-        editor_controller = EditorController::new(100, &object_atlas, &ground_atlas);
+        editor_controller = EditorController::new(stage_editor_load_details.new_stage_id, &object_atlas, &ground_atlas);
     }
 
     commands.insert_resource(editor_controller);
