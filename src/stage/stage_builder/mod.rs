@@ -53,5 +53,6 @@ pub struct CurrentStageData {
 
 #[derive(Resource, Default)]
 pub struct StageAssets {
-    pub stage_object_tilemap_handle: Handle<Image>
+    pub stage_objects_handle: Handle<Image>,
+    pub ground_tiles_handle: Handle<Image>,
 }

@@ -68,7 +68,7 @@ fn build_stage_editor(
     mut app_state: ResMut<NextState<AppState>>,
 ) {
     let object_atlas: Handle<Image> = asset_server.load("object_tilemap.png");
-    let ground_atlas: Handle<Image> = asset_server.load("tilemap.png");
+    let ground_atlas: Handle<Image> = asset_server.load("ground_grass.png");
     
     let editor_controller: EditorController;
 

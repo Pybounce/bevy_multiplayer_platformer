@@ -56,7 +56,7 @@ pub fn tick_saw_shooters(
             ActiveEvents::COLLISION_EVENTS,
             LockedAxes::ROTATION_LOCKED,
             SpriteBundle {
-                texture: stage_assets.stage_object_tilemap_handle.clone(),
+                texture: stage_assets.stage_objects_handle.clone(),
                 sprite: Sprite {
                     custom_size: Some(Vec2::new(16.0, 16.0)),
                     rect: Some(atlas_rects[0]),
