@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::{common::death::DeathMarker, local_player::LocalPlayer};
+use crate::{common::death::DeathMarker, local_player::LocalPlayer, stage::stage_objects::StageObject};
 
 use super::spawner::LocalPlayerSpawner;
 
@@ -17,9 +17,9 @@ pub fn trigger_dead_local_player_respawn(
     time: Res<Time>
 ) {
     for respawnable in &query {
-        commands.spawn(LocalPlayerSpawner {
+        commands.spawn((LocalPlayerSpawner {
             spawn_time: time.elapsed_seconds_f64() + respawnable.delay_in_seconds,
             translation: respawnable.translation,
-        });
+        }, StageObject { stage_id: usize::max_value() }));
     }
 }
