@@ -32,8 +32,8 @@ pub fn try_enter_stage(
     mut build_event_writer: EventWriter<BuildStageEvent>
 ) {
     if input.just_released(KeyCode::Space) {
-        load_event_writer.send(LoadStageEvent {stage_id: 0});
-        build_event_writer.send(BuildStageEvent {stage_id: 0});
+        load_event_writer.send(LoadStageEvent {stage_id: 5});
+        build_event_writer.send(BuildStageEvent {stage_id: 5});
     }
 }
 
@@ -44,8 +44,8 @@ pub fn try_enter_stage_editor(
 ) {
     if input.just_released(KeyCode::KeyE) {
         commands.insert_resource(StageEditorLoadDetails {
-            template_stage_id: 0.into(),
-            new_stage_id: 0,
+            template_stage_id: 5.into(),
+            new_stage_id: 5,
             template_stage_handle: None
         });
         app_state.set(AppState::StageEditor);

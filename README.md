@@ -140,3 +140,24 @@ Then we go through the rest and if they have triggers, we can set the correct en
 - Only have the hotbar fade in when you change a varient
   - Then fade out after 0.5s of not changing varient
 - It should appear where ever the cursor is
+
+## Decorations
+
+#### Grass
+
+- [ ] Vines
+- [ ] Bushes
+
+#### Snow
+
+- [ ] Snowman
+- [ ] Icicles
+- [ ] Some red tree that makes the colour pop
+
+#### Desert
+
+- [ ] Cacti
+
+#### Caverns
+
+- [ ] Gems (in SUB)
